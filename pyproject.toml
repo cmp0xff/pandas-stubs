@@ -176,8 +176,15 @@ fix = true
 
 
 [tool.ruff.lint]
-extend-select = ["B007", "B018", "PYI", "UP", "RUF100", "RUF059"]
+extend-select = ["ANN", "B007", "B018", "PYI", "UP", "RUF100", "RUF059"]
 ignore = [
+  "ANN001",
+  "ANN003",
+  "ANN201",
+  "ANN202",
+  "ANN204",
+  "ANN206",
+  "ANN401", # https://docs.astral.sh/ruff/rules/any-type/
   "E501",   # https://docs.astral.sh/ruff/rules/line-too-long/
   "E731",   # https://docs.astral.sh/ruff/rules/lambda-assignment/
   "PYI042", # https://docs.astral.sh/ruff/rules/snake-case-type-alias/
