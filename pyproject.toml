@@ -176,16 +176,37 @@ fix = true
 
 
 [tool.ruff.lint]
-extend-select = ["B007", "B018", "PYI", "UP", "RUF100", "RUF059"]
+extend-select = ["ALL"]
 ignore = [
+  # The following rules are ignored permanently
+  "A001",   # https://docs.astral.sh/ruff/rules/builtin-variable-shadowing/
+  "A002",   # https://docs.astral.sh/ruff/rules/builtin-argument-shadowing/
+  "A004",   # https://docs.astral.sh/ruff/rules/builtin-import-shadowing/
+  "COM",    # https://docs.astral.sh/ruff/rules/#flake8-commas-com
   "E501",   # https://docs.astral.sh/ruff/rules/line-too-long/
   "E731",   # https://docs.astral.sh/ruff/rules/lambda-assignment/
+  "EM",     # https://docs.astral.sh/ruff/rules/#flake8-errmsg-em
+  "I",      # handled by isort
+  "PD",     # Pandas is here
   "PYI042", # https://docs.astral.sh/ruff/rules/snake-case-type-alias/
+  # The following rules are ignored temporarily. Either fix them or move to the permanent list above.
+  "ANN", "D", "ERA", "NPY", "FBT", "DTZ", "N", "PLR", "PGH", "TC", "PTH", "PLC", "S", "C901", "FIX", "TD"
 ]
 
 
 [tool.ruff.lint.per-file-ignores]
 "_*.pyi" = ["PYI001"]
+"scripts/*" = [
+  # The following rules are ignored temporarily. Either fix them or move to the permanent list above.
+  "TRY", "PT", "BLE"
+]
+"tests/*" = [
+  # The following rules are ignored temporarily. Either fix them or move to the permanent list above.
+  "S101",    # https://docs.astral.sh/ruff/rules/assert/
+  "SLF001",  # https://docs.astral.sh/ruff/rules/private-member-access/
+  # The following rules are ignored temporarily
+  "ARG", "RUF", "SIM", "TRY", "PT"
+]
 
 
 [tool.mypy]
