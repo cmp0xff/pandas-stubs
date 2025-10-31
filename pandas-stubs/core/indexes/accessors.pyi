@@ -5,6 +5,7 @@ from datetime import (
     tzinfo as _tzinfo,
 )
 from typing import (
+    Any,
     Generic,
     Literal,
     TypeVar,
@@ -14,10 +15,10 @@ from typing import (
 
 import numpy as np
 from pandas.core.accessor import PandasDelegate
-from pandas.core.arrays.base import ExtensionArray
 from pandas.core.arrays.categorical import Categorical
 from pandas.core.arrays.datetimes import DatetimeArray
 from pandas.core.arrays.interval import IntervalArray
+from pandas.core.arrays.numpy_ import NumpyExtensionArray
 from pandas.core.arrays.period import PeriodArray
 from pandas.core.arrays.timedeltas import TimedeltaArray
 from pandas.core.base import (
@@ -48,8 +49,6 @@ from pandas._typing import (
     np_1darray,
     np_ndarray_bool,
 )
-
-from pandas.core.dtypes.dtypes import CategoricalDtype
 
 class Properties(PandasDelegate, NoNewAttributesMixin): ...
 
@@ -462,11 +461,9 @@ class DtDescriptor:
 class ArrayDescriptor:
     @overload
     def __get__(
-        self, instance: IndexOpsMixin[Never], owner: type[IndexOpsMixin]
-    ) -> ExtensionArray: ...
-    @overload
-    def __get__(
-        self, instance: IndexOpsMixin[CategoricalDtype], owner: type[IndexOpsMixin]
+        self,
+        instance: IndexOpsMixin[Any, Categorical],
+        owner: type[IndexOpsMixin[Any, Categorical]],
     ) -> Categorical: ...
     @overload
     def __get__(
@@ -483,5 +480,5 @@ class ArrayDescriptor:
     # should be NumpyExtensionArray
     @overload
     def __get__(
-        self, instance: IndexOpsMixin, owner: type[IndexOpsMixin]
-    ) -> ExtensionArray: ...
+        self, instance: IndexOpsMixin[Any, np.ndarray], owner: type[IndexOpsMixin]
+    ) -> NumpyExtensionArray: ...

@@ -67,6 +67,7 @@ from pandas._typing import (
     S2,
     S2_NSDT,
     T_COMPLEX,
+    A1_co,
     AnyAll,
     AnyArrayLike,
     AnyArrayLikeInt,
@@ -109,7 +110,7 @@ from pandas._typing import (
 
 class InvalidIndexError(Exception): ...
 
-class Index(IndexOpsMixin[S1], ElementOpsMixin[S1]):
+class Index(IndexOpsMixin[S1, A1_co], ElementOpsMixin[S1]):
     __hash__: ClassVar[None]  # type: ignore[assignment]  # pyright: ignore[reportIncompatibleMethodOverride]
     # overloads with additional dtypes
     @overload
@@ -473,7 +474,7 @@ class Index(IndexOpsMixin[S1], ElementOpsMixin[S1]):
     def values(self) -> np_1darray: ...
     def memory_usage(self, deep: bool = False): ...
     @overload
-    def where(
+    def where(  # pyright: ignore[reportOverlappingOverload]
         self,
         cond: Sequence[bool] | np_ndarray_bool | BooleanArray | IndexOpsMixin[bool],
         other: S1 | Series[S1] | Self,
@@ -541,7 +542,9 @@ class Index(IndexOpsMixin[S1], ElementOpsMixin[S1]):
     @overload
     def insert(self, loc: int, item: S1) -> Self: ...
     @overload
-    def insert(self, loc: int, item: object) -> Index: ...
+    def insert(
+        self: Index[Any, A1_co], loc: int, item: object
+    ) -> Index[Any, A1_co]: ...
     def drop(self, labels, errors: IgnoreRaise = "raise") -> Self: ...
     @property
     def shape(self) -> tuple[int, ...]: ...

@@ -22,16 +22,12 @@ from typing import (
     TypeAlias,
     TypedDict,
     TypeVar,
-    cast,
 )
 
 import numpy as np
 import pandas as pd
-from pandas.api.extensions import (
-    ExtensionArray,
-    ExtensionDtype,
-)
 from pandas.api.typing import NAType
+from pandas.core import arrays
 from pandas.core.arrays.datetimes import DatetimeArray
 from pandas.core.arrays.timedeltas import TimedeltaArray
 from pandas.core.window import ExponentialMovingWindow
@@ -50,7 +46,7 @@ from pandas._typing import (
     Scalar,
 )
 
-from pandas.core.dtypes.dtypes import CategoricalDtype  # noqa F401
+from pandas.core.dtypes.base import ExtensionDtype
 
 from tests import (
     PD_LTE_23,
@@ -1412,29 +1408,29 @@ def test_types_rename_axis() -> None:
 
 def test_types_values() -> None:
     check(
-        assert_type(pd.Series([1, 2, 3]).values, ExtensionArray | np.ndarray),
+        assert_type(pd.Series([1, 2, 3]).values, arrays.ExtensionArray | np.ndarray),
         np.ndarray,
     )
-    valresult_type: type[np.ndarray | ExtensionArray]
+    valresult_type: type[np.ndarray | arrays.ExtensionArray]
     if PD_LTE_23:
         valresult_type = np.ndarray
     else:
-        valresult_type = ExtensionArray
+        valresult_type = arrays.ExtensionArray
     check(
-        assert_type(pd.Series(list("aabc")).values, np.ndarray | ExtensionArray),
+        assert_type(pd.Series(list("aabc")).values, np.ndarray | arrays.ExtensionArray),
         valresult_type,
     )
     check(
         assert_type(
             pd.Series(list("aabc")).astype("category").values,
-            np.ndarray | ExtensionArray,
+            np.ndarray | arrays.ExtensionArray,
         ),
         pd.Categorical,
     )
     check(
         assert_type(
             pd.Series(pd.date_range("20130101", periods=3, tz="US/Eastern")).values,
-            np.ndarray | ExtensionArray,
+            np.ndarray | arrays.ExtensionArray,
         ),
         np.ndarray,
     )
@@ -1697,7 +1693,7 @@ def test_series_replace() -> None:
 
 def test_cat_accessor() -> None:
     # GH 43
-    s: pd.Series[str] = pd.Series(
+    s: pd.Series[str, pd.Categorical] = pd.Series(
         pd.Categorical(["a", "b", "a"], categories=["a", "b"])
     )
     check(assert_type(s.cat.codes, "pd.Series[int]"), pd.Series, np.int8)
@@ -1830,7 +1826,7 @@ def test_categorical_codes() -> None:
 
     # GH1383
     sr = pd.Series([1], dtype="category")
-    check(assert_type(sr, "pd.Series[CategoricalDtype]"), pd.Series, np.integer)
+    check(assert_type(sr, "pd.Series[int, pd.Categorical]"), pd.Series, np.integer)
 
 
 def test_relops() -> None:
@@ -2916,10 +2912,17 @@ def test_astype_categorical(cast_arg: CategoryDtypeArg, target_type: type) -> No
     s = pd.Series(["a", "b"])
     check(s.astype(cast_arg), pd.Series, target_type)
 
-    if TYPE_CHECKING:
-        # pandas category
-        assert_type(s.astype(pd.CategoricalDtype()), "pd.Series[pd.CategoricalDtype]")
-        assert_type(s.astype(cast_arg), "pd.Series[pd.CategoricalDtype]")
+    # pandas category
+    check(
+        assert_type(s.astype(pd.CategoricalDtype()), "pd.Series[str, pd.Categorical]"),
+        pd.Series,
+        str,
+    )
+    check(
+        assert_type(s.astype(cast_arg), "pd.Series[str, pd.Categorical]"),
+        pd.Series,
+        str,
+    )
 
 
 @pytest.mark.parametrize("cast_arg, target_type", ASTYPE_OBJECT_ARGS, ids=repr)
@@ -3497,14 +3500,10 @@ def test_diff() -> None:
         index_to_check_for_type=-1,
     )
     # nullable bool -> nullable bool
-    # casting due to pandas-dev/pandas-stubs#1395
     check(
         assert_type(
-            cast(
-                "pd.Series[pd.BooleanDtype]",
-                pd.Series([True, True, False, False, True], dtype="boolean").diff(),
-            ),
-            "pd.Series[pd.BooleanDtype]",
+            pd.Series([True, True, False, False, True], dtype="boolean").diff(),
+            "pd.Series[bool, arrays.BooleanArray]",
         ),
         pd.Series,
         np.bool_,

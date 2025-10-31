@@ -2,7 +2,7 @@ from typing import Literal
 
 import pandas as pd
 from pandas.api.typing import NAType
-from pandas.core.arrays.boolean import BooleanArray
+from pandas.core import arrays
 from typing_extensions import assert_type
 
 from tests import check
@@ -15,32 +15,32 @@ def test_arithmetic() -> None:
     idx_int: pd.Index[int] = pd.Index([1, 2, 3], dtype="Int64")
 
     # __add__
-    check(assert_type(na + s_int, pd.Series), pd.Series)
+    check(assert_type(na + s_int, "pd.Series[int, arrays.IntegerArray]"), pd.Series)
     check(assert_type(na + idx_int, pd.Index), pd.Index)
     check(assert_type(na + 1, NAType), NAType)
 
     # __radd__
-    check(assert_type(s_int + na, pd.Series), pd.Series)
+    check(assert_type(s_int + na, "pd.Series[int, arrays.IntegerArray]"), pd.Series)
     check(assert_type(idx_int + na, pd.Index), pd.Index)
     check(assert_type(1 + na, NAType), NAType)
 
     # __sub__
-    check(assert_type(na - s_int, pd.Series), pd.Series)
+    check(assert_type(na - s_int, "pd.Series[int, arrays.IntegerArray]"), pd.Series)
     check(assert_type(na - idx_int, pd.Index), pd.Index)
     check(assert_type(na - 1, NAType), NAType)
 
     # __rsub__
-    check(assert_type(s_int - na, pd.Series), pd.Series)
+    check(assert_type(s_int - na, "pd.Series[int, arrays.IntegerArray]"), pd.Series)
     check(assert_type(idx_int - na, pd.Index), pd.Index)
     check(assert_type(1 - na, NAType), NAType)
 
     # __mul__
-    check(assert_type(na * s_int, pd.Series), pd.Series)
+    check(assert_type(na * s_int, "pd.Series[int, arrays.IntegerArray]"), pd.Series)
     check(assert_type(na * idx_int, pd.Index), pd.Index)
     check(assert_type(na * 1, NAType), NAType)
 
     # __rmul__
-    check(assert_type(s_int * na, pd.Series), pd.Series)
+    check(assert_type(s_int * na, "pd.Series[int, arrays.IntegerArray]"), pd.Series)
     check(assert_type(idx_int * na, pd.Index), pd.Index)
     check(assert_type(1 * na, NAType), NAType)
 
@@ -51,32 +51,32 @@ def test_arithmetic() -> None:
     check(assert_type(1 @ na, NAType), NAType)
 
     # __truediv__
-    check(assert_type(na / s_int, pd.Series), pd.Series)
+    check(assert_type(na / s_int, "pd.Series[int, arrays.IntegerArray]"), pd.Series)
     check(assert_type(na / idx_int, pd.Index), pd.Index)
     check(assert_type(na / 1, NAType), NAType)
 
     # __rtruediv__
-    check(assert_type(s_int / na, pd.Series), pd.Series)
+    check(assert_type(s_int / na, "pd.Series[int, arrays.IntegerArray]"), pd.Series)
     check(assert_type(idx_int / na, pd.Index), pd.Index)
     check(assert_type(1 / na, NAType), NAType)
 
     # __floordiv__
-    check(assert_type(na // s_int, pd.Series), pd.Series)
+    check(assert_type(na // s_int, "pd.Series[int, arrays.IntegerArray]"), pd.Series)
     check(assert_type(na // idx_int, pd.Index), pd.Index)
     check(assert_type(na // 1, NAType), NAType)
 
     # __rfloordiv__
-    check(assert_type(s_int // na, pd.Series), pd.Series)
+    check(assert_type(s_int // na, "pd.Series[int, arrays.IntegerArray]"), pd.Series)
     check(assert_type(idx_int // na, pd.Index), pd.Index)
     check(assert_type(1 // na, NAType), NAType)
 
     # __mod__
-    check(assert_type(na % s_int, pd.Series), pd.Series)
+    check(assert_type(na % s_int, "pd.Series[int, arrays.IntegerArray]"), pd.Series)
     check(assert_type(na % idx_int, pd.Index), pd.Index)
     check(assert_type(na % 1, NAType), NAType)
 
     # __rmod__
-    check(assert_type(s_int % na, pd.Series), pd.Series)
+    check(assert_type(s_int % na, "pd.Series[int, arrays.IntegerArray]"), pd.Series)
     check(assert_type(idx_int % na, "pd.Index[int]"), pd.Index)
     check(assert_type(1 % na, NAType), NAType)
 
@@ -121,42 +121,42 @@ def test_arithmetic() -> None:
     check(assert_type(divmod(1, na), tuple[NAType, NAType]), tuple)
 
     # __eq__
-    check(assert_type(na == s_int, "pd.Series[bool]"), pd.Series)
-    check(assert_type(na == idx_int, BooleanArray), BooleanArray)
+    check(assert_type(na == s_int, "pd.Series[bool, arrays.BooleanArray]"), pd.Series)
+    check(assert_type(na == idx_int, arrays.BooleanArray), arrays.BooleanArray)
     check(assert_type(na == 1, NAType), NAType)
 
     # __ne__
-    check(assert_type(na != s_int, "pd.Series[bool]"), pd.Series)
-    check(assert_type(na != idx_int, BooleanArray), BooleanArray)
+    check(assert_type(na != s_int, "pd.Series[bool, arrays.BooleanArray]"), pd.Series)
+    check(assert_type(na != idx_int, arrays.BooleanArray), arrays.BooleanArray)
     check(assert_type(na != 1, NAType), NAType)
 
     # __le__
-    check(assert_type(na <= s_int, "pd.Series[bool]"), pd.Series)
-    check(assert_type(na <= idx_int, BooleanArray), BooleanArray)
+    check(assert_type(na <= s_int, "pd.Series[bool, arrays.BooleanArray]"), pd.Series)
+    check(assert_type(na <= idx_int, arrays.BooleanArray), arrays.BooleanArray)
     check(assert_type(na <= 1, NAType), NAType)
 
     # __lt__
-    check(assert_type(na < s_int, "pd.Series[bool]"), pd.Series)
-    check(assert_type(na < idx_int, BooleanArray), BooleanArray)
+    check(assert_type(na < s_int, "pd.Series[bool, arrays.BooleanArray]"), pd.Series)
+    check(assert_type(na < idx_int, arrays.BooleanArray), arrays.BooleanArray)
     check(assert_type(na < 1, NAType), NAType)
 
     # __gt__
-    check(assert_type(na > s_int, "pd.Series[bool]"), pd.Series)
-    check(assert_type(na > idx_int, BooleanArray), BooleanArray)
+    check(assert_type(na > s_int, "pd.Series[bool, arrays.BooleanArray]"), pd.Series)
+    check(assert_type(na > idx_int, arrays.BooleanArray), arrays.BooleanArray)
     check(assert_type(na > 1, NAType), NAType)
 
     # __ge__
-    check(assert_type(na >= s_int, "pd.Series[bool]"), pd.Series)
-    check(assert_type(na >= idx_int, BooleanArray), BooleanArray)
+    check(assert_type(na >= s_int, "pd.Series[bool, arrays.BooleanArray]"), pd.Series)
+    check(assert_type(na >= idx_int, arrays.BooleanArray), arrays.BooleanArray)
     check(assert_type(na >= 1, NAType), NAType)
 
     # __pow__
-    check(assert_type(na**s_int, pd.Series), pd.Series)
+    check(assert_type(na**s_int, "pd.Series[int, arrays.IntegerArray]"), pd.Series)
     check(assert_type(na**idx_int, pd.Index), pd.Index)
     check(assert_type(na**2, NAType), NAType)
 
     # __rpow__
-    check(assert_type(s_int**na, pd.Series), pd.Series)
+    check(assert_type(s_int**na, "pd.Series[int, arrays.IntegerArray]"), pd.Series)
     check(assert_type(idx_int**na, "pd.Index[int]"), pd.Index)
     check(assert_type(2**na, NAType), NAType)
 
@@ -178,9 +178,9 @@ def test_arithmetic() -> None:
     check(assert_type(True | na, Literal[True]), bool)
 
     # __xor__
-    check(assert_type(na ^ s_int, pd.Series), pd.Series)
+    check(assert_type(na ^ s_int, "pd.Series[int, arrays.IntegerArray]"), pd.Series)
     check(assert_type(na ^ idx_int, pd.Index), pd.Index)
 
     # rxor
-    check(assert_type(s_int ^ na, pd.Series), pd.Series)
+    check(assert_type(s_int ^ na, "pd.Series[int, arrays.IntegerArray]"), pd.Series)
     check(assert_type(idx_int ^ na, pd.Index), pd.Index)

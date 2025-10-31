@@ -33,6 +33,7 @@ from pandas.core.arrays import (
     ExtensionArray,
     IntegerArray,
 )
+from pandas.core.arrays.numpy_ import NumpyExtensionArray
 from pandas.core.frame import DataFrame
 from pandas.core.generic import NDFrame
 from pandas.core.groupby.grouper import Grouper
@@ -222,34 +223,24 @@ Dtype: TypeAlias = ExtensionDtype | NpDtype
 # object0
 # m
 # datetime64
-
+# Builtin bool type and its string alias
+PyBooleanDtypeArg: TypeAlias = type[bool] | Literal["bool"]
+# Pandas nullable boolean type and its string alias
+PdBooleanDtypeArg: TypeAlias = pd.BooleanDtype | Literal["boolean"]
+# Numpy bool type
+# https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.bool_
+NpBooleanDtypeArg: TypeAlias = type[np.bool_] | Literal["?", "b1", "bool_"]
+# PyArrow boolean type and its string alias
+PaBooleanDtypeArg: TypeAlias = Literal["bool[pyarrow]", "boolean[pyarrow]"]
 BooleanDtypeArg: TypeAlias = (
-    # Builtin bool type and its string alias
-    type[bool]  # noqa: PYI030
-    | Literal["bool"]
-    # Pandas nullable boolean type and its string alias
-    | pd.BooleanDtype
-    | Literal["boolean"]
-    # Numpy bool type
-    # https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.bool_
-    | type[np.bool_]
-    | Literal["?", "b1", "bool_"]
-    # PyArrow boolean type and its string alias
-    | Literal["bool[pyarrow]", "boolean[pyarrow]"]
+    PyBooleanDtypeArg | PdBooleanDtypeArg | NpBooleanDtypeArg | PaBooleanDtypeArg
 )
-IntDtypeArg: TypeAlias = (
-    # Builtin integer type and its string alias
-    type[int]  # noqa: PYI030
-    | Literal["int"]
-    # Pandas nullable integer types and their string aliases
-    | pd.Int8Dtype
-    | pd.Int16Dtype
-    | pd.Int32Dtype
-    | pd.Int64Dtype
-    | Literal["Int8", "Int16", "Int32", "Int64"]
-    # Numpy signed integer types and their string aliases
+# Builtin integer type and its string alias
+PyIntDtypeArg: TypeAlias = type[int] | Literal["int"]
+# Numpy signed integer types and their string aliases
+NpIntDtypeArg: TypeAlias = (
     # https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.byte
-    | type[np.byte]
+    type[np.byte]  # noqa: PYI030
     | Literal["b", "i1", "int8", "byte"]
     # https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.short
     | type[np.short]
@@ -266,19 +257,32 @@ IntDtypeArg: TypeAlias = (
     # https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.intp
     | type[np.intp]  # signed pointer (=`intptr_t`, platform dependent)
     | Literal["p", "intp"]
-    # PyArrow integer types and their string aliases
-    | Literal["int8[pyarrow]", "int16[pyarrow]", "int32[pyarrow]", "int64[pyarrow]"]
 )
-UIntDtypeArg: TypeAlias = (
-    # Pandas nullable unsigned integer types and their string aliases
-    pd.UInt8Dtype  # noqa: PYI030
+# Pandas nullable integer types and their string aliases
+PdIntDtypeArg: TypeAlias = (
+    pd.Int8Dtype
+    | pd.Int16Dtype
+    | pd.Int32Dtype
+    | pd.Int64Dtype
+    | Literal["Int8", "Int16", "Int32", "Int64"]
+)
+# PyArrow integer types and their string aliases
+PaIntDtypeArg: TypeAlias = Literal[
+    "int8[pyarrow]", "int16[pyarrow]", "int32[pyarrow]", "int64[pyarrow]"
+]
+IntDtypeArg: TypeAlias = PyIntDtypeArg | NpIntDtypeArg | PdIntDtypeArg | PaIntDtypeArg
+# Pandas nullable unsigned integer types and their string aliases
+PdUIntDtypeArg: TypeAlias = (
+    pd.UInt8Dtype
     | pd.UInt16Dtype
     | pd.UInt32Dtype
     | pd.UInt64Dtype
     | Literal["UInt8", "UInt16", "UInt32", "UInt64"]
-    # Numpy unsigned integer types and their string aliases
+)
+# Numpy unsigned integer types and their string aliases
+NpUIntDtypeArg: TypeAlias = (
     # https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.ubyte
-    | type[np.ubyte]
+    type[np.ubyte]  # noqa: PYI030
     | Literal["B", "u1", "uint8", "ubyte"]
     # https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.ushort
     | type[np.ushort]
@@ -295,9 +299,12 @@ UIntDtypeArg: TypeAlias = (
     # https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.uintp
     | type[np.uintp]  # unsigned pointer (=`uintptr_t`, platform dependent)
     | Literal["P", "uintp"]
-    # PyArrow unsigned integer types and their string aliases
-    | Literal["uint8[pyarrow]", "uint16[pyarrow]", "uint32[pyarrow]", "uint64[pyarrow]"]
 )
+# PyArrow unsigned integer types and their string aliases
+PaUIntDtypeArg: TypeAlias = Literal[
+    "uint8[pyarrow]", "uint16[pyarrow]", "uint32[pyarrow]", "uint64[pyarrow]"
+]
+UIntDtypeArg: TypeAlias = PdUIntDtypeArg | NpUIntDtypeArg | PaUIntDtypeArg
 FloatDtypeArg: TypeAlias = (
     # Builtin float type and its string alias
     type[float]  # noqa: PYI030
@@ -936,6 +943,13 @@ C2 = TypeVar(
     Interval,
     CategoricalDtype,
     BaseOffset,
+)
+
+A1N_co = TypeVar(
+    "A1N_co", bound=ExtensionArray, default=NumpyExtensionArray, covariant=True
+)
+A1_co = TypeVar(
+    "A1_co", bound=np.ndarray | ExtensionArray, default=np.ndarray, covariant=True
 )
 
 IndexingInt: TypeAlias = (

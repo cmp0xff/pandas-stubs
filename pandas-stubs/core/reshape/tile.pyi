@@ -7,7 +7,6 @@ from typing import (
 import numpy as np
 from pandas import (
     Categorical,
-    CategoricalDtype,
     DatetimeIndex,
     Index,
     Interval,
@@ -16,6 +15,7 @@ from pandas import (
 )
 from pandas.core.series import Series
 
+from pandas._libs.interval import _OrderableT
 from pandas._typing import (
     IntervalT,
     Label,
@@ -171,19 +171,11 @@ def cut(
     include_lowest: bool = ...,
     duplicates: Literal["raise", "drop"] = ...,
     ordered: bool = ...,
-) -> Series[CategoricalDtype]: ...
+) -> Series[Interval[Timestamp], Categorical]: ...
 @overload
 def cut(
-    x: Series,
-    bins: (
-        int
-        | Series
-        | Index[int]
-        | Index[float]
-        | Sequence[int]
-        | Sequence[float]
-        | IntervalIndex
-    ),
+    x: Series[_OrderableT],
+    bins: int | Series | Index[int] | Index[float] | Sequence[float] | IntervalIndex,
     right: bool = ...,
     labels: Literal[False] | Sequence[Label] | None = ...,
     retbins: Literal[False] = False,
@@ -191,7 +183,7 @@ def cut(
     include_lowest: bool = ...,
     duplicates: Literal["raise", "drop"] = ...,
     ordered: bool = ...,
-) -> Series: ...
+) -> Series[Interval[_OrderableT], Categorical]: ...
 @overload
 def cut(
     x: Index | npt.NDArray | Sequence[int] | Sequence[float],
