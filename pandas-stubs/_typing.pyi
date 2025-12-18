@@ -979,6 +979,10 @@ ListLikeHashable: TypeAlias = (
     MutableSequence[HashableT0] | np_1darray | tuple[HashableT0, ...] | range
 )
 
+if TYPE_CHECKING:  # noqa: PYI002
+    IndexT0 = TypeVar("IndexT0", bound=Index, default=Index)
+    IndexStrT0 = TypeVar("IndexStrT0", bound=Index, default=Index[str])
+
 class SupportsDType(Protocol[GenericT_co]):
     @property
     def dtype(self) -> np.dtype[GenericT_co]: ...
