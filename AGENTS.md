@@ -74,6 +74,29 @@ if TYPE_CHECKING_INVALID_USAGE:
 
 This applies to any expression that would trigger warnings about unused results (comparisons, arithmetic operations, etc.).
 
+### Runtime Type Validation with `check()`
+
+In addition to static type checking with `assert_type`, tests should also verify runtime types using the `check()` function from `tests/__init__.py`:
+
+```python
+from tests import check
+
+# Static and dynamic type check
+check(assert_type(result, "pd.Series[int]"), pd.Series, np.integer)
+```
+
+The `check()` function:
+
+- Validates that the actual runtime type matches the expected type
+- Can optionally verify the dtype of pandas objects (Series, Index, etc.)
+- Raises `RuntimeError` if types don't match
+- Returns the value if all checks pass
+
+**When to use both:**
+
+- Use `assert_type` for static type checker validation (mypy, pyright)
+- Use `check()` for runtime type validation to catch discrepancies between stub annotations and actual pandas behavior
+
 See `docs/philosophy.md` sections "Testing the Type Stubs" and "Narrow vs. Wide Arguments" for full details.
 
 ## Validation After Editing
