@@ -874,6 +874,19 @@ def test_types_scalar_arithmetic() -> None:
     _res_pow3: pd.Series = s.pow(0.5)
 
 
+def test_series_frame_ops() -> None:
+    """Test that flex methods like add/sub/div/truediv/... don't allow passing a frame as other."""
+    df = pd.DataFrame([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+    s = pd.Series([0, 1, -10])
+
+    if TYPE_CHECKING_INVALID_USAGE:
+        _0 = s.add(df)  # type: ignore[type-var] # pyright: ignore[reportCallIssue,reportUnknownVariableType,reportArgumentType]
+        _1 = s.sub(df)  # type: ignore[arg-type] # pyright: ignore[reportCallIssue,reportUnknownVariableType,reportArgumentType]
+        _2 = s.mul(df)  # type: ignore[type-var] # pyright: ignore[reportCallIssue,reportUnknownVariableType,reportArgumentType]
+        _3 = s.truediv(df)  # type: ignore[arg-type] # pyright: ignore[reportCallIssue,reportUnknownVariableType,reportArgumentType]
+        _4 = s.divmod(df)  # type: ignore[arg-type] # pyright: ignore[reportArgumentType]
+
+
 def test_types_groupby() -> None:
     s = pd.Series([4, 2, 1, 8], index=["a", "b", "a", "b"])
     s.groupby(["a", "b", "a", "b"])
