@@ -4212,6 +4212,38 @@ class Series(IndexOpsMixin[S1], ElementOpsMixin[S1], NDFrame):
     ) -> Series: ...
     @overload
     def cumprod(
+        self: Series[Timestamp],
+        axis: AxisIndex = ...,
+        skipna: _bool = ...,
+        *args: Any,
+        **kwargs: Any,
+    ) -> Never: ...
+    @overload
+    def cumprod(
+        self: Series[Timedelta],
+        axis: AxisIndex = ...,
+        skipna: _bool = ...,
+        *args: Any,
+        **kwargs: Any,
+    ) -> Never: ...
+    @overload
+    def cumprod(
+        self: Series[Period],
+        axis: AxisIndex = ...,
+        skipna: _bool = ...,
+        *args: Any,
+        **kwargs: Any,
+    ) -> Never: ...
+    @overload
+    def cumprod(
+        self: Series[BaseOffset],
+        axis: AxisIndex = ...,
+        skipna: _bool = ...,
+        *args: Any,
+        **kwargs: Any,
+    ) -> Never: ...
+    @overload
+    def cumprod(
         self: Series[bool],
         axis: AxisIndex = ...,
         skipna: _bool = ...,
