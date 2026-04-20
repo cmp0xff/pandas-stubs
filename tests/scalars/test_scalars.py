@@ -6,6 +6,7 @@ import datetime as dt
 from typing import (
     Any,
     Literal,
+    Never,
     assert_type,
 )
 
@@ -1916,11 +1917,32 @@ def test_nat_comparison_with_date() -> None:
 
     # Inequality comparisons should raise TypeError
     if TYPE_CHECKING_INVALID_USAGE:
-        _llt = pd.NaT < date_obj  # type: ignore[arg-type]  # pyright: ignore[reportOperatorIssue,reportUnknownVariableType]
-        _lgt = pd.NaT > date_obj  # type: ignore[arg-type]  # pyright: ignore[reportOperatorIssue,reportUnknownVariableType]
-        _lle = pd.NaT <= date_obj  # type: ignore[arg-type]  # pyright: ignore[reportOperatorIssue,reportUnknownVariableType]
-        _lge = pd.NaT >= date_obj  # type: ignore[arg-type]  # pyright: ignore[reportOperatorIssue,reportUnknownVariableType]
-        _rlt = date_obj < pd.NaT  # type: ignore[operator]  # pyright: ignore[reportOperatorIssue,reportUnknownVariableType]
-        _rgt = date_obj > pd.NaT  # type: ignore[operator]  # pyright: ignore[reportOperatorIssue,reportUnknownVariableType]
-        _rle = date_obj <= pd.NaT  # type: ignore[operator]  # pyright: ignore[reportOperatorIssue,reportUnknownVariableType]
-        _rge = date_obj >= pd.NaT  # type: ignore[operator]  # pyright: ignore[reportOperatorIssue,reportUnknownVariableType]
+        _llt: Any = pd.NaT < date_obj
+        _lgt: Any = pd.NaT > date_obj
+        _lle: Any = pd.NaT <= date_obj
+        _lge: Any = pd.NaT >= date_obj
+        _rlt: Any = date_obj < pd.NaT
+        _rgt: Any = date_obj > pd.NaT
+        _rle: Any = date_obj <= pd.NaT
+        _rge: Any = date_obj >= pd.NaT
+
+
+def test_timestamp_comparison_with_date() -> None:
+    # GH 1579: comparison of Timestamp with datetime.date now raises TypeError on inequalities
+    ts = pd.Timestamp("2023-01-01")
+    date_obj = datetime.date(2023, 1, 1)
+
+    # Equality should be False
+    check(assert_type(ts == date_obj, Literal[False]), bool)
+    check(assert_type(ts != date_obj, Literal[True]), bool)
+
+    # Inequality should be a type error
+    if TYPE_CHECKING_INVALID_USAGE:
+        if True:
+            _0: Never = ts < date_obj
+        if True:
+            _1: Never = ts <= date_obj
+        if True:
+            _2: Never = ts > date_obj
+        if True:
+            _3: Never = ts >= date_obj

@@ -1,12 +1,15 @@
 from datetime import (
+    date as _date,
     datetime,
     timedelta,
     tzinfo as _tzinfo,
 )
 from typing import (
     Literal,
+    Never,
     Self,
     TypeAlias,
+    overload,
 )
 
 import numpy as np
@@ -28,7 +31,10 @@ _NaTComparisonTypes: TypeAlias = (
 )
 
 class _NatComparison:
-    def __call__(self, other: _NaTComparisonTypes) -> bool: ...
+    @overload
+    def __call__(self, other: _NaTComparisonTypes) -> bool: ...  # type: ignore[overload-overlap]
+    @overload
+    def __call__(self, other: _date) -> Never: ...
 
 class NaTType:
     value: np.int64
