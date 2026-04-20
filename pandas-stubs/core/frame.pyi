@@ -875,7 +875,6 @@ class DataFrame(NDFrame, OpsMixin, _GetItemHack):
         other: NDFrameT,
         join: AlignJoin = "outer",
         axis: Axis | None = None,
-        level: Level | None = None,
         fill_value: Scalar | NAType | None = ...,
     ) -> tuple[Self, NDFrameT]: ...
     def reindex(
@@ -886,7 +885,6 @@ class DataFrame(NDFrame, OpsMixin, _GetItemHack):
         columns: Axes | None = ...,
         axis: Axis | None = ...,
         method: ReindexMethod | None = ...,
-        level: int | _str = ...,
         fill_value: Scalar | None = ...,
         limit: int | None = None,
         tolerance: float | Timedelta | None = ...,
@@ -900,7 +898,6 @@ class DataFrame(NDFrame, OpsMixin, _GetItemHack):
         columns: Renamer | None = ...,
         axis: Axis | None = ...,
         inplace: Literal[True],
-        level: Level | None = None,
         errors: IgnoreRaise = ...,
     ) -> None: ...
     @overload
@@ -912,7 +909,6 @@ class DataFrame(NDFrame, OpsMixin, _GetItemHack):
         columns: Renamer | None = ...,
         axis: Axis | None = ...,
         inplace: Literal[False] = False,
-        level: Level | None = None,
         errors: IgnoreRaise = ...,
     ) -> Self: ...
     def fillna(
@@ -1819,7 +1815,6 @@ class DataFrame(NDFrame, OpsMixin, _GetItemHack):
         self,
         other: complex | ListLike | DataFrame,
         axis: Axis | None = "columns",
-        level: Level | None = None,
         fill_value: float | None = None,
     ) -> Self: ...
     def __radd__(self, other: Any) -> Self: ...
@@ -1827,7 +1822,6 @@ class DataFrame(NDFrame, OpsMixin, _GetItemHack):
         self,
         other: complex | ListLike | DataFrame,
         axis: Axis = "columns",
-        level: Level | None = None,
         fill_value: float | None = None,
     ) -> Self: ...
     def __sub__(self, other: Any) -> Self: ...
@@ -1835,7 +1829,6 @@ class DataFrame(NDFrame, OpsMixin, _GetItemHack):
         self,
         other: complex | ListLike | DataFrame,
         axis: Axis = "columns",
-        level: Level | None = None,
         fill_value: float | None = None,
     ) -> Self: ...
     subtract = sub
@@ -1844,7 +1837,6 @@ class DataFrame(NDFrame, OpsMixin, _GetItemHack):
         self,
         other: complex | ListLike | DataFrame,
         axis: Axis = "columns",
-        level: Level | None = None,
         fill_value: float | None = None,
     ) -> Self: ...
     def __mul__(self, other: Any) -> Self: ...
@@ -2006,7 +1998,6 @@ class DataFrame(NDFrame, OpsMixin, _GetItemHack):
         self,
         other: complex | ListLike | DataFrame,
         axis: Axis | None = "columns",
-        level: Level | None = None,
         fill_value: float | None = None,
     ) -> Self: ...
     div = truediv
@@ -2017,7 +2008,6 @@ class DataFrame(NDFrame, OpsMixin, _GetItemHack):
         self,
         other: complex | ListLike | DataFrame,
         axis: Axis = "columns",
-        level: Level | None = None,
     ) -> Self: ...
     @final
     def equals(self, other: Series | DataFrame) -> _bool: ...
@@ -2061,14 +2051,12 @@ class DataFrame(NDFrame, OpsMixin, _GetItemHack):
         self,
         other: float | ListLike | DataFrame,
         axis: Axis | None = "columns",
-        level: Level | None = None,
         fill_value: float | None = None,
     ) -> Self: ...
     def ge(
         self,
         other: complex | ListLike | DataFrame,
         axis: Axis = "columns",
-        level: Level | None = None,
     ) -> Self: ...
     @overload
     def get(self, key: Hashable, default: None = None) -> Series | None: ...
@@ -2082,7 +2070,6 @@ class DataFrame(NDFrame, OpsMixin, _GetItemHack):
         self,
         other: complex | ListLike | DataFrame,
         axis: Axis = "columns",
-        level: Level | None = None,
     ) -> Self: ...
     @final
     def head(self, n: int = 5) -> Self: ...
@@ -2120,13 +2107,11 @@ class DataFrame(NDFrame, OpsMixin, _GetItemHack):
         self,
         other: complex | ListLike | DataFrame,
         axis: Axis = "columns",
-        level: Level | None = None,
     ) -> Self: ...
     def lt(
         self,
         other: complex | ListLike | DataFrame,
         axis: Axis = "columns",
-        level: Level | None = None,
     ) -> Self: ...
     def mask(
         self,
@@ -2211,14 +2196,12 @@ class DataFrame(NDFrame, OpsMixin, _GetItemHack):
         self,
         other: float | ListLike | DataFrame,
         axis: Axis | None = "columns",
-        level: Level | None = None,
         fill_value: float | None = None,
     ) -> Self: ...
     def mul(
         self,
         other: complex | ListLike | DataFrame,
         axis: Axis | None = "columns",
-        level: Level | None = None,
         fill_value: float | None = None,
     ) -> Self: ...
     multiply = mul
@@ -2226,7 +2209,6 @@ class DataFrame(NDFrame, OpsMixin, _GetItemHack):
         self,
         other: complex | ListLike | DataFrame,
         axis: Axis = "columns",
-        level: Level | None = None,
     ) -> Self: ...
     @final
     def pct_change(
@@ -2242,7 +2224,6 @@ class DataFrame(NDFrame, OpsMixin, _GetItemHack):
         self,
         other: complex | ListLike | DataFrame,
         axis: Axis | None = "columns",
-        level: Level | None = None,
         fill_value: float | None = None,
     ) -> Self: ...
     def prod(
@@ -2323,21 +2304,18 @@ class DataFrame(NDFrame, OpsMixin, _GetItemHack):
         self,
         other: complex | ListLike | DataFrame,
         axis: Axis = "columns",
-        level: Level | None = None,
         fill_value: float | None = None,
     ) -> Self: ...
     def rmod(
         self,
         other: complex | ListLike | DataFrame,
         axis: Axis = "columns",
-        level: Level | None = None,
         fill_value: float | None = None,
     ) -> Self: ...
     def rmul(
         self,
         other: complex | ListLike | DataFrame,
         axis: Axis = "columns",
-        level: Level | None = None,
         fill_value: float | None = None,
     ) -> Self: ...
     @overload
@@ -2372,14 +2350,12 @@ class DataFrame(NDFrame, OpsMixin, _GetItemHack):
         self,
         other: complex | ListLike | DataFrame,
         axis: Axis = "columns",
-        level: Level | None = None,
         fill_value: float | None = None,
     ) -> Self: ...
     def rtruediv(
         self,
         other: complex | ListLike | DataFrame,
         axis: Axis = "columns",
-        level: Level | None = None,
         fill_value: float | None = None,
     ) -> Self: ...
     rdiv = rtruediv
