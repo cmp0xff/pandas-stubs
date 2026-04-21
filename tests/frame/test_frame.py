@@ -3809,14 +3809,14 @@ def test_select_dtypes() -> None:
     )
     check(
         assert_type(
-            df.select_dtypes(
+            df.select_dtypes(  # pyright: ignore[reportCallIssue,reportUnknownArgumentType,reportAssertTypeFailure]
                 exclude=[
                     np.datetime64,
-                    "datetime64",
-                    "datetime",
+                    "datetime64",  # type: ignore[list-item] # pyright: ignore[reportArgumentType]
+                    "datetime",  # type: ignore[list-item]
                     np.timedelta64,
-                    "timedelta",
-                    "timedelta64",
+                    "timedelta",  # type: ignore[list-item]
+                    "timedelta64",  # type: ignore[list-item]
                     "category",
                     "datetimetz",
                     "datetime64[ns]",

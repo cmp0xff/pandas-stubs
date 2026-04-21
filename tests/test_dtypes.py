@@ -200,3 +200,21 @@ def test_is_any_real_numeric_dtype() -> None:
     check(assert_type(is_any_real_numeric_dtype(np.array([1, 2])), bool), bool)
     check(assert_type(is_any_real_numeric_dtype(int), bool), bool)
     check(assert_type(is_any_real_numeric_dtype(float), bool), bool)
+
+
+def test_astype_unitless_restriction() -> None:
+    # GH 1579: unit-less datetime64/timedelta64 in astype() is deprecated/removed
+    df = pd.DataFrame({"a": [1, 2]})
+    s = df["a"]
+
+    if TYPE_CHECKING_INVALID_USAGE:
+        # These should be type errors now
+        df.astype("datetime64")  # type: ignore[arg-type] # pyrefly: ignore[bad-argument-type] # pyright: ignore[reportArgumentType]
+        df.astype("datetime")  # type: ignore[arg-type] # pyrefly: ignore[bad-argument-type] # pyright: ignore[reportArgumentType]
+        df.astype("timedelta")  # type: ignore[arg-type] # pyrefly: ignore[bad-argument-type] # pyright: ignore[reportArgumentType]
+        df.astype("timedelta64")  # type: ignore[arg-type] # pyrefly: ignore[bad-argument-type] # pyright: ignore[reportArgumentType]
+
+        s.astype("datetime64")  # type: ignore[call-overload] # pyrefly: ignore[no-matching-overload] # pyright: ignore[reportCallIssue,reportArgumentType]
+        s.astype("datetime")  # type: ignore[call-overload] # pyrefly: ignore[no-matching-overload] # pyright: ignore[reportCallIssue,reportArgumentType]
+        s.astype("timedelta")  # type: ignore[call-overload] # pyrefly: ignore[no-matching-overload] # pyright: ignore[reportCallIssue,reportArgumentType]
+        s.astype("timedelta64")  # type: ignore[call-overload] # pyrefly: ignore[no-matching-overload] # pyright: ignore[reportCallIssue,reportArgumentType]

@@ -338,11 +338,7 @@ _AstypeArgExt: TypeAlias = (
     AstypeArg
     | Literal[
         "number",
-        "datetime64",
-        "datetime",
         "integer",
-        "timedelta",
-        "timedelta64",
         "datetimetz",
         "datetime64[ns]",
     ]
