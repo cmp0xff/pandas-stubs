@@ -100,9 +100,9 @@ def to_datetime(
 @overload
 def to_datetime(
     arg: (
-        Sequence[float | date]
+        Sequence[float | date | datetime | Timestamp]
         | list[str]
-        | tuple[float | str | date, ...]
+        | tuple[float | str | date | datetime | Timestamp, ...]
         | np_ndarray_dt
         | np_ndarray_str
         | np_ndarray_anyint
