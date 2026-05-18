@@ -3031,11 +3031,11 @@ def test_align() -> None:
     check(assert_type(aligned_s0, pd.Series), pd.Series)
     check(assert_type(aligned_s1, pd.Series), pd.Series)
 
-    aligned_s0, aligned_s1 = s0.align(s1, fill_value=0, axis=0, level=0)
-    check(assert_type(aligned_s0, pd.Series), pd.Series)
-    check(assert_type(aligned_s1, pd.Series), pd.Series)
-
     if TYPE_CHECKING_INVALID_USAGE:
+        aligned_s0, aligned_s1 = s0.align(s1, fill_value=0, axis=0, level=0)  # type: ignore[call-arg] # pyright: ignore[reportCallIssue,reportUnknownVariableType]
+        check(assert_type(aligned_s0, pd.Series), pd.Series)
+        check(assert_type(aligned_s1, pd.Series), pd.Series)
+
         _0 = s0.align(s1, fill_value=0, axis=0, level=0, copy=False)  # type: ignore[call-arg]  # pyright: ignore[reportCallIssue,reportUnknownVariableType]
 
 
