@@ -258,33 +258,37 @@ class CategoricalAccessor(PandasDelegate, Generic[CategoricalValueT]):
             | dict[Any, CategoricalValueT]
             | Callable[[CategoricalValueT], CategoricalValueT]
         ),
-    ) -> Series[CategoricalDtype[CategoricalValueT]]: ...
+    ) -> Series[CategoricalValueT, Categorical[CategoricalValueT]]: ...  # type: ignore[type-var] # pyright: ignore[reportInvalidTypeArguments] # pyrefly: ignore[bad-specialization] # ty: ignore[invalid-type-arguments]
     @overload
     def reorder_categories(
         self,
         new_categories: Sequence[CategoricalValueT],
         ordered: bool = ...,
-    ) -> Series[CategoricalDtype[CategoricalValueT]]: ...
+    ) -> Series[CategoricalValueT, Categorical[CategoricalValueT]]: ...  # type: ignore[type-var] # pyright: ignore[reportInvalidTypeArguments] # pyrefly: ignore[bad-specialization] # ty: ignore[invalid-type-arguments]
     @overload
     def reorder_categories(
         self,
         new_categories: AnyArrayLike,
         ordered: bool = ...,
-    ) -> Series[CategoricalDtype]: ...
+    ) -> Series[Any, Categorical[Any]]: ...
     def add_categories(
         self, new_categories: Scalar | ListLike
-    ) -> Series[CategoricalDtype[CategoricalValueT]]: ...
+    ) -> Series[CategoricalValueT, Categorical[CategoricalValueT]]: ...  # type: ignore[type-var] # pyright: ignore[reportInvalidTypeArguments] # pyrefly: ignore[bad-specialization] # ty: ignore[invalid-type-arguments]
     def remove_categories(
         self, removals: Scalar | ListLike
-    ) -> Series[CategoricalDtype[CategoricalValueT]]: ...
+    ) -> Series[CategoricalValueT, Categorical[CategoricalValueT]]: ...  # type: ignore[type-var] # pyright: ignore[reportInvalidTypeArguments] # pyrefly: ignore[bad-specialization] # ty: ignore[invalid-type-arguments]
     def remove_unused_categories(
         self,
-    ) -> Series[CategoricalDtype[CategoricalValueT]]: ...
+    ) -> Series[CategoricalValueT, Categorical[CategoricalValueT]]: ...  # type: ignore[type-var] # pyright: ignore[reportInvalidTypeArguments] # pyrefly: ignore[bad-specialization] # ty: ignore[invalid-type-arguments]
     def set_categories(
         self,
         new_categories: Sequence[CategoricalValueT] | ListLike,
         ordered: bool | None = False,
         rename: bool = False,
-    ) -> Series[CategoricalDtype[CategoricalValueT]]: ...
-    def as_ordered(self) -> Series[CategoricalDtype[CategoricalValueT]]: ...
-    def as_unordered(self) -> Series[CategoricalDtype[CategoricalValueT]]: ...
+    ) -> Series[CategoricalValueT, Categorical[CategoricalValueT]]: ...  # type: ignore[type-var] # pyright: ignore[reportInvalidTypeArguments] # pyrefly: ignore[bad-specialization] # ty: ignore[invalid-type-arguments]
+    def as_ordered(
+        self,
+    ) -> Series[CategoricalValueT, Categorical[CategoricalValueT]]: ...  # type: ignore[type-var] # pyright: ignore[reportInvalidTypeArguments] # pyrefly: ignore[bad-specialization] # ty: ignore[invalid-type-arguments]
+    def as_unordered(
+        self,
+    ) -> Series[CategoricalValueT, Categorical[CategoricalValueT]]: ...  # type: ignore[type-var] # pyright: ignore[reportInvalidTypeArguments] # pyrefly: ignore[bad-specialization] # ty: ignore[invalid-type-arguments]

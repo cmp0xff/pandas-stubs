@@ -11,6 +11,7 @@ from typing import (
 import numpy as np
 from numpy import typing as npt  # noqa: F401
 import pandas as pd
+from pandas.core.arrays.string_ import BaseStringArray  # noqa: F401
 import pytest
 
 from tests import (
@@ -28,7 +29,7 @@ from tests._typing import (
 def left() -> "pd.Index[str]":
     """Left operand"""
     lo = pd.Index(["1", "2", "3"])
-    return check(assert_type(lo, "pd.Index[str]"), pd.Index, str)
+    return check(assert_type(lo, "pd.Index[str, BaseStringArray]"), pd.Index, str)
 
 
 def test_mul_py_scalar(left: "pd.Index[str]") -> None:

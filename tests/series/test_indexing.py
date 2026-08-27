@@ -62,8 +62,18 @@ def test_multiindex_loc() -> None:
     s = pd.Series(
         [1, 2, 3, 4], index=pd.MultiIndex.from_product([[1, 2], ["a", "b"]]), dtype=int
     )
-    check(assert_type(s.loc[1, :], "pd.Series[int]"), pd.Series, np.int_)
-    check(assert_type(s.loc[pd.Index([1]), :], "pd.Series[int]"), pd.Series, np.int_)
+    check(
+        assert_type(s.loc[1, :], "pd.Series[int, pd.arrays.NumpyExtensionArray]"),
+        pd.Series,
+        np.int_,
+    )
+    check(
+        assert_type(
+            s.loc[pd.Index([1]), :], "pd.Series[int, pd.arrays.NumpyExtensionArray]"
+        ),
+        pd.Series,
+        np.int_,
+    )
     check(assert_type(s.loc[1, "a"], int), np.int_)
 
 
@@ -75,7 +85,10 @@ def test_multiindex_loc_str_tuple() -> None:
     )
     check(assert_type(s.loc[("A", "c")], int), np.int_)
     check(
-        assert_type(s.loc[[("A", "c"), ("B", "d")]], "pd.Series[int]"),
+        assert_type(
+            s.loc[[("A", "c"), ("B", "d")]],
+            "pd.Series[int, pd.arrays.NumpyExtensionArray]",
+        ),
         pd.Series,
         np.int_,
     )
@@ -116,10 +129,26 @@ def test_series_index_isin() -> None:
     t2 = s.loc[~s.index.isin([1, 3])]
     t3 = s[s.index.isin([1, 3])]
     t4 = s[~s.index.isin([1, 3])]
-    check(assert_type(t1, "pd.Series[int]"), pd.Series, np.integer)
-    check(assert_type(t2, "pd.Series[int]"), pd.Series, np.integer)
-    check(assert_type(t3, "pd.Series[int]"), pd.Series, np.integer)
-    check(assert_type(t4, "pd.Series[int]"), pd.Series, np.integer)
+    check(
+        assert_type(t1, "pd.Series[int, pd.arrays.NumpyExtensionArray]"),
+        pd.Series,
+        np.integer,
+    )
+    check(
+        assert_type(t2, "pd.Series[int, pd.arrays.NumpyExtensionArray]"),
+        pd.Series,
+        np.integer,
+    )
+    check(
+        assert_type(t3, "pd.Series[int, pd.arrays.NumpyExtensionArray]"),
+        pd.Series,
+        np.integer,
+    )
+    check(
+        assert_type(t4, "pd.Series[int, pd.arrays.NumpyExtensionArray]"),
+        pd.Series,
+        np.integer,
+    )
 
 
 def test_series_invert() -> None:
@@ -127,8 +156,16 @@ def test_series_invert() -> None:
     s2 = ~s1
     check(assert_type(s2, "pd.Series[bool]"), pd.Series, np.bool_)
     s3 = pd.Series([1, 2, 3])
-    check(assert_type(s3[s2], "pd.Series[int]"), pd.Series, np.integer)
-    check(assert_type(s3.loc[s2], "pd.Series[int]"), pd.Series, np.integer)
+    check(
+        assert_type(s3[s2], "pd.Series[int, pd.arrays.NumpyExtensionArray]"),
+        pd.Series,
+        np.integer,
+    )
+    check(
+        assert_type(s3.loc[s2], "pd.Series[int, pd.arrays.NumpyExtensionArray]"),
+        pd.Series,
+        np.integer,
+    )
 
 
 def test_series_multiindex_getitem() -> None:
@@ -193,7 +230,13 @@ def test_iloc_setitem_ndarray() -> None:
 def test_loc_callable() -> None:
     # GH 586
     s = pd.Series([1, 2])
-    check(assert_type(s.loc[lambda x: x > 1], "pd.Series[int]"), pd.Series, np.integer)
+    check(
+        assert_type(
+            s.loc[lambda x: x > 1], "pd.Series[int, pd.arrays.NumpyExtensionArray]"
+        ),
+        pd.Series,
+        np.integer,
+    )
 
 
 def test_series_setitem_multiindex() -> None:
@@ -243,7 +286,7 @@ def test_slice_timestamp() -> None:
     check(
         assert_type(
             s.loc[pd.Timestamp("2025-01-15") : pd.Timestamp("2025-01-20")],
-            "pd.Series[int]",
+            "pd.Series[int, pd.arrays.NumpyExtensionArray]",
         ),
         pd.Series,
         np.integer,
@@ -253,7 +296,11 @@ def test_slice_timestamp() -> None:
 def test_series_single_slice() -> None:
     # GH 572
     s = pd.Series([1, 2, 3])
-    check(assert_type(s.loc[:], "pd.Series[int]"), pd.Series, np.integer)
+    check(
+        assert_type(s.loc[:], "pd.Series[int, pd.arrays.NumpyExtensionArray]"),
+        pd.Series,
+        np.integer,
+    )
 
     s.loc[:] = 1 + s
 
@@ -264,4 +311,8 @@ def test_series_index_timestamp() -> None:
     dt2 = pd.to_datetime("2023-05-02")
     s = pd.Series([1, 2], index=[dt1, dt2])
     check(assert_type(s[dt1], int), np.integer)
-    check(assert_type(s.loc[[dt1]], "pd.Series[int]"), pd.Series, np.integer)
+    check(
+        assert_type(s.loc[[dt1]], "pd.Series[int, pd.arrays.NumpyExtensionArray]"),
+        pd.Series,
+        np.integer,
+    )

@@ -46,7 +46,11 @@ def test_cumul_str() -> None:
 
 def test_cumul_ts() -> None:
     series = pd.Series(pd.to_datetime(["2025-09-18", "2025-09-18", "2025-09-18"]))
-    check(assert_type(series, "pd.Series[pd.Timestamp]"), pd.Series, pd.Timestamp)
+    check(
+        assert_type(series, "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]"),
+        pd.Series,
+        pd.Timestamp,
+    )
 
     if TYPE_CHECKING_INVALID_USAGE:
         series.cumprod()  # type: ignore[misc] # pyright: ignore[reportAttributeAccessIssue,reportUnknownMemberType] # pyrefly: ignore[no-matching-overload]
@@ -54,7 +58,11 @@ def test_cumul_ts() -> None:
 
 def test_cumul_td() -> None:
     series = pd.Series(pd.to_timedelta(["1 days", "2 days", "3 days"]))
-    check(assert_type(series, "pd.Series[pd.Timedelta]"), pd.Series, pd.Timedelta)
+    check(
+        assert_type(series, "pd.Series[pd.Timedelta, pd.arrays.TimedeltaArray]"),
+        pd.Series,
+        pd.Timedelta,
+    )
 
     if TYPE_CHECKING_INVALID_USAGE:
         series.cumprod()  # type: ignore[misc] # pyright: ignore[reportAttributeAccessIssue,reportUnknownMemberType] # pyrefly: ignore[no-matching-overload]

@@ -1,5 +1,6 @@
 from collections.abc import Sequence
 from typing import (
+    Any,
     Literal,
     overload,
 )
@@ -7,7 +8,6 @@ from typing import (
 import numpy as np
 from pandas import (
     Categorical,
-    CategoricalDtype,
     DatetimeIndex,
     Index,
     Interval,
@@ -159,7 +159,7 @@ def cut(
     include_lowest: bool = False,
     duplicates: Literal["raise", "drop"] = "raise",
     ordered: bool = True,
-) -> Series[CategoricalDtype]: ...
+) -> Series[Any, Categorical[Any]]: ...
 @overload
 def cut(
     x: Series,

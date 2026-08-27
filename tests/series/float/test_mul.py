@@ -28,7 +28,11 @@ from tests._typing import (
 def left() -> "pd.Series[float]":
     """Left operand"""
     lo = pd.Series([1.0, 2.0, 3.0])
-    return check(assert_type(lo, "pd.Series[float]"), pd.Series, np.floating)
+    return check(
+        assert_type(lo, "pd.Series[float, pd.arrays.NumpyExtensionArray]"),
+        pd.Series,
+        np.floating,
+    )
 
 
 def test_mul_py_scalar(left: "pd.Series[float]") -> None:

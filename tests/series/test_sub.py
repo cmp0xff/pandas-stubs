@@ -134,25 +134,25 @@ def test_sub_i_pd_index() -> None:
     f = pd.Index([1.0, 2.0, 3.0])
     c = pd.Index([1.1j, 2.2j, 4.1j])
 
-    check(assert_type(left_i - a, pd.Series), pd.Series)
+    check(assert_type(left_i - a, pd.Series), pd.Series)  # type: ignore[assert-type]
     check(assert_type(left_i - b, pd.Series), pd.Series)
     check(assert_type(left_i - i, pd.Series), pd.Series)
     check(assert_type(left_i - f, pd.Series), pd.Series)
     check(assert_type(left_i - c, pd.Series), pd.Series)
 
-    check(assert_type(a - left_i, pd.Series), pd.Series)
+    check(assert_type(a - left_i, pd.Series), pd.Series)  # type: ignore[assert-type]
     check(assert_type(b - left_i, pd.Series), pd.Series)
     check(assert_type(i - left_i, pd.Series), pd.Series)
     check(assert_type(f - left_i, pd.Series), pd.Series)
     check(assert_type(c - left_i, pd.Series), pd.Series)
 
-    check(assert_type(left_i.sub(a), pd.Series), pd.Series)
+    check(assert_type(left_i.sub(a), pd.Series), pd.Series)  # type: ignore[assert-type]
     check(assert_type(left_i.sub(b), pd.Series), pd.Series)
     check(assert_type(left_i.sub(i), pd.Series), pd.Series)
     check(assert_type(left_i.sub(f), pd.Series), pd.Series)
     check(assert_type(left_i.sub(c), pd.Series), pd.Series)
 
-    check(assert_type(left_i.rsub(a), pd.Series), pd.Series)
+    check(assert_type(left_i.rsub(a), pd.Series), pd.Series)  # type: ignore[assert-type]
     check(assert_type(left_i.rsub(b), pd.Series), pd.Series)
     check(assert_type(left_i.rsub(i), pd.Series), pd.Series)
     check(assert_type(left_i.rsub(f), pd.Series), pd.Series)
@@ -167,25 +167,25 @@ def test_sub_i_pd_series() -> None:
     f = pd.Series([1.0, 2.0, 3.0])
     c = pd.Series([1.1j, 2.2j, 4.1j])
 
-    check(assert_type(left_i - a, pd.Series), pd.Series)
+    check(assert_type(left_i - a, pd.Series), pd.Series)  # type: ignore[assert-type]
     check(assert_type(left_i - b, pd.Series), pd.Series)
     check(assert_type(left_i - i, pd.Series), pd.Series)
     check(assert_type(left_i - f, pd.Series), pd.Series)
     check(assert_type(left_i - c, pd.Series), pd.Series)
 
-    check(assert_type(a - left_i, pd.Series), pd.Series)
-    check(assert_type(b - left_i, pd.Series), pd.Series)
-    check(assert_type(i - left_i, pd.Series), pd.Series)
-    check(assert_type(f - left_i, pd.Series), pd.Series)
-    check(assert_type(c - left_i, pd.Series), pd.Series)
+    check(assert_type(a - left_i, pd.Series), pd.Series)  # type: ignore[assert-type]
+    check(assert_type(b - left_i, pd.Series), pd.Series)  # type: ignore[assert-type]
+    check(assert_type(i - left_i, pd.Series), pd.Series)  # type: ignore[assert-type]
+    check(assert_type(f - left_i, pd.Series), pd.Series)  # type: ignore[assert-type]
+    check(assert_type(c - left_i, pd.Series), pd.Series)  # type: ignore[assert-type]
 
-    check(assert_type(left_i.sub(a), pd.Series), pd.Series)
+    check(assert_type(left_i.sub(a), pd.Series), pd.Series)  # type: ignore[assert-type]
     check(assert_type(left_i.sub(b), pd.Series), pd.Series)
     check(assert_type(left_i.sub(i), pd.Series), pd.Series)
     check(assert_type(left_i.sub(f), pd.Series), pd.Series)
     check(assert_type(left_i.sub(c), pd.Series), pd.Series)
 
-    check(assert_type(left_i.rsub(a), pd.Series), pd.Series)
+    check(assert_type(left_i.rsub(a), pd.Series), pd.Series)  # type: ignore[assert-type]
     check(assert_type(left_i.rsub(b), pd.Series), pd.Series)
     check(assert_type(left_i.rsub(i), pd.Series), pd.Series)
     check(assert_type(left_i.rsub(f), pd.Series), pd.Series)
@@ -304,9 +304,9 @@ def test_sub_ts_pd_datetime() -> None:
     # left_td - a
 
     check(assert_type(s - left_ts, pd.Series), pd.Series, pd.Timedelta)
-    check(assert_type(a - left_ts, pd.Series), pd.Series, pd.Timedelta)
+    check(assert_type(a - left_ts, pd.Series), pd.Series, pd.Timedelta)  # type: ignore[assert-type]
     check(assert_type(s - left_td, pd.Series), pd.Series, pd.Timestamp)
-    check(assert_type(a - left_td, pd.Series), pd.Series, pd.Timestamp)
+    check(assert_type(a - left_td, pd.Series), pd.Series, pd.Timestamp)  # type: ignore[assert-type]
 
     check(
         assert_type(left_ts.sub(s), "pd.Series[pd.Timedelta]"), pd.Series, pd.Timedelta

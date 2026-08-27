@@ -20,6 +20,7 @@ from pandas._stubs_only import (
     OrderableT,
     OrderableTimesT,
 )
+from pandas.core.arrays.interval import IntervalArray
 from pandas.core.indexes.extension import ExtensionIndex
 from typing_extensions import override
 
@@ -96,7 +97,9 @@ class _MidDescriptor:
         owner: type[IntervalIndex],
     ) -> Index[OrderableT]: ...
 
-class IntervalIndex(ExtensionIndex[IntervalT, np.object_], IntervalMixin):
+class IntervalIndex(
+    ExtensionIndex[IntervalT, np.object_, IntervalArray], IntervalMixin
+):
     closed: IntervalClosedType
 
     def __new__(

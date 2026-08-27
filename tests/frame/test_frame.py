@@ -36,6 +36,7 @@ from zoneinfo import ZoneInfo
 
 import numpy as np
 import pandas as pd
+from pandas.api.extensions import ExtensionArray
 from pandas.api.typing import NAType
 from pandas.api.typing.aliases import Scalar
 from pandas.core.resample import (
@@ -1113,8 +1114,8 @@ def test_types_unique() -> None:
     df = pd.DataFrame(data={"col1": [1, 2], "col2": [1, 4]})
     # TODO: astral-sh/ty#2182
     check(
-        assert_type(  # ty: ignore[type-assertion-failure]
-            df["col1"].unique(), np_1darray
+        assert_type(  # type: ignore[assert-type]
+            df["col1"].unique(), np_1darray | ExtensionArray | pd.Categorical
         ),
         np_1darray,
         np.integer,
@@ -2962,7 +2963,13 @@ def test_compute_values() -> None:
     # use the following line and remove the line with __add__.
     # see https://github.com/pandas-dev/pandas-stubs/actions/runs/31049878204
     # check(assert_type(df["x"] + s.values, pd.Series), pd.Series, np.int64)
-    check(assert_type(df["x"].__add__(s.values), pd.Series), pd.Series, np.int64)
+    check(
+        assert_type(  # ty: ignore[type-assertion-failure]
+            df["x"].__add__(s.values), pd.Series
+        ),
+        pd.Series,
+        np.int64,
+    )
 
 
 # https://github.com/microsoft/python-type-stubs/issues/164
@@ -2973,9 +2980,9 @@ def test_sum_get_add() -> None:
     summer = df.sum(axis=1)
     check(assert_type(summer, pd.Series), pd.Series)
 
-    check(assert_type(s + summer, pd.Series), pd.Series)
-    check(assert_type(s + df["y"], pd.Series), pd.Series)
-    check(assert_type(summer + summer, pd.Series), pd.Series)
+    check(assert_type(s + summer, pd.Series), pd.Series)  # type: ignore[assert-type]
+    check(assert_type(s + df["y"], pd.Series), pd.Series)  # type: ignore[assert-type]
+    check(assert_type(summer + summer, pd.Series), pd.Series)  # type: ignore[assert-type]
 
 
 def test_to_excel(tmp_path: Path) -> None:

@@ -2,7 +2,10 @@ from collections.abc import (
     Hashable,
     Iterable,
 )
-from typing import Self
+from typing import (
+    Any,
+    Self,
+)
 
 from pandas.core.accessor import PandasDelegate
 from pandas.core.arrays.categorical import Categorical
@@ -17,12 +20,16 @@ from pandas._typing import (
     np_1darray_intp,
 )
 
-class CategoricalIndex(ExtensionIndex[S1], PandasDelegate):
+class CategoricalIndex(
+    ExtensionIndex[
+        S1,
+        Any,
+        Categorical[object],
+    ],
+    PandasDelegate,
+):
     codes: np_1darray_intp = ...
     categories: Index[S1] = ...
-    @property
-    @override
-    def array(self) -> Categorical: ...  # type: ignore[override] # pyrefly: ignore[bad-override]
     def __new__(
         cls,
         data: Iterable[S1],
@@ -35,4 +42,4 @@ class CategoricalIndex(ExtensionIndex[S1], PandasDelegate):
     # `item` might be `S1` but not one of the categories, thus changing
     # the return type from `CategoricalIndex` to `Index`.
     @override
-    def insert(self, loc: int, item: object) -> Index: ...  # type: ignore[override] # pyrefly: ignore[bad-override]
+    def insert(self, loc: int, item: object) -> Index: ...  # type: ignore[override] # pyright: ignore[reportIncompatibleMethodOverride] # pyrefly: ignore[bad-override] # ty: ignore[invalid-method-override]

@@ -36,54 +36,62 @@ def test_astype_int(cast_arg: IntDtypeArg, target_type: type) -> None:
 
     if TYPE_CHECKING:
         # python int
-        assert_type(i.astype(int), "pd.Index[int]")
-        assert_type(i.astype("int"), "pd.Index[int]")
+        assert_type(i.astype(int), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
+        assert_type(i.astype("int"), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
         # pandas Int8
-        assert_type(i.astype(pd.Int8Dtype()), "pd.Index[int]")
-        assert_type(i.astype("Int8"), "pd.Index[int]")
+        assert_type(i.astype(pd.Int8Dtype()), "pd.Index[int, pd.arrays.IntegerArray]")
+        assert_type(i.astype("Int8"), "pd.Index[int, pd.arrays.IntegerArray]")
         # pandas Int16
-        assert_type(i.astype(pd.Int16Dtype()), "pd.Index[int]")
-        assert_type(i.astype("Int16"), "pd.Index[int]")
+        assert_type(i.astype(pd.Int16Dtype()), "pd.Index[int, pd.arrays.IntegerArray]")
+        assert_type(i.astype("Int16"), "pd.Index[int, pd.arrays.IntegerArray]")
         # pandas Int32
-        assert_type(i.astype(pd.Int32Dtype()), "pd.Index[int]")
-        assert_type(i.astype("Int32"), "pd.Index[int]")
+        assert_type(i.astype(pd.Int32Dtype()), "pd.Index[int, pd.arrays.IntegerArray]")
+        assert_type(i.astype("Int32"), "pd.Index[int, pd.arrays.IntegerArray]")
         # pandas Int64
-        assert_type(i.astype(pd.Int64Dtype()), "pd.Index[int]")
-        assert_type(i.astype("Int64"), "pd.Index[int]")
+        assert_type(i.astype(pd.Int64Dtype()), "pd.Index[int, pd.arrays.IntegerArray]")
+        assert_type(i.astype("Int64"), "pd.Index[int, pd.arrays.IntegerArray]")
         # numpy int8
-        assert_type(i.astype(np.byte), "pd.Index[int]")
-        assert_type(i.astype("byte"), "pd.Index[int]")
-        assert_type(i.astype("int8"), "pd.Index[int]")
-        assert_type(i.astype("b"), "pd.Index[int]")
-        assert_type(i.astype("i1"), "pd.Index[int]")
+        assert_type(i.astype(np.byte), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
+        assert_type(i.astype("byte"), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
+        assert_type(i.astype("int8"), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
+        assert_type(i.astype("b"), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
+        assert_type(i.astype("i1"), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
         # numpy int16
-        assert_type(i.astype(np.short), "pd.Index[int]")
-        assert_type(i.astype("short"), "pd.Index[int]")
-        assert_type(i.astype("int16"), "pd.Index[int]")
-        assert_type(i.astype("h"), "pd.Index[int]")
-        assert_type(i.astype("i2"), "pd.Index[int]")
+        assert_type(i.astype(np.short), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
+        assert_type(i.astype("short"), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
+        assert_type(i.astype("int16"), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
+        assert_type(i.astype("h"), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
+        assert_type(i.astype("i2"), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
         # numpy int32
-        assert_type(i.astype(np.intc), "pd.Index[int]")
-        assert_type(i.astype("intc"), "pd.Index[int]")
-        assert_type(i.astype("int32"), "pd.Index[int]")
-        assert_type(i.astype("i"), "pd.Index[int]")
-        assert_type(i.astype("i4"), "pd.Index[int]")
+        assert_type(i.astype(np.intc), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
+        assert_type(i.astype("intc"), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
+        assert_type(i.astype("int32"), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
+        assert_type(i.astype("i"), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
+        assert_type(i.astype("i4"), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
         # numpy int64
-        assert_type(i.astype(np.int_), "pd.Index[int]")
-        assert_type(i.astype("int_"), "pd.Index[int]")
-        assert_type(i.astype("int64"), "pd.Index[int]")
-        assert_type(i.astype("long"), "pd.Index[int]")
-        assert_type(i.astype("l"), "pd.Index[int]")
-        assert_type(i.astype("i8"), "pd.Index[int]")
+        assert_type(i.astype(np.int_), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
+        assert_type(i.astype("int_"), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
+        assert_type(i.astype("int64"), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
+        assert_type(i.astype("long"), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
+        assert_type(i.astype("l"), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
+        assert_type(i.astype("i8"), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
         # numpy signed pointer
-        assert_type(i.astype(np.intp), "pd.Index[int]")
-        assert_type(i.astype("intp"), "pd.Index[int]")
-        assert_type(i.astype("p"), "pd.Index[int]")
+        assert_type(i.astype(np.intp), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
+        assert_type(i.astype("intp"), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
+        assert_type(i.astype("p"), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
         # pyarrow integer types
-        assert_type(i.astype("int8[pyarrow]"), "pd.Index[int]")
-        assert_type(i.astype("int16[pyarrow]"), "pd.Index[int]")
-        assert_type(i.astype("int32[pyarrow]"), "pd.Index[int]")
-        assert_type(i.astype("int64[pyarrow]"), "pd.Index[int]")
+        assert_type(
+            i.astype("int8[pyarrow]"), "pd.Index[int, pd.arrays.ArrowExtensionArray]"
+        )
+        assert_type(
+            i.astype("int16[pyarrow]"), "pd.Index[int, pd.arrays.ArrowExtensionArray]"
+        )
+        assert_type(
+            i.astype("int32[pyarrow]"), "pd.Index[int, pd.arrays.ArrowExtensionArray]"
+        )
+        assert_type(
+            i.astype("int64[pyarrow]"), "pd.Index[int, pd.arrays.ArrowExtensionArray]"
+        )
 
 
 @pytest.mark.parametrize("cast_arg, target_type", ASTYPE_UINT_ARGS.items(), ids=repr)
@@ -93,48 +101,56 @@ def test_astype_uint(cast_arg: IntDtypeArg, target_type: type) -> None:
 
     if TYPE_CHECKING:
         # pandas UInt8
-        assert_type(i.astype(pd.UInt8Dtype()), "pd.Index[int]")
-        assert_type(i.astype("UInt8"), "pd.Index[int]")
+        assert_type(i.astype(pd.UInt8Dtype()), "pd.Index[int, pd.arrays.IntegerArray]")
+        assert_type(i.astype("UInt8"), "pd.Index[int, pd.arrays.IntegerArray]")
         # pandas UInt16
-        assert_type(i.astype(pd.UInt16Dtype()), "pd.Index[int]")
-        assert_type(i.astype("UInt16"), "pd.Index[int]")
+        assert_type(i.astype(pd.UInt16Dtype()), "pd.Index[int, pd.arrays.IntegerArray]")
+        assert_type(i.astype("UInt16"), "pd.Index[int, pd.arrays.IntegerArray]")
         # pandas UInt32
-        assert_type(i.astype(pd.UInt32Dtype()), "pd.Index[int]")
-        assert_type(i.astype("UInt32"), "pd.Index[int]")
+        assert_type(i.astype(pd.UInt32Dtype()), "pd.Index[int, pd.arrays.IntegerArray]")
+        assert_type(i.astype("UInt32"), "pd.Index[int, pd.arrays.IntegerArray]")
         # pandas UInt64
-        assert_type(i.astype(pd.UInt64Dtype()), "pd.Index[int]")
-        assert_type(i.astype("UInt64"), "pd.Index[int]")
+        assert_type(i.astype(pd.UInt64Dtype()), "pd.Index[int, pd.arrays.IntegerArray]")
+        assert_type(i.astype("UInt64"), "pd.Index[int, pd.arrays.IntegerArray]")
         # numpy uint8
-        assert_type(i.astype(np.ubyte), "pd.Index[int]")
-        assert_type(i.astype("ubyte"), "pd.Index[int]")
-        assert_type(i.astype("uint8"), "pd.Index[int]")
-        assert_type(i.astype("B"), "pd.Index[int]")
-        assert_type(i.astype("u1"), "pd.Index[int]")
+        assert_type(i.astype(np.ubyte), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
+        assert_type(i.astype("ubyte"), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
+        assert_type(i.astype("uint8"), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
+        assert_type(i.astype("B"), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
+        assert_type(i.astype("u1"), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
         # numpy uint16
-        assert_type(i.astype(np.ushort), "pd.Index[int]")
-        assert_type(i.astype("ushort"), "pd.Index[int]")
-        assert_type(i.astype("uint16"), "pd.Index[int]")
-        assert_type(i.astype("H"), "pd.Index[int]")
-        assert_type(i.astype("u2"), "pd.Index[int]")
+        assert_type(i.astype(np.ushort), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
+        assert_type(i.astype("ushort"), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
+        assert_type(i.astype("uint16"), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
+        assert_type(i.astype("H"), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
+        assert_type(i.astype("u2"), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
         # numpy uint32
-        assert_type(i.astype(np.uintc), "pd.Index[int]")
-        assert_type(i.astype("uintc"), "pd.Index[int]")
-        assert_type(i.astype("uint32"), "pd.Index[int]")
-        assert_type(i.astype("I"), "pd.Index[int]")
-        assert_type(i.astype("u4"), "pd.Index[int]")
+        assert_type(i.astype(np.uintc), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
+        assert_type(i.astype("uintc"), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
+        assert_type(i.astype("uint32"), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
+        assert_type(i.astype("I"), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
+        assert_type(i.astype("u4"), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
         # numpy uint64
-        assert_type(i.astype(np.uint), "pd.Index[int]")
-        assert_type(i.astype("uint"), "pd.Index[int]")
-        assert_type(i.astype("uint64"), "pd.Index[int]")
-        assert_type(i.astype("ulong"), "pd.Index[int]")
-        assert_type(i.astype("L"), "pd.Index[int]")
-        assert_type(i.astype("u8"), "pd.Index[int]")
+        assert_type(i.astype(np.uint), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
+        assert_type(i.astype("uint"), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
+        assert_type(i.astype("uint64"), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
+        assert_type(i.astype("ulong"), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
+        assert_type(i.astype("L"), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
+        assert_type(i.astype("u8"), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
         # numpy unsigned pointer
-        assert_type(i.astype(np.uintp), "pd.Index[int]")
-        assert_type(i.astype("uintp"), "pd.Index[int]")
-        assert_type(i.astype("P"), "pd.Index[int]")
+        assert_type(i.astype(np.uintp), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
+        assert_type(i.astype("uintp"), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
+        assert_type(i.astype("P"), "pd.Index[int, pd.arrays.NumpyExtensionArray]")
         # pyarrow unsigned integer types
-        assert_type(i.astype("uint8[pyarrow]"), "pd.Index[int]")
-        assert_type(i.astype("uint16[pyarrow]"), "pd.Index[int]")
-        assert_type(i.astype("uint32[pyarrow]"), "pd.Index[int]")
-        assert_type(i.astype("uint64[pyarrow]"), "pd.Index[int]")
+        assert_type(
+            i.astype("uint8[pyarrow]"), "pd.Index[int, pd.arrays.ArrowExtensionArray]"
+        )
+        assert_type(
+            i.astype("uint16[pyarrow]"), "pd.Index[int, pd.arrays.ArrowExtensionArray]"
+        )
+        assert_type(
+            i.astype("uint32[pyarrow]"), "pd.Index[int, pd.arrays.ArrowExtensionArray]"
+        )
+        assert_type(
+            i.astype("uint64[pyarrow]"), "pd.Index[int, pd.arrays.ArrowExtensionArray]"
+        )

@@ -48,25 +48,25 @@ def test_add_i_py_sequence() -> None:
     f = [1.0, 2.0, 3.0]
     c = [1j, 1j, 4j]
 
-    check(assert_type(left_i + a, pd.Series), pd.Series)
+    check(assert_type(left_i + a, pd.Series), pd.Series)  # type: ignore[assert-type]
     check(assert_type(left_i + b, pd.Series), pd.Series)
     check(assert_type(left_i + i, pd.Series), pd.Series)
     check(assert_type(left_i + f, pd.Series), pd.Series)
     check(assert_type(left_i + c, pd.Series), pd.Series)
 
-    check(assert_type(a + left_i, pd.Series), pd.Series)
+    check(assert_type(a + left_i, pd.Series), pd.Series)  # type: ignore[assert-type]
     check(assert_type(b + left_i, pd.Series), pd.Series)
     check(assert_type(i + left_i, pd.Series), pd.Series)
     check(assert_type(f + left_i, pd.Series), pd.Series)
     check(assert_type(c + left_i, pd.Series), pd.Series)
 
-    check(assert_type(left_i.add(a), pd.Series), pd.Series)
+    check(assert_type(left_i.add(a), pd.Series), pd.Series)  # type: ignore[assert-type]
     check(assert_type(left_i.add(b), pd.Series), pd.Series)
     check(assert_type(left_i.add(i), pd.Series), pd.Series)
     check(assert_type(left_i.add(f), pd.Series), pd.Series)
     check(assert_type(left_i.add(c), pd.Series), pd.Series)
 
-    check(assert_type(left_i.radd(a), pd.Series), pd.Series)
+    check(assert_type(left_i.radd(a), pd.Series), pd.Series)  # type: ignore[assert-type]
     check(assert_type(left_i.radd(b), pd.Series), pd.Series)
     check(assert_type(left_i.radd(i), pd.Series), pd.Series)
     check(assert_type(left_i.radd(f), pd.Series), pd.Series)
@@ -134,25 +134,25 @@ def test_add_i_pd_index() -> None:
     f = pd.Index([1.0, 2.0, 3.0])
     c = pd.Index([1.1j, 2.2j, 4.1j])
 
-    check(assert_type(left_i + a, pd.Series), pd.Series)
+    check(assert_type(left_i + a, pd.Series), pd.Series)  # type: ignore[assert-type]
     check(assert_type(left_i + b, pd.Series), pd.Series)
     check(assert_type(left_i + i, pd.Series), pd.Series)
     check(assert_type(left_i + f, pd.Series), pd.Series)
     check(assert_type(left_i + c, pd.Series), pd.Series)
 
-    check(assert_type(a + left_i, pd.Series), pd.Series)
+    check(assert_type(a + left_i, pd.Series), pd.Series)  # type: ignore[assert-type]
     check(assert_type(b + left_i, pd.Series), pd.Series)
     check(assert_type(i + left_i, pd.Series), pd.Series)
     check(assert_type(f + left_i, pd.Series), pd.Series)
     check(assert_type(c + left_i, pd.Series), pd.Series)
 
-    check(assert_type(left_i.add(a), pd.Series), pd.Series)
+    check(assert_type(left_i.add(a), pd.Series), pd.Series)  # type: ignore[assert-type]
     check(assert_type(left_i.add(b), pd.Series), pd.Series)
     check(assert_type(left_i.add(i), pd.Series), pd.Series)
     check(assert_type(left_i.add(f), pd.Series), pd.Series)
     check(assert_type(left_i.add(c), pd.Series), pd.Series)
 
-    check(assert_type(left_i.radd(a), pd.Series), pd.Series)
+    check(assert_type(left_i.radd(a), pd.Series), pd.Series)  # type: ignore[assert-type]
     check(assert_type(left_i.radd(b), pd.Series), pd.Series)
     check(assert_type(left_i.radd(i), pd.Series), pd.Series)
     check(assert_type(left_i.radd(f), pd.Series), pd.Series)
@@ -167,25 +167,25 @@ def test_add_i_pd_series() -> None:
     f = pd.Series([1.0, 2.0, 3.0])
     c = pd.Series([1.1j, 2.2j, 4.1j])
 
-    check(assert_type(left_i + a, pd.Series), pd.Series)
+    check(assert_type(left_i + a, pd.Series), pd.Series)  # type: ignore[assert-type]
     check(assert_type(left_i + b, pd.Series), pd.Series)
     check(assert_type(left_i + i, pd.Series), pd.Series)
     check(assert_type(left_i + f, pd.Series), pd.Series)
     check(assert_type(left_i + c, pd.Series), pd.Series)
 
-    check(assert_type(a + left_i, pd.Series), pd.Series)
-    check(assert_type(b + left_i, pd.Series), pd.Series)
-    check(assert_type(i + left_i, pd.Series), pd.Series)
-    check(assert_type(f + left_i, pd.Series), pd.Series)
-    check(assert_type(c + left_i, pd.Series), pd.Series)
+    check(assert_type(a + left_i, pd.Series), pd.Series)  # type: ignore[assert-type]
+    check(assert_type(b + left_i, pd.Series), pd.Series)  # type: ignore[assert-type]
+    check(assert_type(i + left_i, pd.Series), pd.Series)  # type: ignore[assert-type]
+    check(assert_type(f + left_i, pd.Series), pd.Series)  # type: ignore[assert-type]
+    check(assert_type(c + left_i, pd.Series), pd.Series)  # type: ignore[assert-type]
 
-    check(assert_type(left_i.add(a), pd.Series), pd.Series)
+    check(assert_type(left_i.add(a), pd.Series), pd.Series)  # type: ignore[assert-type]
     check(assert_type(left_i.add(b), pd.Series), pd.Series)
     check(assert_type(left_i.add(i), pd.Series), pd.Series)
     check(assert_type(left_i.add(f), pd.Series), pd.Series)
     check(assert_type(left_i.add(c), pd.Series), pd.Series)
 
-    check(assert_type(left_i.radd(a), pd.Series), pd.Series)
+    check(assert_type(left_i.radd(a), pd.Series), pd.Series)  # type: ignore[assert-type]
     check(assert_type(left_i.radd(b), pd.Series), pd.Series)
     check(assert_type(left_i.radd(i), pd.Series), pd.Series)
     check(assert_type(left_i.radd(f), pd.Series), pd.Series)

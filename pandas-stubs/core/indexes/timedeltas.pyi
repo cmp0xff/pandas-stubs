@@ -16,6 +16,7 @@ from typing import (
 )
 
 import numpy as np
+from pandas.core.arrays.timedeltas import TimedeltaArray
 from pandas.core.indexes.accessors import TimedeltaIndexProperties
 from pandas.core.indexes.base import Index
 from pandas.core.indexes.datetimelike import DatetimeTimedeltaMixin
@@ -55,7 +56,8 @@ _DT_FACTOR: TypeAlias = timedelta | np.timedelta64 | Timedelta
 _DT_FACTOR_SEQ: TypeAlias = _DT_FACTOR | Sequence[_DT_FACTOR] | np_ndarray_td
 
 class TimedeltaIndex(
-    DatetimeTimedeltaMixin[Timedelta, np.timedelta64], TimedeltaIndexProperties
+    DatetimeTimedeltaMixin[Timedelta, np.timedelta64, TimedeltaArray],
+    TimedeltaIndexProperties,
 ):
     def __new__(
         cls,
@@ -156,7 +158,7 @@ class TimedeltaIndex(
     @override
     def to_series(
         self, index: Index | None = None, name: Hashable | None = None
-    ) -> Series[Timedelta]: ...
+    ) -> Series[Timedelta, TimedeltaArray]: ...
     def shift(
         self, periods: int = 1, freq: Frequency | timedelta | None = None
     ) -> Self: ...

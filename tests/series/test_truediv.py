@@ -231,7 +231,7 @@ def test_truediv_pd_index(left_i: pd.Series) -> None:
     s = pd.Index([datetime(2025, 11, 1 + d) for d in range(3)])
     d = pd.Index([timedelta(seconds=s) for s in range(3)])
 
-    check(assert_type(left_i / a, pd.Series), pd.Series)
+    check(assert_type(left_i / a, pd.Series), pd.Series)  # type: ignore[assert-type]
     check(assert_type(left_i / b, pd.Series), pd.Series)
     check(assert_type(left_i / i, pd.Series), pd.Series)
     check(assert_type(left_i / f, pd.Series), pd.Series)
@@ -240,7 +240,7 @@ def test_truediv_pd_index(left_i: pd.Series) -> None:
         _05 = left_i / s  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation]
         assert_type(left_i / d, Never)
 
-    check(assert_type(a / left_i, pd.Series), pd.Series)
+    check(assert_type(a / left_i, pd.Series), pd.Series)  # type: ignore[assert-type]
     check(assert_type(b / left_i, pd.Series), pd.Series)
     check(assert_type(i / left_i, pd.Series), pd.Series)
     check(assert_type(f / left_i, pd.Series), pd.Series)
@@ -249,7 +249,7 @@ def test_truediv_pd_index(left_i: pd.Series) -> None:
         _15 = s / left_i  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation]
     check(assert_type(d / left_i, pd.Series), pd.Series)
 
-    check(assert_type(left_i.truediv(a), pd.Series), pd.Series)
+    check(assert_type(left_i.truediv(a), pd.Series), pd.Series)  # type: ignore[assert-type]
     check(assert_type(left_i.truediv(b), pd.Series), pd.Series)
     check(assert_type(left_i.truediv(i), pd.Series), pd.Series)
     check(assert_type(left_i.truediv(f), pd.Series), pd.Series)
@@ -260,7 +260,7 @@ def test_truediv_pd_index(left_i: pd.Series) -> None:
     def _26() -> None:  # pyright: ignore[reportUnusedFunction]
         assert_type(left_i.truediv(d), Never)
 
-    check(assert_type(left_i.div(a), pd.Series), pd.Series)
+    check(assert_type(left_i.div(a), pd.Series), pd.Series)  # type: ignore[assert-type]
     check(assert_type(left_i.div(b), pd.Series), pd.Series)
     check(assert_type(left_i.div(i), pd.Series), pd.Series)
     check(assert_type(left_i.div(f), pd.Series), pd.Series)
@@ -271,7 +271,7 @@ def test_truediv_pd_index(left_i: pd.Series) -> None:
     def _36() -> None:  # pyright: ignore[reportUnusedFunction]
         assert_type(left_i.div(d), Never)
 
-    check(assert_type(left_i.rtruediv(a), pd.Series), pd.Series)
+    check(assert_type(left_i.rtruediv(a), pd.Series), pd.Series)  # type: ignore[assert-type]
     check(assert_type(left_i.rtruediv(b), pd.Series), pd.Series)
     check(assert_type(left_i.rtruediv(i), pd.Series), pd.Series)
     check(assert_type(left_i.rtruediv(f), pd.Series), pd.Series)
@@ -280,7 +280,7 @@ def test_truediv_pd_index(left_i: pd.Series) -> None:
         left_i.rtruediv(s)  # type: ignore[arg-type] # pyright: ignore[reportArgumentType,reportCallIssue] # pyrefly: ignore[no-matching-overload]
     check(assert_type(left_i.rtruediv(d), pd.Series), pd.Series)
 
-    check(assert_type(left_i.rdiv(a), pd.Series), pd.Series)
+    check(assert_type(left_i.rdiv(a), pd.Series), pd.Series)  # type: ignore[assert-type]
     check(assert_type(left_i.rdiv(b), pd.Series), pd.Series)
     check(assert_type(left_i.rdiv(i), pd.Series), pd.Series)
     check(assert_type(left_i.rdiv(f), pd.Series), pd.Series)
@@ -300,7 +300,7 @@ def test_truediv_pd_series(left_i: pd.Series) -> None:
     s = pd.Series([datetime(2025, 11, 1 + d) for d in range(3)])
     d = pd.Series([timedelta(seconds=s) for s in range(3)])
 
-    check(assert_type(left_i / a, pd.Series), pd.Series)
+    check(assert_type(left_i / a, pd.Series), pd.Series)  # type: ignore[assert-type]
     check(assert_type(left_i / b, pd.Series), pd.Series)
     check(assert_type(left_i / i, pd.Series), pd.Series)
     check(assert_type(left_i / f, pd.Series), pd.Series)
@@ -309,16 +309,16 @@ def test_truediv_pd_series(left_i: pd.Series) -> None:
         _04 = left_i / s  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation]
         # _05 = left_i / d  # This invalid one cannot be detected by static type checking
 
-    check(assert_type(a / left_i, pd.Series), pd.Series)
-    check(assert_type(b / left_i, pd.Series), pd.Series)
-    check(assert_type(i / left_i, pd.Series), pd.Series)
-    check(assert_type(f / left_i, pd.Series), pd.Series)
-    check(assert_type(c / left_i, pd.Series), pd.Series)
+    check(assert_type(a / left_i, pd.Series), pd.Series)  # type: ignore[assert-type]
+    check(assert_type(b / left_i, pd.Series), pd.Series)  # type: ignore[assert-type]
+    check(assert_type(i / left_i, pd.Series), pd.Series)  # type: ignore[assert-type]
+    check(assert_type(f / left_i, pd.Series), pd.Series)  # type: ignore[assert-type]
+    check(assert_type(c / left_i, pd.Series), pd.Series)  # type: ignore[assert-type]
     if TYPE_CHECKING_INVALID_USAGE:
         _14 = s / left_i  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation]
-    check(assert_type(d / left_i, pd.Series), pd.Series)
+    check(assert_type(d / left_i, pd.Series), pd.Series)  # type: ignore[assert-type]
 
-    check(assert_type(left_i.truediv(a), pd.Series), pd.Series)
+    check(assert_type(left_i.truediv(a), pd.Series), pd.Series)  # type: ignore[assert-type]
     check(assert_type(left_i.truediv(b), pd.Series), pd.Series)
     check(assert_type(left_i.truediv(i), pd.Series), pd.Series)
     check(assert_type(left_i.truediv(f), pd.Series), pd.Series)
@@ -327,7 +327,7 @@ def test_truediv_pd_series(left_i: pd.Series) -> None:
         left_i.truediv(s)  # type: ignore[arg-type] # pyright: ignore[reportArgumentType,reportCallIssue] # pyrefly: ignore[no-matching-overload]
         # left_i.truediv(d)  # This invalid one cannot be detected by static type checking
 
-    check(assert_type(left_i.div(a), pd.Series), pd.Series)
+    check(assert_type(left_i.div(a), pd.Series), pd.Series)  # type: ignore[assert-type]
     check(assert_type(left_i.div(b), pd.Series), pd.Series)
     check(assert_type(left_i.div(i), pd.Series), pd.Series)
     check(assert_type(left_i.div(f), pd.Series), pd.Series)
@@ -336,7 +336,7 @@ def test_truediv_pd_series(left_i: pd.Series) -> None:
         left_i.div(s)  # type: ignore[arg-type] # pyright: ignore[reportArgumentType,reportCallIssue] # pyrefly: ignore[no-matching-overload]
         # left_i.div(d)  # This invalid one cannot be detected by static type checking
 
-    check(assert_type(left_i.rtruediv(a), pd.Series), pd.Series)
+    check(assert_type(left_i.rtruediv(a), pd.Series), pd.Series)  # type: ignore[assert-type]
     check(assert_type(left_i.rtruediv(b), pd.Series), pd.Series)
     check(assert_type(left_i.rtruediv(i), pd.Series), pd.Series)
     check(assert_type(left_i.rtruediv(f), pd.Series), pd.Series)
@@ -345,7 +345,7 @@ def test_truediv_pd_series(left_i: pd.Series) -> None:
         left_i.rtruediv(s)  # type: ignore[arg-type] # pyright: ignore[reportArgumentType,reportCallIssue] # pyrefly: ignore[no-matching-overload]
     check(assert_type(left_i.rtruediv(d), pd.Series), pd.Series)
 
-    check(assert_type(left_i.rdiv(a), pd.Series), pd.Series)
+    check(assert_type(left_i.rdiv(a), pd.Series), pd.Series)  # type: ignore[assert-type]
     check(assert_type(left_i.rdiv(b), pd.Series), pd.Series)
     check(assert_type(left_i.rdiv(i), pd.Series), pd.Series)
     check(assert_type(left_i.rdiv(f), pd.Series), pd.Series)

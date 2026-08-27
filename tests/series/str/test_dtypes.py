@@ -7,6 +7,7 @@ from typing import (
 
 import numpy as np
 import pandas as pd
+from pandas.core.arrays.string_ import BaseStringArray  # noqa: F401
 import pytest
 
 from tests import check
@@ -21,15 +22,19 @@ def test_astype_string(cast_arg: StrDtypeArg, target_type: type) -> None:
 
     if TYPE_CHECKING:
         # python string
-        assert_type(s.astype(str), "pd.Series[str]")
-        assert_type(s.astype("str"), "pd.Series[str]")
+        assert_type(s.astype(str), "pd.Series[str, BaseStringArray]")
+        assert_type(s.astype("str"), "pd.Series[str, BaseStringArray]")
         # pandas string
-        assert_type(s.astype(pd.StringDtype()), "pd.Series[str]")
-        assert_type(s.astype("string"), "pd.Series[str]")
+        assert_type(s.astype(pd.StringDtype()), "pd.Series[str, BaseStringArray]")
+        assert_type(s.astype("string"), "pd.Series[str, BaseStringArray]")
         # numpy string
-        assert_type(s.astype(np.str_), "pd.Series[str]")
-        assert_type(s.astype("str_"), "pd.Series[str]")
-        assert_type(s.astype("unicode"), "pd.Series[str]")
-        assert_type(s.astype("U"), "pd.Series[str]")
+        assert_type(s.astype(np.str_), "pd.Series[str, BaseStringArray]")
+        assert_type(s.astype("str_"), "pd.Series[str, pd.arrays.NumpyExtensionArray]")
+        assert_type(
+            s.astype("unicode"), "pd.Series[str, pd.arrays.NumpyExtensionArray]"
+        )
+        assert_type(s.astype("U"), "pd.Series[str, pd.arrays.NumpyExtensionArray]")
         # pyarrow string
-        assert_type(s.astype("string[pyarrow]"), "pd.Series[str]")
+        assert_type(
+            s.astype("string[pyarrow]"), "pd.Series[str, pd.arrays.ArrowStringArray]"
+        )

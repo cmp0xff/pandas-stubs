@@ -28,7 +28,11 @@ from tests._typing import (
 def left() -> "pd.Series[bool]":
     """Left operand"""
     lo = pd.Series([True, True, False])
-    return check(assert_type(lo, "pd.Series[bool]"), pd.Series, np.bool_)
+    return check(
+        assert_type(lo, "pd.Series[bool, pd.arrays.NumpyExtensionArray]"),
+        pd.Series,
+        np.bool_,
+    )
 
 
 def test_mul_py_scalar(left: "pd.Series[bool]") -> None:

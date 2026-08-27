@@ -21,15 +21,24 @@ def test_astype_bool(cast_arg: BooleanDtypeArg, target_type: type) -> None:
 
     if TYPE_CHECKING:
         # python boolean
-        assert_type(s.astype(bool), "pd.Series[bool]")
-        assert_type(s.astype("bool"), "pd.Series[bool]")
+        assert_type(s.astype(bool), "pd.Series[bool, pd.arrays.NumpyExtensionArray]")
+        assert_type(s.astype("bool"), "pd.Series[bool, pd.arrays.NumpyExtensionArray]")
         # pandas boolean
-        assert_type(s.astype(pd.BooleanDtype()), "pd.Series[bool]")
-        assert_type(s.astype("boolean"), "pd.Series[bool]")
+        assert_type(
+            s.astype(pd.BooleanDtype()), "pd.Series[bool, pd.arrays.BooleanArray]"
+        )
+        assert_type(s.astype("boolean"), "pd.Series[bool, pd.arrays.BooleanArray]")
         # numpy boolean type
-        assert_type(s.astype(np.bool_), "pd.Series[bool]")
-        assert_type(s.astype("bool_"), "pd.Series[bool]")
-        assert_type(s.astype("?"), "pd.Series[bool]")
+        assert_type(
+            s.astype(np.bool_), "pd.Series[bool, pd.arrays.NumpyExtensionArray]"
+        )
+        assert_type(s.astype("bool_"), "pd.Series[bool, pd.arrays.NumpyExtensionArray]")
+        assert_type(s.astype("?"), "pd.Series[bool, pd.arrays.NumpyExtensionArray]")
         # pyarrow boolean type
-        assert_type(s.astype("bool[pyarrow]"), "pd.Series[bool]")
-        assert_type(s.astype("boolean[pyarrow]"), "pd.Series[bool]")
+        assert_type(
+            s.astype("bool[pyarrow]"), "pd.Series[bool, pd.arrays.ArrowExtensionArray]"
+        )
+        assert_type(
+            s.astype("boolean[pyarrow]"),
+            "pd.Series[bool, pd.arrays.ArrowExtensionArray]",
+        )

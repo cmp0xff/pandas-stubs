@@ -18,7 +18,11 @@ from tests import (
 def left() -> "pd.Index[bool]":
     """Left operand"""
     lo = pd.Index([True, False, True])
-    return check(assert_type(lo, "pd.Index[bool]"), pd.Index, np.bool_)
+    return check(
+        assert_type(lo, "pd.Index[bool, pd.arrays.NumpyExtensionArray]"),
+        pd.Index,
+        np.bool_,
+    )
 
 
 def test_truediv_py_scalar(left: "pd.Index[bool]") -> None:

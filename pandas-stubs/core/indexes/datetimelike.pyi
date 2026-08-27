@@ -11,13 +11,14 @@ from typing_extensions import override
 from pandas._libs.tslibs import BaseOffset
 from pandas._typing import (
     S1,
+    ArrayT_co,
     AxisIndex,
     GenericT_co,
     TimeUnit,
     np_ndarray_complex,
 )
 
-class DatetimeIndexOpsMixin(ExtensionIndex[S1, GenericT_co]):
+class DatetimeIndexOpsMixin(ExtensionIndex[S1, GenericT_co, ArrayT_co]):
     @property
     def freq(self) -> BaseOffset | None: ...
     @property
@@ -61,7 +62,7 @@ class DatetimeIndexOpsMixin(ExtensionIndex[S1, GenericT_co]):
     @override
     def __rmul__(self, other: np_ndarray_complex) -> Never: ...  # type: ignore[override] # pyright: ignore[reportIncompatibleMethodOverride] # pyrefly: ignore[bad-override] # ty: ignore[invalid-method-override]
 
-class DatetimeTimedeltaMixin(DatetimeIndexOpsMixin[S1, GenericT_co]):
+class DatetimeTimedeltaMixin(DatetimeIndexOpsMixin[S1, GenericT_co, ArrayT_co]):
     @property
     def unit(self) -> TimeUnit: ...
     def as_unit(self, unit: TimeUnit) -> Self: ...

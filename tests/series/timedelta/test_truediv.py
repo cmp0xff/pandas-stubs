@@ -23,7 +23,11 @@ from tests import (
 def left() -> "pd.Series[pd.Timedelta]":
     """Left operand"""
     lo = pd.Series([pd.Timedelta(1, "s")])
-    return check(assert_type(lo, "pd.Series[pd.Timedelta]"), pd.Series, pd.Timedelta)
+    return check(
+        assert_type(lo, "pd.Series[pd.Timedelta, pd.arrays.TimedeltaArray]"),
+        pd.Series,
+        pd.Timedelta,
+    )
 
 
 def test_truediv_py_scalar(left: "pd.Series[pd.Timedelta]") -> None:

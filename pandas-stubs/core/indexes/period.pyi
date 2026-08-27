@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 from pandas import Index
 from pandas._stubs_only import PeriodAddSub
+from pandas.core.arrays.period import PeriodArray
 from pandas.core.indexes.accessors import PeriodIndexFieldOps
 from pandas.core.indexes.datetimelike import DatetimeIndexOpsMixin
 from pandas.core.indexes.timedeltas import TimedeltaIndex
@@ -27,7 +28,9 @@ from pandas._typing import (
     np_ndarray_bool,
 )
 
-class PeriodIndex(DatetimeIndexOpsMixin[Period, np.object_], PeriodIndexFieldOps):
+class PeriodIndex(
+    DatetimeIndexOpsMixin[Period, np.object_, PeriodArray], PeriodIndexFieldOps
+):
     def __new__(
         cls,
         data: AxesData | None = None,

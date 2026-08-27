@@ -149,7 +149,11 @@ def test_types_timestamp_series_comparisons() -> None:
     data = pd.date_range("2022-01-01", "2022-01-31", freq="D")
     s = pd.Series(data)
     ts2 = pd.Timestamp("2022-01-15")
-    check(assert_type(s, "pd.Series[pd.Timestamp]"), pd.Series, pd.Timestamp)
+    check(
+        assert_type(s, "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]"),
+        pd.Series,
+        pd.Timestamp,
+    )
     check(assert_type(ts2 <= s, "pd.Series[bool]"), pd.Series, np.bool_)
     check(assert_type(ts2 >= s, "pd.Series[bool]"), pd.Series, np.bool_)
     check(assert_type(ts2 < s, "pd.Series[bool]"), pd.Series, np.bool_)
@@ -219,7 +223,7 @@ def test_datetimeindex_plus_timedelta() -> None:
     check(
         assert_type(
             pd.Series([pd.Timestamp("2022-03-05"), pd.Timestamp("2022-03-06")]),
-            "pd.Series[pd.Timestamp]",
+            "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]",
         ),
         pd.Series,
         pd.Timestamp,
@@ -241,7 +245,7 @@ def test_datetimeindex_minus_timedelta() -> None:
     check(
         assert_type(
             pd.Series([pd.Timestamp("2022-03-05"), pd.Timestamp("2022-03-06")]),
-            "pd.Series[pd.Timestamp]",
+            "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]",
         ),
         pd.Series,
         pd.Timestamp,
@@ -260,7 +264,7 @@ def test_timestamp_series_construction() -> None:
     check(
         assert_type(
             pd.Series([pd.Timestamp("2022-03-05"), pd.Timestamp("2022-03-06")]),
-            "pd.Series[pd.Timestamp]",
+            "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]",
         ),
         pd.Series,
         pd.Timestamp,
@@ -584,7 +588,11 @@ def test_series_dt_accessors() -> None:
     check(assert_type(i2, pd.TimedeltaIndex), pd.TimedeltaIndex)
 
     check(
-        assert_type(i2.to_series(), "pd.Series[pd.Timedelta]"), pd.Series, pd.Timedelta
+        assert_type(
+            i2.to_series(), "pd.Series[pd.Timedelta, pd.arrays.TimedeltaArray]"
+        ),
+        pd.Series,
+        pd.Timedelta,
     )
 
     s2 = pd.Series(i2)
@@ -646,7 +654,11 @@ def test_series_dt_accessors() -> None:
 
     s4 = pd.Series([pd.Timestamp("2024-01-01"), pd.Timestamp("2024-01-02")])
 
-    check(assert_type(s4, "pd.Series[pd.Timestamp]"), pd.Series, pd.Timestamp)
+    check(
+        assert_type(s4, "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]"),
+        pd.Series,
+        pd.Timestamp,
+    )
     check(assert_type(s4.dt.unit, TimeUnit), str)
     check(
         assert_type(s4.dt.as_unit("s"), "pd.Series[pd.Timestamp]"),

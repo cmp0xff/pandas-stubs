@@ -12,7 +12,6 @@ from typing import (
     overload,
 )
 
-import numpy as np
 import pandas as pd
 from pandas.api.typing import FrozenList
 from pandas.core.indexes.base import Index
@@ -129,9 +128,6 @@ class MultiIndex(Index):
     ) -> Self: ...
     @override
     def view(self, cls: NumpyNotTimeDtypeArg | NumpyTimedeltaDtypeArg | NumpyTimestampDtypeArg | type[np_ndarray] | None = None) -> MultiIndex: ...  # type: ignore[override] # pyright: ignore[reportIncompatibleMethodOverride] # pyrefly: ignore[bad-override] # ty: ignore[invalid-method-override]
-    @property
-    @override
-    def dtype(self) -> np.dtype: ...
     @property
     def dtypes(self) -> pd.Series[Dtype]: ...
     @override

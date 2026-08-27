@@ -934,6 +934,9 @@ PyArrowNotStrDtypeArg: TypeAlias = (
 
 ScalarT = TypeVar("ScalarT", bound=Scalar)
 ScalarT0 = TypeVar("ScalarT0", bound=Scalar, default=Scalar)
+ArrayT_co = TypeVar(
+    "ArrayT_co", bound=ExtensionArray, default=ExtensionArray, covariant=True
+)
 # Refine the definitions below in 3.9 to use the specialized type.
 np_num: TypeAlias = np.bool | np.integer | np.floating | np.complexfloating
 

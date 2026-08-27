@@ -29,7 +29,7 @@ def test_series_construction_timestamp_dtype() -> None:
     check(
         assert_type(
             pd.Series([datetime.datetime(2020, 1, 1)], dtype="datetime64[s]"),
-            "pd.Series[pd.Timestamp]",
+            "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]",
         ),
         pd.Series,
         pd.Timestamp,
@@ -37,7 +37,7 @@ def test_series_construction_timestamp_dtype() -> None:
     check(
         assert_type(
             pd.Series([datetime.datetime(2020, 1, 1)], dtype="datetime64[ms]"),
-            "pd.Series[pd.Timestamp]",
+            "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]",
         ),
         pd.Series,
         pd.Timestamp,
@@ -45,7 +45,7 @@ def test_series_construction_timestamp_dtype() -> None:
     check(
         assert_type(
             pd.Series([datetime.datetime(2020, 1, 1)], dtype="datetime64[us]"),
-            "pd.Series[pd.Timestamp]",
+            "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]",
         ),
         pd.Series,
         pd.Timestamp,
@@ -53,7 +53,7 @@ def test_series_construction_timestamp_dtype() -> None:
     check(
         assert_type(
             pd.Series([datetime.datetime(2020, 1, 1)], dtype="datetime64[ns]"),
-            "pd.Series[pd.Timestamp]",
+            "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]",
         ),
         pd.Series,
         pd.Timestamp,
@@ -62,7 +62,7 @@ def test_series_construction_timestamp_dtype() -> None:
     check(
         assert_type(
             pd.Series([datetime.datetime(2020, 1, 1)], dtype="M8[s]"),
-            "pd.Series[pd.Timestamp]",
+            "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]",
         ),
         pd.Series,
         pd.Timestamp,
@@ -70,7 +70,7 @@ def test_series_construction_timestamp_dtype() -> None:
     check(
         assert_type(
             pd.Series([datetime.datetime(2020, 1, 1)], dtype="M8[ms]"),
-            "pd.Series[pd.Timestamp]",
+            "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]",
         ),
         pd.Series,
         pd.Timestamp,
@@ -78,7 +78,7 @@ def test_series_construction_timestamp_dtype() -> None:
     check(
         assert_type(
             pd.Series([datetime.datetime(2020, 1, 1)], dtype="M8[us]"),
-            "pd.Series[pd.Timestamp]",
+            "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]",
         ),
         pd.Series,
         pd.Timestamp,
@@ -86,7 +86,7 @@ def test_series_construction_timestamp_dtype() -> None:
     check(
         assert_type(
             pd.Series([datetime.datetime(2020, 1, 1)], dtype="M8[ns]"),
-            "pd.Series[pd.Timestamp]",
+            "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]",
         ),
         pd.Series,
         pd.Timestamp,
@@ -95,7 +95,7 @@ def test_series_construction_timestamp_dtype() -> None:
     check(
         assert_type(
             pd.Series([datetime.datetime(2020, 1, 1)], dtype="<M8[s]"),
-            "pd.Series[pd.Timestamp]",
+            "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]",
         ),
         pd.Series,
         pd.Timestamp,
@@ -103,7 +103,7 @@ def test_series_construction_timestamp_dtype() -> None:
     check(
         assert_type(
             pd.Series([datetime.datetime(2020, 1, 1)], dtype="<M8[ms]"),
-            "pd.Series[pd.Timestamp]",
+            "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]",
         ),
         pd.Series,
         pd.Timestamp,
@@ -111,7 +111,7 @@ def test_series_construction_timestamp_dtype() -> None:
     check(
         assert_type(
             pd.Series([datetime.datetime(2020, 1, 1)], dtype="<M8[us]"),
-            "pd.Series[pd.Timestamp]",
+            "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]",
         ),
         pd.Series,
         pd.Timestamp,
@@ -119,7 +119,7 @@ def test_series_construction_timestamp_dtype() -> None:
     check(
         assert_type(
             pd.Series([datetime.datetime(2020, 1, 1)], dtype="<M8[ns]"),
-            "pd.Series[pd.Timestamp]",
+            "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]",
         ),
         pd.Series,
         pd.Timestamp,
@@ -200,55 +200,171 @@ def test_astype_timestamp(cast_arg: TimestampDtypeArg, target_type: type) -> Non
 
     if TYPE_CHECKING:
         # numpy datetime64
-        assert_type(s.astype("datetime64[Y]"), "pd.Series[pd.Timestamp]")
-        assert_type(s.astype("datetime64[M]"), "pd.Series[pd.Timestamp]")
-        assert_type(s.astype("datetime64[W]"), "pd.Series[pd.Timestamp]")
-        assert_type(s.astype("datetime64[D]"), "pd.Series[pd.Timestamp]")
-        assert_type(s.astype("datetime64[h]"), "pd.Series[pd.Timestamp]")
-        assert_type(s.astype("datetime64[m]"), "pd.Series[pd.Timestamp]")
-        assert_type(s.astype("datetime64[s]"), "pd.Series[pd.Timestamp]")
-        assert_type(s.astype("datetime64[ms]"), "pd.Series[pd.Timestamp]")
-        assert_type(s.astype("datetime64[us]"), "pd.Series[pd.Timestamp]")
-        assert_type(s.astype("datetime64[μs]"), "pd.Series[pd.Timestamp]")
-        assert_type(s.astype("datetime64[ns]"), "pd.Series[pd.Timestamp]")
-        assert_type(s.astype("datetime64[ps]"), "pd.Series[pd.Timestamp]")
-        assert_type(s.astype("datetime64[fs]"), "pd.Series[pd.Timestamp]")
-        assert_type(s.astype("datetime64[as]"), "pd.Series[pd.Timestamp]")
+        assert_type(
+            s.astype("datetime64[Y]"),
+            "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]",
+        )
+        assert_type(
+            s.astype("datetime64[M]"),
+            "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]",
+        )
+        assert_type(
+            s.astype("datetime64[W]"),
+            "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]",
+        )
+        assert_type(
+            s.astype("datetime64[D]"),
+            "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]",
+        )
+        assert_type(
+            s.astype("datetime64[h]"),
+            "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]",
+        )
+        assert_type(
+            s.astype("datetime64[m]"),
+            "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]",
+        )
+        assert_type(
+            s.astype("datetime64[s]"),
+            "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]",
+        )
+        assert_type(
+            s.astype("datetime64[ms]"),
+            "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]",
+        )
+        assert_type(
+            s.astype("datetime64[us]"),
+            "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]",
+        )
+        assert_type(
+            s.astype("datetime64[μs]"),
+            "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]",
+        )
+        assert_type(
+            s.astype("datetime64[ns]"),
+            "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]",
+        )
+        assert_type(
+            s.astype("datetime64[ps]"),
+            "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]",
+        )
+        assert_type(
+            s.astype("datetime64[fs]"),
+            "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]",
+        )
+        assert_type(
+            s.astype("datetime64[as]"),
+            "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]",
+        )
         # numpy datetime64 type codes
-        assert_type(s.astype("M8[Y]"), "pd.Series[pd.Timestamp]")
-        assert_type(s.astype("M8[M]"), "pd.Series[pd.Timestamp]")
-        assert_type(s.astype("M8[W]"), "pd.Series[pd.Timestamp]")
-        assert_type(s.astype("M8[D]"), "pd.Series[pd.Timestamp]")
-        assert_type(s.astype("M8[h]"), "pd.Series[pd.Timestamp]")
-        assert_type(s.astype("M8[m]"), "pd.Series[pd.Timestamp]")
-        assert_type(s.astype("M8[s]"), "pd.Series[pd.Timestamp]")
-        assert_type(s.astype("M8[ms]"), "pd.Series[pd.Timestamp]")
-        assert_type(s.astype("M8[us]"), "pd.Series[pd.Timestamp]")
-        assert_type(s.astype("M8[μs]"), "pd.Series[pd.Timestamp]")
-        assert_type(s.astype("M8[ns]"), "pd.Series[pd.Timestamp]")
-        assert_type(s.astype("M8[ps]"), "pd.Series[pd.Timestamp]")
-        assert_type(s.astype("M8[fs]"), "pd.Series[pd.Timestamp]")
-        assert_type(s.astype("M8[as]"), "pd.Series[pd.Timestamp]")
+        assert_type(
+            s.astype("M8[Y]"), "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]"
+        )
+        assert_type(
+            s.astype("M8[M]"), "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]"
+        )
+        assert_type(
+            s.astype("M8[W]"), "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]"
+        )
+        assert_type(
+            s.astype("M8[D]"), "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]"
+        )
+        assert_type(
+            s.astype("M8[h]"), "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]"
+        )
+        assert_type(
+            s.astype("M8[m]"), "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]"
+        )
+        assert_type(
+            s.astype("M8[s]"), "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]"
+        )
+        assert_type(
+            s.astype("M8[ms]"), "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]"
+        )
+        assert_type(
+            s.astype("M8[us]"), "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]"
+        )
+        assert_type(
+            s.astype("M8[μs]"), "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]"
+        )
+        assert_type(
+            s.astype("M8[ns]"), "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]"
+        )
+        assert_type(
+            s.astype("M8[ps]"), "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]"
+        )
+        assert_type(
+            s.astype("M8[fs]"), "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]"
+        )
+        assert_type(
+            s.astype("M8[as]"), "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]"
+        )
         # numpy datetime64 type codes
-        assert_type(s.astype("<M8[Y]"), "pd.Series[pd.Timestamp]")
-        assert_type(s.astype("<M8[M]"), "pd.Series[pd.Timestamp]")
-        assert_type(s.astype("<M8[W]"), "pd.Series[pd.Timestamp]")
-        assert_type(s.astype("<M8[D]"), "pd.Series[pd.Timestamp]")
-        assert_type(s.astype("<M8[h]"), "pd.Series[pd.Timestamp]")
-        assert_type(s.astype("<M8[m]"), "pd.Series[pd.Timestamp]")
-        assert_type(s.astype("<M8[s]"), "pd.Series[pd.Timestamp]")
-        assert_type(s.astype("<M8[ms]"), "pd.Series[pd.Timestamp]")
-        assert_type(s.astype("<M8[us]"), "pd.Series[pd.Timestamp]")
-        assert_type(s.astype("<M8[μs]"), "pd.Series[pd.Timestamp]")
-        assert_type(s.astype("<M8[ns]"), "pd.Series[pd.Timestamp]")
-        assert_type(s.astype("<M8[ps]"), "pd.Series[pd.Timestamp]")
-        assert_type(s.astype("<M8[fs]"), "pd.Series[pd.Timestamp]")
-        assert_type(s.astype("<M8[as]"), "pd.Series[pd.Timestamp]")
+        assert_type(
+            s.astype("<M8[Y]"), "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]"
+        )
+        assert_type(
+            s.astype("<M8[M]"), "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]"
+        )
+        assert_type(
+            s.astype("<M8[W]"), "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]"
+        )
+        assert_type(
+            s.astype("<M8[D]"), "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]"
+        )
+        assert_type(
+            s.astype("<M8[h]"), "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]"
+        )
+        assert_type(
+            s.astype("<M8[m]"), "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]"
+        )
+        assert_type(
+            s.astype("<M8[s]"), "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]"
+        )
+        assert_type(
+            s.astype("<M8[ms]"), "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]"
+        )
+        assert_type(
+            s.astype("<M8[us]"), "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]"
+        )
+        assert_type(
+            s.astype("<M8[μs]"), "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]"
+        )
+        assert_type(
+            s.astype("<M8[ns]"), "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]"
+        )
+        assert_type(
+            s.astype("<M8[ps]"), "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]"
+        )
+        assert_type(
+            s.astype("<M8[fs]"), "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]"
+        )
+        assert_type(
+            s.astype("<M8[as]"), "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]"
+        )
         # pyarrow timestamp
-        assert_type(s.astype("timestamp[s][pyarrow]"), "pd.Series[pd.Timestamp]")
-        assert_type(s.astype("timestamp[ms][pyarrow]"), "pd.Series[pd.Timestamp]")
-        assert_type(s.astype("timestamp[us][pyarrow]"), "pd.Series[pd.Timestamp]")
-        assert_type(s.astype("timestamp[ns][pyarrow]"), "pd.Series[pd.Timestamp]")
+        assert_type(
+            s.astype("timestamp[s][pyarrow]"),
+            "pd.Series[pd.Timestamp, pd.arrays.ArrowExtensionArray]",
+        )
+        assert_type(
+            s.astype("timestamp[ms][pyarrow]"),
+            "pd.Series[pd.Timestamp, pd.arrays.ArrowExtensionArray]",
+        )
+        assert_type(
+            s.astype("timestamp[us][pyarrow]"),
+            "pd.Series[pd.Timestamp, pd.arrays.ArrowExtensionArray]",
+        )
+        assert_type(
+            s.astype("timestamp[ns][pyarrow]"),
+            "pd.Series[pd.Timestamp, pd.arrays.ArrowExtensionArray]",
+        )
         # pyarrow date
-        assert_type(s.astype("date32[pyarrow]"), "pd.Series[pd.Timestamp]")
-        assert_type(s.astype("date64[pyarrow]"), "pd.Series[pd.Timestamp]")
+        assert_type(
+            s.astype("date32[pyarrow]"),
+            "pd.Series[pd.Timestamp, pd.arrays.ArrowExtensionArray]",
+        )
+        assert_type(
+            s.astype("date64[pyarrow]"),
+            "pd.Series[pd.Timestamp, pd.arrays.ArrowExtensionArray]",
+        )

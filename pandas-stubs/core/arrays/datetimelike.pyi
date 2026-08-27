@@ -1,6 +1,4 @@
-from collections.abc import (
-    Sequence,
-)
+from collections.abc import Sequence
 from datetime import timedelta
 from typing import (
     Any,

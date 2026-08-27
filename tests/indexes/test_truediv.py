@@ -102,17 +102,17 @@ def test_truediv_pd_index(left_i: pd.Index) -> None:
     f = pd.Index([1.0, 2.0, 3.0])
     c = pd.Index([1.1j, 2.2j, 4.1j])
 
-    check(assert_type(left_i / a, pd.Index), pd.Index)
+    check(assert_type(left_i / a, pd.Index), pd.Index)  # type: ignore[assert-type]
     check(assert_type(left_i / b, pd.Index), pd.Index)
     check(assert_type(left_i / i, pd.Index), pd.Index)
     check(assert_type(left_i / f, pd.Index), pd.Index)
     check(assert_type(left_i / c, pd.Index), pd.Index)
 
-    check(assert_type(a / left_i, pd.Index), pd.Index)
-    check(assert_type(b / left_i, pd.Index), pd.Index)
-    check(assert_type(i / left_i, pd.Index), pd.Index)
-    check(assert_type(f / left_i, pd.Index), pd.Index)
-    check(assert_type(c / left_i, pd.Index), pd.Index)
+    check(assert_type(a / left_i, pd.Index), pd.Index)  # type: ignore[assert-type]
+    check(assert_type(b / left_i, pd.Index), pd.Index)  # type: ignore[assert-type]
+    check(assert_type(i / left_i, pd.Index), pd.Index)  # type: ignore[assert-type]
+    check(assert_type(f / left_i, pd.Index), pd.Index)  # type: ignore[assert-type]
+    check(assert_type(c / left_i, pd.Index), pd.Index)  # type: ignore[assert-type]
 
 
 def test_truediv_paths(tmp_path: Path) -> None:

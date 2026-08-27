@@ -131,25 +131,25 @@ def test_mul_pd_index(left_i: pd.Series) -> None:
     f = pd.Index([1.0, 2.0, 3.0])
     c = pd.Index([1.1j, 2.2j, 4.1j])
 
-    check(assert_type(left_i * a, pd.Series), pd.Series)
+    check(assert_type(left_i * a, pd.Series), pd.Series)  # type: ignore[assert-type]
     check(assert_type(left_i * b, pd.Series), pd.Series)
     check(assert_type(left_i * i, pd.Series), pd.Series)
     check(assert_type(left_i * f, pd.Series), pd.Series)
     check(assert_type(left_i * c, pd.Series), pd.Series)
 
-    check(assert_type(a * left_i, pd.Series), pd.Series)
+    check(assert_type(a * left_i, pd.Series), pd.Series)  # type: ignore[assert-type]
     check(assert_type(b * left_i, pd.Series), pd.Series)
     check(assert_type(i * left_i, pd.Series), pd.Series)
     check(assert_type(f * left_i, pd.Series), pd.Series)
     check(assert_type(c * left_i, pd.Series), pd.Series)
 
-    check(assert_type(left_i.mul(a), pd.Series), pd.Series)
+    check(assert_type(left_i.mul(a), pd.Series), pd.Series)  # type: ignore[assert-type]
     check(assert_type(left_i.mul(b), pd.Series), pd.Series)
     check(assert_type(left_i.mul(i), pd.Series), pd.Series)
     check(assert_type(left_i.mul(f), pd.Series), pd.Series)
     check(assert_type(left_i.mul(c), pd.Series), pd.Series)
 
-    check(assert_type(left_i.rmul(a), pd.Series), pd.Series)
+    check(assert_type(left_i.rmul(a), pd.Series), pd.Series)  # type: ignore[assert-type]
     check(assert_type(left_i.rmul(b), pd.Series), pd.Series)
     check(assert_type(left_i.rmul(i), pd.Series), pd.Series)
     check(assert_type(left_i.rmul(f), pd.Series), pd.Series)
@@ -164,25 +164,25 @@ def test_mul_pd_series(left_i: pd.Series) -> None:
     f = pd.Series([1.0, 2.0, 3.0])
     c = pd.Series([1.1j, 2.2j, 4.1j])
 
-    check(assert_type(left_i * a, pd.Series), pd.Series)
+    check(assert_type(left_i * a, pd.Series), pd.Series)  # type: ignore[assert-type]
     check(assert_type(left_i * b, pd.Series), pd.Series)
     check(assert_type(left_i * i, pd.Series), pd.Series)
     check(assert_type(left_i * f, pd.Series), pd.Series)
     check(assert_type(left_i * c, pd.Series), pd.Series)
 
-    check(assert_type(a * left_i, pd.Series), pd.Series)
-    check(assert_type(b * left_i, pd.Series), pd.Series)
-    check(assert_type(i * left_i, pd.Series), pd.Series)
-    check(assert_type(f * left_i, pd.Series), pd.Series)
-    check(assert_type(c * left_i, pd.Series), pd.Series)
+    check(assert_type(a * left_i, pd.Series), pd.Series)  # type: ignore[assert-type]
+    check(assert_type(b * left_i, pd.Series), pd.Series)  # type: ignore[assert-type]
+    check(assert_type(i * left_i, pd.Series), pd.Series)  # type: ignore[assert-type]
+    check(assert_type(f * left_i, pd.Series), pd.Series)  # type: ignore[assert-type]
+    check(assert_type(c * left_i, pd.Series), pd.Series)  # type: ignore[assert-type]
 
-    check(assert_type(left_i.mul(a), pd.Series), pd.Series)
+    check(assert_type(left_i.mul(a), pd.Series), pd.Series)  # type: ignore[assert-type]
     check(assert_type(left_i.mul(b), pd.Series), pd.Series)
     check(assert_type(left_i.mul(i), pd.Series), pd.Series)
     check(assert_type(left_i.mul(f), pd.Series), pd.Series)
     check(assert_type(left_i.mul(c), pd.Series), pd.Series)
 
-    check(assert_type(left_i.rmul(a), pd.Series), pd.Series)
+    check(assert_type(left_i.rmul(a), pd.Series), pd.Series)  # type: ignore[assert-type]
     check(assert_type(left_i.rmul(b), pd.Series), pd.Series)
     check(assert_type(left_i.rmul(i), pd.Series), pd.Series)
     check(assert_type(left_i.rmul(f), pd.Series), pd.Series)

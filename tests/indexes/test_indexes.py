@@ -24,6 +24,7 @@ from pandas.core.arrays.base import ExtensionArray
 from pandas.core.arrays.categorical import Categorical
 from pandas.core.arrays.datetimes import DatetimeArray
 from pandas.core.arrays.interval import IntervalArray
+from pandas.core.arrays.string_ import BaseStringArray  # noqa: F401
 from pandas.core.arrays.timedeltas import TimedeltaArray
 from pandas.core.indexes.base import Index
 from pandas.core.indexes.category import CategoricalIndex
@@ -141,7 +142,7 @@ def test_index_astype() -> None:
     indi = pd.Index([1, 2, 3])
     inds = pd.Index(["a", "b", "c"])
     indc = indi.astype(inds.dtype)
-    check(assert_type(indc, pd.Index), pd.Index)
+    check(assert_type(indc, "pd.Index[str, BaseStringArray]"), pd.Index, str)
     mi = pd.MultiIndex.from_product([["a", "b"], ["c", "d"]], names=["ab", "cd"])
     check(
         assert_type(mi.to_frame(name=[3, 7], allow_duplicates=True), pd.DataFrame),
@@ -297,13 +298,35 @@ def test_column_sequence() -> None:
 def test_difference_none() -> None:
     # https://github.com/pandas-dev/pandas-stubs/issues/17
     ind = pd.Index([1, 2, 3])
-    check(assert_type(ind.difference([1, None]), "pd.Index[int]"), pd.Index)
+    check(
+        assert_type(
+            ind.difference([1, None]), "pd.Index[int, pd.arrays.NumpyExtensionArray]"
+        ),
+        pd.Index,
+    )
     # GH 253
-    check(assert_type(ind.difference([1]), "pd.Index[int]"), pd.Index)
+    check(
+        assert_type(
+            ind.difference([1]), "pd.Index[int, pd.arrays.NumpyExtensionArray]"
+        ),
+        pd.Index,
+    )
 
     # check with sort parameter
-    check(assert_type(ind.difference([1, None], sort=False), "pd.Index[int]"), pd.Index)
-    check(assert_type(ind.difference([1], sort=True), "pd.Index[int]"), pd.Index)
+    check(
+        assert_type(
+            ind.difference([1, None], sort=False),
+            "pd.Index[int, pd.arrays.NumpyExtensionArray]",
+        ),
+        pd.Index,
+    )
+    check(
+        assert_type(
+            ind.difference([1], sort=True),
+            "pd.Index[int, pd.arrays.NumpyExtensionArray]",
+        ),
+        pd.Index,
+    )
 
 
 def test_str_split() -> None:
@@ -340,7 +363,11 @@ def test_index_rename() -> None:
     """Test that index rename returns an element of type Index."""
     ind = pd.Index([1, 2, 3], name="foo")
     ind2 = ind.rename("goo")
-    check(assert_type(ind2, "pd.Index[int]"), pd.Index, np.integer)
+    check(
+        assert_type(ind2, "pd.Index[int, pd.arrays.NumpyExtensionArray]"),
+        pd.Index,
+        np.integer,
+    )
 
 
 def test_index_rename_inplace() -> None:
@@ -354,8 +381,18 @@ def test_index_rename_inplace() -> None:
 def test_index_dropna() -> None:
     idx = pd.Index([1, 2])
 
-    check(assert_type(idx.dropna(how="all"), "pd.Index[int]"), pd.Index)
-    check(assert_type(idx.dropna(how="any"), "pd.Index[int]"), pd.Index)
+    check(
+        assert_type(
+            idx.dropna(how="all"), "pd.Index[int, pd.arrays.NumpyExtensionArray]"
+        ),
+        pd.Index,
+    )
+    check(
+        assert_type(
+            idx.dropna(how="any"), "pd.Index[int, pd.arrays.NumpyExtensionArray]"
+        ),
+        pd.Index,
+    )
 
     midx = pd.MultiIndex.from_arrays([[1, 2], [3, 4]])
 
@@ -366,7 +403,7 @@ def test_index_dropna() -> None:
 def test_index_neg() -> None:
     # GH 253
     idx = pd.Index([1, 2])
-    check(assert_type(-idx, "pd.Index[int]"), pd.Index)
+    check(assert_type(-idx, "pd.Index[int, pd.arrays.NumpyExtensionArray]"), pd.Index)
 
 
 def test_types_to_numpy() -> None:
@@ -411,14 +448,16 @@ def test_index_union_sort() -> None:
     """Test sort argument in pd.Index.union GH1264."""
     check(
         assert_type(
-            pd.Index(["e", "f"]).union(["a", "b", "c"], sort=True), "pd.Index[str]"
+            pd.Index(["e", "f"]).union(["a", "b", "c"], sort=True),
+            "pd.Index[str, BaseStringArray]",
         ),
         pd.Index,
         str,
     )
     check(
         assert_type(
-            pd.Index(["e", "f"]).union(["a", "b", "c"], sort=False), "pd.Index[str]"
+            pd.Index(["e", "f"]).union(["a", "b", "c"], sort=False),
+            "pd.Index[str, BaseStringArray]",
         ),
         pd.Index,
         str,
@@ -989,15 +1028,48 @@ def test_index_operators() -> None:
     i1 = pd.Index([1, 2, 3])
     i2 = pd.Index([4, 5, 6])
 
-    check(assert_type(i1**i2, "pd.Index[int]"), pd.Index)
-    check(assert_type(i1**2, "pd.Index[int]"), pd.Index)
-    check(assert_type(2**i1, "pd.Index[int]"), pd.Index)
-    check(assert_type(i1 % i2, "pd.Index[int]"), pd.Index)
-    check(assert_type(i1 % 10, "pd.Index[int]"), pd.Index)
-    check(assert_type(10 % i1, "pd.Index[int]"), pd.Index)
-    check(assert_type(divmod(i1, i2), tuple["pd.Index[int]", "pd.Index[int]"]), tuple)
-    check(assert_type(divmod(i1, 10), tuple["pd.Index[int]", "pd.Index[int]"]), tuple)
-    check(assert_type(divmod(10, i1), tuple["pd.Index[int]", "pd.Index[int]"]), tuple)
+    check(assert_type(i1**i2, "pd.Index[int, pd.arrays.NumpyExtensionArray]"), pd.Index)
+    check(assert_type(i1**2, "pd.Index[int, pd.arrays.NumpyExtensionArray]"), pd.Index)
+    check(assert_type(2**i1, "pd.Index[int, pd.arrays.NumpyExtensionArray]"), pd.Index)
+    check(
+        assert_type(i1 % i2, "pd.Index[int, pd.arrays.NumpyExtensionArray]"), pd.Index
+    )
+    check(
+        assert_type(i1 % 10, "pd.Index[int, pd.arrays.NumpyExtensionArray]"), pd.Index
+    )
+    check(
+        assert_type(10 % i1, "pd.Index[int, pd.arrays.NumpyExtensionArray]"), pd.Index
+    )
+    check(
+        assert_type(
+            divmod(i1, i2),
+            tuple[
+                "pd.Index[int, pd.arrays.NumpyExtensionArray]",
+                "pd.Index[int, pd.arrays.NumpyExtensionArray]",
+            ],
+        ),
+        tuple,
+    )
+    check(
+        assert_type(
+            divmod(i1, 10),
+            tuple[
+                "pd.Index[int, pd.arrays.NumpyExtensionArray]",
+                "pd.Index[int, pd.arrays.NumpyExtensionArray]",
+            ],
+        ),
+        tuple,
+    )
+    check(
+        assert_type(
+            divmod(10, i1),
+            tuple[
+                "pd.Index[int, pd.arrays.NumpyExtensionArray]",
+                "pd.Index[int, pd.arrays.NumpyExtensionArray]",
+            ],
+        ),
+        tuple,
+    )
 
     if TYPE_CHECKING_INVALID_USAGE:
         _i1_a_i2 = i1 & i2  # type: ignore[operator,var-annotated] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation]
@@ -1097,9 +1169,9 @@ def test_getitem() -> None:
     check(assert_type(mi[[0, 2]], pd.MultiIndex), pd.MultiIndex, tuple)
 
     i0 = pd.Index(["a", "b", "c"])
-    check(assert_type(i0, "pd.Index[str]"), pd.Index)
+    check(assert_type(i0, "pd.Index[str, BaseStringArray]"), pd.Index)
     check(assert_type(i0[0], str), str)
-    check(assert_type(i0[[0, 2]], "pd.Index[str]"), pd.Index, str)
+    check(assert_type(i0[[0, 2]], "pd.Index[str, BaseStringArray]"), pd.Index, str)
 
 
 def test_append_mix() -> None:
@@ -1110,8 +1182,8 @@ def test_append_mix() -> None:
     check(assert_type(first.append(second), pd.Index), pd.Index)
     check(assert_type(first.append([second]), pd.Index), pd.Index)
 
-    check(assert_type(first.append(third), pd.Index), pd.Index)
-    check(assert_type(first.append([third]), pd.Index), pd.Index)
+    check(assert_type(first.append(third), pd.Index), pd.Index)  # type: ignore[assert-type]
+    check(assert_type(first.append([third]), pd.Index), pd.Index)  # type: ignore[assert-type]
     check(assert_type(first.append([second, third]), pd.Index), pd.Index)
 
     check(assert_type(third.append([]), pd.Index), pd.Index)
@@ -1155,80 +1227,132 @@ def test_index_constructors() -> None:
     # Eventually should be using a generic index
     ilist = [1, 2, 3]
     check(
-        assert_type(pd.Index(ilist, dtype="int"), "pd.Index[int]"), pd.Index, np.integer
+        assert_type(
+            pd.Index(ilist, dtype="int"), "pd.Index[int, pd.arrays.NumpyExtensionArray]"
+        ),
+        pd.Index,
+        np.integer,
     )
     check(
-        assert_type(pd.Index(ilist, dtype=int), "pd.Index[int]"), pd.Index, np.integer
+        assert_type(
+            pd.Index(ilist, dtype=int), "pd.Index[int, pd.arrays.NumpyExtensionArray]"
+        ),
+        pd.Index,
+        np.integer,
     )
     check(
-        assert_type(pd.Index(ilist, dtype=np.int8), "pd.Index[int]"), pd.Index, np.int8
+        assert_type(
+            pd.Index(ilist, dtype=np.int8),
+            "pd.Index[int, pd.arrays.NumpyExtensionArray]",
+        ),
+        pd.Index,
+        np.int8,
     )
     check(
-        assert_type(pd.Index(ilist, dtype=np.int16), "pd.Index[int]"),
+        assert_type(
+            pd.Index(ilist, dtype=np.int16),
+            "pd.Index[int, pd.arrays.NumpyExtensionArray]",
+        ),
         pd.Index,
         np.int16,
     )
     check(
-        assert_type(pd.Index(ilist, dtype=np.int32), "pd.Index[int]"),
+        assert_type(
+            pd.Index(ilist, dtype=np.int32),
+            "pd.Index[int, pd.arrays.NumpyExtensionArray]",
+        ),
         pd.Index,
         np.int32,
     )
     check(
-        assert_type(pd.Index(ilist, dtype=np.int64), "pd.Index[int]"),
+        assert_type(
+            pd.Index(ilist, dtype=np.int64),
+            "pd.Index[int, pd.arrays.NumpyExtensionArray]",
+        ),
         pd.Index,
         np.int64,
     )
     check(
-        assert_type(pd.Index(ilist, dtype=np.uint8), "pd.Index[int]"),
+        assert_type(
+            pd.Index(ilist, dtype=np.uint8),
+            "pd.Index[int, pd.arrays.NumpyExtensionArray]",
+        ),
         pd.Index,
         np.uint8,
     )
     check(
-        assert_type(pd.Index(ilist, dtype=np.uint16), "pd.Index[int]"),
+        assert_type(
+            pd.Index(ilist, dtype=np.uint16),
+            "pd.Index[int, pd.arrays.NumpyExtensionArray]",
+        ),
         pd.Index,
         np.uint16,
     )
     check(
-        assert_type(pd.Index(ilist, dtype=np.uint32), "pd.Index[int]"),
+        assert_type(
+            pd.Index(ilist, dtype=np.uint32),
+            "pd.Index[int, pd.arrays.NumpyExtensionArray]",
+        ),
         pd.Index,
         np.uint32,
     )
     check(
-        assert_type(pd.Index(ilist, dtype=np.uint64), "pd.Index[int]"),
+        assert_type(
+            pd.Index(ilist, dtype=np.uint64),
+            "pd.Index[int, pd.arrays.NumpyExtensionArray]",
+        ),
         pd.Index,
         np.uint64,
     )
 
     flist = [1.1, 2.2, 3.3]
     check(
-        assert_type(pd.Index(flist, dtype="float"), "pd.Index[float]"),
+        assert_type(
+            pd.Index(flist, dtype="float"),
+            "pd.Index[float, pd.arrays.NumpyExtensionArray]",
+        ),
         pd.Index,
         np.float64,
     )
     check(
-        assert_type(pd.Index(flist, dtype=float), "pd.Index[float]"),
+        assert_type(
+            pd.Index(flist, dtype=float),
+            "pd.Index[float, pd.arrays.NumpyExtensionArray]",
+        ),
         pd.Index,
         np.float64,
     )
     check(
-        assert_type(pd.Index(flist, dtype=np.float32), "pd.Index[float]"),
+        assert_type(
+            pd.Index(flist, dtype=np.float32),
+            "pd.Index[float, pd.arrays.NumpyExtensionArray]",
+        ),
         pd.Index,
         np.float32,
     )
     check(
-        assert_type(pd.Index(flist, dtype=np.float64), "pd.Index[float]"),
+        assert_type(
+            pd.Index(flist, dtype=np.float64),
+            "pd.Index[float, pd.arrays.NumpyExtensionArray]",
+        ),
         pd.Index,
         np.float64,
     )
 
     clist = [1 + 1j, 2 + 2j, 3 + 4j]
     check(
-        assert_type(pd.Index(clist, dtype="complex"), "pd.Index[complex]"),
+        assert_type(
+            pd.Index(clist, dtype="complex"),
+            "pd.Index[complex, pd.arrays.NumpyExtensionArray]",
+        ),
         pd.Index,
         complex,
     )
     check(
-        assert_type(pd.Index(clist, dtype=complex), "pd.Index[complex]"),
+        assert_type(
+            pd.Index(clist, dtype=complex),
+            "pd.Index[complex, pd.arrays.NumpyExtensionArray]",
+        ),
         pd.Index,
         complex,
     )
@@ -1255,8 +1379,18 @@ def test_annotate() -> None:
 
 
 def test_new() -> None:
-    check(assert_type(pd.Index([1]), "pd.Index[int]"), pd.Index, np.integer)
-    check(assert_type(pd.Index([1], dtype=float), "pd.Index[float]"), pd.Index, float)
+    check(
+        assert_type(pd.Index([1]), "pd.Index[int, pd.arrays.NumpyExtensionArray]"),
+        pd.Index,
+        np.integer,
+    )
+    check(
+        assert_type(
+            pd.Index([1], dtype=float), "pd.Index[float, pd.arrays.NumpyExtensionArray]"
+        ),
+        pd.Index,
+        float,
+    )
     check(
         assert_type(pd.Index([pd.Timestamp(0)]), pd.DatetimeIndex),
         pd.DatetimeIndex,
@@ -1375,7 +1509,11 @@ def test_timedeltaindex_shift() -> None:
 def test_index_insert() -> None:
     """Test the return type of Index.insert GH1196."""
     idx = pd.Index([1, 2, 3, 4, 5])
-    check(assert_type(idx.insert(2, 3), "pd.Index[int]"), pd.Index, np.integer)
+    check(
+        assert_type(idx.insert(2, 3), "pd.Index[int, pd.arrays.NumpyExtensionArray]"),
+        pd.Index,
+        np.integer,
+    )
 
     ind = pd.date_range("1/1/2021", "1/5/2021") - pd.Timestamp("1/3/2019")
     check(
@@ -1393,7 +1531,11 @@ def test_index_insert() -> None:
 def test_index_delete() -> None:
     """Test the return type of Index.delete GH1196."""
     idx = pd.Index([1, 2, 3, 4, 5])
-    check(assert_type(idx.delete(2), "pd.Index[int]"), pd.Index, np.integer)
+    check(
+        assert_type(idx.delete(2), "pd.Index[int, pd.arrays.NumpyExtensionArray]"),
+        pd.Index,
+        np.integer,
+    )
 
     ind = pd.date_range("1/1/2021", "1/5/2021") - pd.Timestamp("1/3/2019")
     check(assert_type(ind.delete(2), pd.TimedeltaIndex), pd.TimedeltaIndex)
@@ -1529,7 +1671,7 @@ def test_array_property() -> None:
     """Test that Index.array and semantic Index.array return ExtensionArray and its subclasses"""
     # casting due to pandas-dev/pandas-stubs#1383
     check(
-        assert_type(Index([1], dtype="category").array, pd.Categorical),
+        assert_type(Index([1], dtype="category").array, "pd.Categorical[object]"),
         pd.Categorical,
         int,
     )
@@ -1552,20 +1694,27 @@ def test_array_property() -> None:
         TimedeltaArray,
         pd.Timedelta,
     )
-    check(assert_type(Index([1]).array, ExtensionArray), ExtensionArray, np.integer)
+    check(
+        assert_type(Index([1]).array, pd.arrays.NumpyExtensionArray),
+        ExtensionArray,
+        np.integer,
+    )
 
 
 def test_to_series() -> None:
     """Test that Index.to_series return typed Series"""
     check(
-        assert_type(pd.interval_range(0, 1).to_series(), "pd.Series[pd.Interval[int]]"),
+        assert_type(
+            pd.interval_range(0, 1).to_series(),
+            "pd.Series[pd.Interval[int], pd.arrays.IntervalArray]",
+        ),
         pd.Series,
         pd.Interval,
     )
     check(
         assert_type(
             pd.date_range(start="2022-06-01", periods=10).to_series(),
-            "pd.Series[pd.Timestamp]",
+            "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]",
         ),
         pd.Series,
         pd.Timestamp,
@@ -1574,7 +1723,7 @@ def test_to_series() -> None:
     check(
         assert_type(
             pd.timedelta_range(start="1 day", periods=10).to_series(),
-            "pd.Series[pd.Timedelta]",
+            "pd.Series[pd.Timedelta, pd.arrays.TimedeltaArray]",
         ),
         pd.Series,
         pd.Timedelta,
@@ -1582,27 +1731,49 @@ def test_to_series() -> None:
     check(
         assert_type(
             pd.period_range(start="2022-06-01", periods=10).to_series(),
-            "pd.Series[pd.Period]",
+            "pd.Series[pd.Period, pd.arrays.PeriodArray]",
         ),
         pd.Series,
         pd.Period,
     )
 
     check(
-        assert_type(Index([True]).to_series(), "pd.Series[bool]"), pd.Series, np.bool_
+        assert_type(
+            Index([True]).to_series(),
+            "pd.Series[bool, pd.arrays.NumpyExtensionArray]",
+        ),
+        pd.Series,
+        np.bool_,
     )
-    check(assert_type(Index([1]).to_series(), "pd.Series[int]"), pd.Series, np.integer)
     check(
-        assert_type(Index([1.0]).to_series(), "pd.Series[float]"),
+        assert_type(
+            Index([1]).to_series(),
+            "pd.Series[int, pd.arrays.NumpyExtensionArray]",
+        ),
+        pd.Series,
+        np.integer,
+    )
+    check(
+        assert_type(
+            Index([1.0]).to_series(),
+            "pd.Series[float, pd.arrays.NumpyExtensionArray]",
+        ),
         pd.Series,
         np.floating,
     )
     check(
-        assert_type(Index([1j]).to_series(), "pd.Series[complex]"),
+        assert_type(
+            Index([1j]).to_series(),
+            "pd.Series[complex, pd.arrays.NumpyExtensionArray]",
+        ),
         pd.Series,
         np.complexfloating,
     )
-    check(assert_type(Index(["1"]).to_series(), "pd.Series[str]"), pd.Series, str)
+    check(
+        assert_type(Index(["1"]).to_series(), "pd.Series[str, BaseStringArray]"),
+        pd.Series,
+        str,
+    )
 
 
 def test_multiindex_union() -> None:
@@ -1627,7 +1798,7 @@ def test_index_where() -> None:
 
     val_idx = idx.where(mask, idx)
     check(
-        assert_type(val_idx, "pd.Index[int]"),
+        assert_type(val_idx, "pd.Index[int, pd.arrays.NumpyExtensionArray]"),
         pd.Index,
         int if PD_LTE_31 else np.integer,
     )
@@ -1635,7 +1806,9 @@ def test_index_where() -> None:
     val_sr = idx.where(mask, idx.to_series())
 
     check(
-        assert_type(val_sr, "pd.Index[int]"), pd.Index, int if PD_LTE_31 else np.int64
+        assert_type(val_sr, "pd.Index[int, pd.arrays.NumpyExtensionArray]"),
+        pd.Index,
+        int if PD_LTE_31 else np.int64,
     )
 
 
@@ -1667,11 +1840,24 @@ def test_datetimeindex_where() -> None:
 def test_index_set_names() -> None:
     idx = pd.Index([1, 2])
     check(
-        assert_type(idx.set_names("chinchilla"), "pd.Index[int]"), pd.Index, np.integer
+        assert_type(
+            idx.set_names("chinchilla"), "pd.Index[int, pd.arrays.NumpyExtensionArray]"
+        ),
+        pd.Index,
+        np.integer,
     )
-    check(assert_type(idx.set_names((0,)), "pd.Index[int]"), pd.Index, np.integer)
     check(
-        assert_type(idx.set_names(["chinchilla"]), "pd.Index[int]"),
+        assert_type(
+            idx.set_names((0,)), "pd.Index[int, pd.arrays.NumpyExtensionArray]"
+        ),
+        pd.Index,
+        np.integer,
+    )
+    check(
+        assert_type(
+            idx.set_names(["chinchilla"]),
+            "pd.Index[int, pd.arrays.NumpyExtensionArray]",
+        ),
         pd.Index,
         np.integer,
     )
@@ -1688,7 +1874,11 @@ def test_index_set_names() -> None:
 
 def test_index_droplevel() -> None:
     idx = pd.Index([1, 2])
-    check(assert_type(idx.droplevel([]), "pd.Index[int]"), pd.Index, np.integer)
+    check(
+        assert_type(idx.droplevel([]), "pd.Index[int, pd.arrays.NumpyExtensionArray]"),
+        pd.Index,
+        np.integer,
+    )
     mi = pd.MultiIndex.from_arrays([[1, 2, 3], [4, 5, 6]], names=["elk", "owl"])
     check(assert_type(mi.droplevel([]), pd.MultiIndex | pd.Index), pd.MultiIndex)
     check(assert_type(mi.droplevel([0]), pd.MultiIndex | pd.Index), pd.Index)
@@ -1787,7 +1977,10 @@ def test_index_slice_locs() -> None:
 def test_index_view() -> None:
     ind = pd.Index([1, 2])
     check(assert_type(ind.view("int64"), np_1darray), np_1darray)
-    check(assert_type(ind.view(), "pd.Index[int]"), pd.Index)
+    check(
+        assert_type(ind.view(), "pd.Index[int, pd.arrays.NumpyExtensionArray]"),
+        pd.Index,
+    )
     # mypy and pyright differ here in what they report:
     # - mypy: ndarray[Any, Any]"
     # - pyright: ndarray[tuple[Any, ...], dtype[Any]]
@@ -1800,17 +1993,39 @@ def test_index_view() -> None:
 
 def test_index_drop() -> None:
     ind = pd.Index([1, 2, 3])
-    check(assert_type(ind.drop([1, 2]), "pd.Index[int]"), pd.Index, np.integer)
     check(
-        assert_type(ind.drop(pd.Index([1, 2])), "pd.Index[int]"), pd.Index, np.integer
+        assert_type(ind.drop([1, 2]), "pd.Index[int, pd.arrays.NumpyExtensionArray]"),
+        pd.Index,
+        np.integer,
     )
     check(
-        assert_type(ind.drop(pd.Series([1, 2])), "pd.Index[int]"), pd.Index, np.integer
+        assert_type(
+            ind.drop(pd.Index([1, 2])), "pd.Index[int, pd.arrays.NumpyExtensionArray]"
+        ),
+        pd.Index,
+        np.integer,
     )
     check(
-        assert_type(ind.drop(np.array([1, 2])), "pd.Index[int]"), pd.Index, np.integer
+        assert_type(
+            ind.drop(pd.Series([1, 2])), "pd.Index[int, pd.arrays.NumpyExtensionArray]"
+        ),
+        pd.Index,
+        np.integer,
     )
-    check(assert_type(ind.drop(iter([1, 2])), "pd.Index[int]"), pd.Index, np.integer)
+    check(
+        assert_type(
+            ind.drop(np.array([1, 2])), "pd.Index[int, pd.arrays.NumpyExtensionArray]"
+        ),
+        pd.Index,
+        np.integer,
+    )
+    check(
+        assert_type(
+            ind.drop(iter([1, 2])), "pd.Index[int, pd.arrays.NumpyExtensionArray]"
+        ),
+        pd.Index,
+        np.integer,
+    )
 
 
 @pytest.mark.parametrize(
@@ -1833,10 +2048,21 @@ def test_ravel(
     check(pd.Index(data).ravel(), klass, element_type)
 
     if TYPE_CHECKING:
-        assert_type(pd.Index([True, False, True]).ravel(), "pd.Index[bool]")
-        assert_type(pd.Index([1, 2, 3]).ravel(), "pd.Index[int]")
-        assert_type(pd.Index([1.0, 2.0, 3.0]).ravel(), "pd.Index[float]")
-        assert_type(pd.Index([1j, 2 + 2j, 3j]).ravel(), "pd.Index[complex]")
+        assert_type(
+            pd.Index([True, False, True]).ravel(),
+            "pd.Index[bool, pd.arrays.NumpyExtensionArray]",
+        )
+        assert_type(
+            pd.Index([1, 2, 3]).ravel(), "pd.Index[int, pd.arrays.NumpyExtensionArray]"
+        )
+        assert_type(
+            pd.Index([1.0, 2.0, 3.0]).ravel(),
+            "pd.Index[float, pd.arrays.NumpyExtensionArray]",
+        )
+        assert_type(
+            pd.Index([1j, 2 + 2j, 3j]).ravel(),
+            "pd.Index[complex, pd.arrays.NumpyExtensionArray]",
+        )
         assert_type(pd.RangeIndex(0, 3).ravel(), pd.RangeIndex)
         assert_type(
             pd.DatetimeIndex([pd.Timestamp("2022-01-01")]).ravel(), pd.DatetimeIndex
@@ -1979,11 +2205,28 @@ def test_index_from_tuples() -> None:
 def test_diff() -> None:
     ind = pd.Index([1, 1, 2, 3, 5, 8])
     # int -> float
-    check(assert_type(ind.diff(), "pd.Index[float]"), pd.Index, float)
+    check(
+        assert_type(ind.diff(), "pd.Index[float, pd.arrays.NumpyExtensionArray]"),
+        pd.Index,
+        float,
+    )
     # unint -> float
-    check(assert_type(ind.astype(np.uint32).diff(), "pd.Index[float]"), pd.Index, float)
+    check(
+        assert_type(
+            ind.astype(np.uint32).diff(),
+            "pd.Index[float, pd.arrays.NumpyExtensionArray]",
+        ),
+        pd.Index,
+        float,
+    )
     # float -> float
-    check(assert_type(ind.astype(float).diff(), "pd.Index[float]"), pd.Index, float)
+    check(
+        assert_type(
+            ind.astype(float).diff(), "pd.Index[float, pd.arrays.NumpyExtensionArray]"
+        ),
+        pd.Index,
+        float,
+    )
     # datetime.date -> timeDelta
     check(
         assert_type(
@@ -2033,14 +2276,10 @@ def test_diff() -> None:
         index_to_check_for_type=-1,
     )
     # nullable bool -> nullable bool
-    # casting due to pandas-dev/pandas-stubs#1395
     check(
         assert_type(
-            cast(
-                "pd.Index[pd.BooleanDtype]",
-                pd.Index([True, True, False, False, True], dtype="boolean").diff(),
-            ),
-            "pd.Index[pd.BooleanDtype]",
+            pd.Index([True, True, False, False, True], dtype="boolean").diff(),
+            "pd.Index[bool, pd.arrays.BooleanArray]",
         ),
         pd.Index,
         np.bool_,
@@ -2049,13 +2288,27 @@ def test_diff() -> None:
     # Any -> Any
     s_o = ind.astype(object)
     assert_type(s_o, pd.Index)
-    check(assert_type(s_o.diff(), pd.Index), pd.Index, float)
+    check(
+        assert_type(s_o.diff(), "pd.Index[float, pd.arrays.NumpyExtensionArray]"),
+        pd.Index,
+        float,
+    )
     mi = pd.MultiIndex.from_arrays(
         [range(4), pd.date_range("2026-01-30", "2026-02-02")], names=["a", "b"]
     )
-    check(assert_type(mi.get_level_values("a").diff(), pd.Index), pd.Index, float)
     check(
-        assert_type(mi.get_level_values("b").diff(), pd.Index),
+        assert_type(
+            mi.get_level_values("a").diff(),
+            "pd.Index[float, pd.arrays.NumpyExtensionArray]",
+        ),
+        pd.Index,
+        float,
+    )
+    check(
+        assert_type(
+            mi.get_level_values("b").diff(),
+            "pd.Index[float, pd.arrays.NumpyExtensionArray]",
+        ),
         pd.Index,
         pd.Timedelta,
         index_to_check_for_type=-1,

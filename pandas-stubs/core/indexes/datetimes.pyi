@@ -17,6 +17,7 @@ from typing import (
 
 import numpy as np
 import pandas as pd
+from pandas.core.arrays.datetimes import DatetimeArray
 from pandas.core.frame import DataFrame
 from pandas.core.indexes.accessors import DatetimeIndexProperties
 from pandas.core.indexes.base import Index
@@ -40,12 +41,11 @@ from pandas._typing import (
     np_ndarray_td,
 )
 
-from pandas.core.dtypes.dtypes import DatetimeTZDtype
-
 from pandas.tseries.offsets import BaseOffset
 
 class DatetimeIndex(
-    DatetimeTimedeltaMixin[Timestamp, np.datetime64], DatetimeIndexProperties
+    DatetimeTimedeltaMixin[Timestamp, np.datetime64, DatetimeArray],
+    DatetimeIndexProperties,
 ):
     def __new__(
         cls,
@@ -83,7 +83,7 @@ class DatetimeIndex(
     @override
     def to_series(
         self, index: Index | None = None, name: Hashable | None = None
-    ) -> Series[Timestamp]: ...
+    ) -> Series[Timestamp, DatetimeArray]: ...
     def snap(self, freq: Frequency = "S") -> Self: ...
     def indexer_at_time(
         self, time: str | time, asof: bool = False
@@ -97,9 +97,6 @@ class DatetimeIndex(
     ) -> np_1darray_intp: ...
     def to_julian_date(self) -> Index[float]: ...
     def isocalendar(self) -> DataFrame: ...
-    @property
-    @override
-    def dtype(self) -> np.dtype | DatetimeTZDtype: ...
     def shift(
         self, periods: int = 1, freq: Frequency | timedelta | None = None
     ) -> Self: ...

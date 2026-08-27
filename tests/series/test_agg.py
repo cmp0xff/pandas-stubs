@@ -83,7 +83,11 @@ def test_agg_str() -> None:
 
 def test_agg_ts() -> None:
     series = pd.Series(pd.to_datetime(["2025-09-18", "2025-09-18", "2025-09-18"]))
-    check(assert_type(series, "pd.Series[pd.Timestamp]"), pd.Series, pd.Timestamp)
+    check(
+        assert_type(series, "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]"),
+        pd.Series,
+        pd.Timestamp,
+    )
 
     check(assert_type(series.mean(), pd.Timestamp), pd.Timestamp)
     check(assert_type(series.median(), pd.Timestamp), pd.Timestamp)
@@ -97,7 +101,11 @@ def test_agg_ts() -> None:
 
 def test_agg_td() -> None:
     series = pd.Series(pd.to_timedelta(["1 days", "2 days", "3 days"]))
-    check(assert_type(series, "pd.Series[pd.Timedelta]"), pd.Series, pd.Timedelta)
+    check(
+        assert_type(series, "pd.Series[pd.Timedelta, pd.arrays.TimedeltaArray]"),
+        pd.Series,
+        pd.Timedelta,
+    )
 
     check(assert_type(series.mean(), pd.Timedelta), pd.Timedelta)
     check(assert_type(series.median(), pd.Timedelta), pd.Timedelta)

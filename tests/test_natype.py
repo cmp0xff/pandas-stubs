@@ -28,7 +28,8 @@ def test_arithmetic() -> None:
     na = pd.NA
 
     s_int = pd.Series([1, 2, 3], dtype="Int64")
-    idx_int: pd.Index[int] = pd.Index([1, 2, 3], dtype="Int64")
+    idx_int = pd.Index([1, 2, 3], dtype="Int64")
+    check(assert_type(idx_int, "pd.Index[int, pd.arrays.IntegerArray]"), pd.Index)
 
     # __add__
     check(assert_type(na + s_int, pd.Series), pd.Series)
@@ -93,7 +94,7 @@ def test_arithmetic() -> None:
 
     # __rmod__
     check(assert_type(s_int % na, pd.Series), pd.Series)
-    check(assert_type(idx_int % na, "pd.Index[int]"), pd.Index)
+    check(assert_type(idx_int % na, "pd.Index[int, pd.arrays.IntegerArray]"), pd.Index)
     check(assert_type(1 % na, NAType), NAType)
 
     # __divmod__
@@ -101,7 +102,10 @@ def test_arithmetic() -> None:
     # TODO: facebook/pyrefly#3822
     check(
         # pyrefly: ignore[assert-type]
-        assert_type(divmod(na, idx_int), tuple[pd.Index, pd.Index]),
+        assert_type(  # type: ignore[assert-type] # ty: ignore[type-assertion-failure]
+            divmod(na, idx_int),
+            "tuple[pd.Index[int, pd.arrays.IntegerArray], pd.Index[int, pd.arrays.IntegerArray]]",
+        ),
         tuple,
         pd.Index,
     )
@@ -118,12 +122,18 @@ def test_arithmetic() -> None:
 
     # __rdivmod__
     check(
-        assert_type(divmod(s_int, na), "tuple[pd.Series[int], pd.Series[int]]"),
+        assert_type(
+            divmod(s_int, na),
+            "tuple[pd.Series[int, pd.arrays.IntegerArray], pd.Series[int, pd.arrays.IntegerArray]]",
+        ),
         tuple,
         pd.Series,
     )
     check(
-        assert_type(divmod(idx_int, na), "tuple[pd.Index[int], pd.Index[int]]"),
+        assert_type(
+            divmod(idx_int, na),
+            "tuple[pd.Index[int, pd.arrays.IntegerArray], pd.Index[int, pd.arrays.IntegerArray]]",
+        ),
         tuple,
         pd.Index,
     )
@@ -166,7 +176,7 @@ def test_arithmetic() -> None:
 
     # __rpow__
     check(assert_type(s_int**na, pd.Series), pd.Series)
-    check(assert_type(idx_int**na, "pd.Index[int]"), pd.Index)
+    check(assert_type(idx_int**na, "pd.Index[int, pd.arrays.IntegerArray]"), pd.Index)
     check(assert_type(2**na, NAType), NAType)
 
     # __and__

@@ -12,7 +12,11 @@ from tests import check
 def left() -> "pd.Index[complex]":
     """Left operand"""
     lo = pd.Index([1j, 2j, 3j])
-    return check(assert_type(lo, "pd.Index[complex]"), pd.Index, np.complexfloating)
+    return check(
+        assert_type(lo, "pd.Index[complex, pd.arrays.NumpyExtensionArray]"),
+        pd.Index,
+        np.complexfloating,
+    )
 
 
 def test_truediv_py_scalar(left: "pd.Index[complex]") -> None:

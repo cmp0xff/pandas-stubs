@@ -142,9 +142,9 @@ def test_floordiv_pd_index(left_i: pd.Index) -> None:
         _04 = left_i // s  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation]
         _05 = left_i // d  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation]
 
-    check(assert_type(b // left_i, pd.Index), pd.Index, np.integer)
-    check(assert_type(i // left_i, pd.Index), pd.Index, np.integer)
-    check(assert_type(f // left_i, pd.Index), pd.Index, np.floating)
+    check(assert_type(b // left_i, pd.Index), pd.Index, np.integer)  # type: ignore[assert-type]
+    check(assert_type(i // left_i, pd.Index), pd.Index, np.integer)  # type: ignore[assert-type]
+    check(assert_type(f // left_i, pd.Index), pd.Index, np.floating)  # type: ignore[assert-type]
     if TYPE_CHECKING_INVALID_USAGE:
         _13 = c // left_i  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation]
         _14 = s // left_i  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation]

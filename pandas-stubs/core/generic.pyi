@@ -69,7 +69,6 @@ from pandas.io.sql import SQLTable
 class NDFrame:
     __hash__: ClassVar[None]  # type: ignore[assignment] # pyright: ignore[reportIncompatibleMethodOverride]
 
-    @final
     def set_flags(
         self,
         *,
@@ -87,9 +86,7 @@ class NDFrame:
     @property
     def size(self) -> int: ...
     def equals(self, other: Series) -> _bool: ...
-    @final
     def __neg__(self) -> Self: ...
-    @final
     def __pos__(self) -> Self: ...
     @final
     def __nonzero__(self) -> None: ...
@@ -455,7 +452,6 @@ class NDFrame:
         *args: Any,
         **kwargs: Any,
     ) -> T: ...
-    @final
     def convert_dtypes(
         self,
         infer_objects: _bool = True,

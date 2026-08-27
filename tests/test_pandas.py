@@ -1070,14 +1070,14 @@ def test_cut() -> None:
     check(
         assert_type(
             pd.cut(s1, bins=[np.datetime64("2020-01-03"), np.datetime64("2020-09-01")]),
-            "pd.Series[pd.CategoricalDtype]",
+            "pd.Series[Any, pd.Categorical[Any]]",
         ),
         pd.Series,
     )
     check(
         assert_type(
             pd.cut(s1, bins=10),
-            "pd.Series[pd.CategoricalDtype]",
+            "pd.Series[Any, pd.Categorical[Any]]",
         ),
         pd.Series,
         pd.Interval,

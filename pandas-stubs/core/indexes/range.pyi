@@ -11,6 +11,7 @@ from typing import (
 import numpy as np
 from pandas._stubs_only import IndexSubclassBase
 from pandas.core.arrays.boolean import BooleanArray
+from pandas.core.arrays.numpy_ import NumpyExtensionArray
 from pandas.core.base import IndexOpsMixin
 from pandas.core.indexes.base import Index
 from typing_extensions import override
@@ -26,7 +27,7 @@ from pandas._typing import (
     np_ndarray_bool,
 )
 
-class RangeIndex(IndexSubclassBase[int, np.int64]):
+class RangeIndex(IndexSubclassBase[int, np.int64, NumpyExtensionArray]):
     def __new__(
         cls,
         start: int | RangeIndex | range | None = None,
@@ -46,9 +47,6 @@ class RangeIndex(IndexSubclassBase[int, np.int64]):
     def stop(self) -> int: ...
     @property
     def step(self) -> int: ...
-    @property
-    @override
-    def dtype(self) -> np.dtype: ...
     @override
     def factorize(
         self, sort: bool = False, use_na_sentinel: bool = True
@@ -61,7 +59,7 @@ class RangeIndex(IndexSubclassBase[int, np.int64]):
         self, other: Sequence[int] | Index[int] | Self, sort: bool | None = None
     ) -> Index[int] | Self: ...
     @overload
-    def union(
+    def union(  # pyright: ignore[reportIncompatibleMethodOverride] # ty: ignore[invalid-method-override]
         self, other: Sequence[HashableT] | Index, sort: bool | None = None
     ) -> Index: ...
     @overload  # type: ignore[override]
@@ -74,7 +72,7 @@ class RangeIndex(IndexSubclassBase[int, np.int64]):
         self, idx: int
     ) -> int: ...
     @override
-    def where(  # type: ignore[override] # pyrefly: ignore[bad-override]
+    def where(  # type: ignore[override] # pyright: ignore[reportIncompatibleMethodOverride] # pyrefly: ignore[bad-override] # ty: ignore[invalid-method-override]
         self,
         cond: Sequence[bool] | np_ndarray_bool | BooleanArray | IndexOpsMixin[bool],
         other: Scalar | AnyArrayLike | None = None,

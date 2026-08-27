@@ -1109,7 +1109,9 @@ def test_timestamp_add_sub() -> None:
     as_timedelta_index = pd.to_timedelta([1, 2, 3], unit="D")
     as_timedelta_series = pd.Series(as_timedelta_index)
     check(
-        assert_type(as_timedelta_series, "pd.Series[pd.Timedelta]"),
+        assert_type(
+            as_timedelta_series, "pd.Series[pd.Timedelta, pd.arrays.TimedeltaArray]"
+        ),
         pd.Series,
         pd.Timedelta,
     )
@@ -1229,7 +1231,11 @@ def test_timestamp_cmp_scalar() -> None:
 def test_timestamp_cmp_series() -> None:
     ts = pd.Timestamp(year=2000, month=3, day=24, hour=12, minute=27)
     ts_ser = pd.Series(pd.DatetimeIndex(["2000-1-1", "2000-1-2"]))
-    check(assert_type(ts_ser, "pd.Series[pd.Timestamp]"), pd.Series, pd.Timestamp)
+    check(
+        assert_type(ts_ser, "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]"),
+        pd.Series,
+        pd.Timestamp,
+    )
 
     # >, <=
     gt1 = check(assert_type(ts > ts_ser, "pd.Series[bool]"), pd.Series, np.bool)
@@ -1575,7 +1581,11 @@ def test_types_timestamp_series_comparisons() -> None:
     data = pd.date_range("2022-01-01", "2022-01-31", freq="D")
     s = pd.Series(data)
     ts2 = pd.Timestamp("2022-01-15")
-    check(assert_type(s, "pd.Series[pd.Timestamp]"), pd.Series, pd.Timestamp)
+    check(
+        assert_type(s, "pd.Series[pd.Timestamp, pd.arrays.DatetimeArray]"),
+        pd.Series,
+        pd.Timestamp,
+    )
     check(assert_type(ts2 <= s, "pd.Series[bool]"), pd.Series, np.bool_)
     check(assert_type(ts2 >= s, "pd.Series[bool]"), pd.Series, np.bool_)
     check(assert_type(ts2 < s, "pd.Series[bool]"), pd.Series, np.bool_)
@@ -1727,9 +1737,17 @@ def test_period_add_subtract() -> None:
     as_period = pd.Period("2012-1-1", freq="D")
     scale = 24 * 60 * 60 * 10**9
     as_td_series = pd.Series(pd.timedelta_range(scale, scale, freq="D"))
-    check(assert_type(as_td_series, "pd.Series[pd.Timedelta]"), pd.Series, pd.Timedelta)
+    check(
+        assert_type(as_td_series, "pd.Series[pd.Timedelta, pd.arrays.TimedeltaArray]"),
+        pd.Series,
+        pd.Timedelta,
+    )
     as_period_series = pd.Series(as_period_index)
-    check(assert_type(as_period_series, "pd.Series[pd.Period]"), pd.Series, pd.Period)
+    check(
+        assert_type(as_period_series, "pd.Series[pd.Period, pd.arrays.PeriodArray]"),
+        pd.Series,
+        pd.Period,
+    )
     as_timedelta_idx = pd.timedelta_range(scale, scale, freq="D")
     as_nat = pd.NaT
 

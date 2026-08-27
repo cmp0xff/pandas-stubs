@@ -23,7 +23,11 @@ from tests import (
 def left() -> "pd.Index[float]":
     """Left operand"""
     lo = pd.Index([1.0, 2.0, 3.0])
-    return check(assert_type(lo, "pd.Index[float]"), pd.Index, np.floating)
+    return check(
+        assert_type(lo, "pd.Index[float, pd.arrays.NumpyExtensionArray]"),
+        pd.Index,
+        np.floating,
+    )
 
 
 def test_truediv_py_scalar(left: "pd.Index[float]") -> None:

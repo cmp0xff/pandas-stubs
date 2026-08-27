@@ -31,17 +31,15 @@ import uuid
 
 import numpy as np
 import pandas as pd
-from pandas.api.extensions import (
-    ExtensionArray,
-    ExtensionDtype,
-)
+from pandas.api.extensions import ExtensionDtype
 from pandas.api.typing import NAType
-from pandas.api.typing.aliases import (
-    DtypeObj,
-    Scalar,
-)
+from pandas.api.typing.aliases import Scalar
 from pandas.core.arrays.datetimes import DatetimeArray
-from pandas.core.arrays.string_ import BaseStringArray
+from pandas.core.arrays.integer import IntegerDtype
+from pandas.core.arrays.string_ import (
+    BaseStringArray,
+    StringDtype,
+)
 from pandas.core.arrays.timedeltas import TimedeltaArray
 from pandas.core.window import ExponentialMovingWindow
 from pandas.core.window.expanding import Expanding
@@ -149,19 +147,25 @@ def test_types_init() -> None:
 
     pd.Series([], pd.DatetimeIndex([]), float, "name")
     check(
-        assert_type(pd.Series([1.0], pd.DatetimeIndex([1]), float), "pd.Series[float]"),
+        assert_type(
+            pd.Series([1.0], pd.DatetimeIndex([1]), float),
+            "pd.Series[float, pd.arrays.NumpyExtensionArray]",
+        ),
         pd.Series,
         float,
     )
     check(
-        assert_type(pd.Series([1.0], pd.Index([1]), float, "f"), "pd.Series[float]"),
+        assert_type(
+            pd.Series([1.0], pd.Index([1]), float, "f"),
+            "pd.Series[float, pd.arrays.NumpyExtensionArray]",
+        ),
         pd.Series,
         float,
     )
     check(
         assert_type(
             pd.Series([pd.Interval(pd.Timestamp(0), pd.Timestamp(1))]),
-            "pd.Series[pd.Interval[pd.Timestamp]]",
+            "pd.Series[pd.Interval[pd.Timestamp], pd.arrays.IntervalArray]",
         ),
         pd.Series,
         pd.Interval,
@@ -206,7 +210,11 @@ def test_types_csv(tmp_path: Path) -> None:
 
 def test_types_copy() -> None:
     s = pd.Series(data=[1, 2, 3, 4])
-    check(assert_type(s.copy(), "pd.Series[int]"), pd.Series, np.integer)
+    check(
+        assert_type(s.copy(), "pd.Series[int, pd.arrays.NumpyExtensionArray]"),
+        pd.Series,
+        np.integer,
+    )
 
 
 def test_types_df_to_df_comparison() -> None:
@@ -255,18 +263,37 @@ def test_types_setting() -> None:
 
 def test_types_drop() -> None:
     s = pd.Series([0, 1, 2])
-    check(assert_type(s.drop(0), "pd.Series[int]"), pd.Series, np.integer)
-    check(assert_type(s.drop([0, 1]), "pd.Series[int]"), pd.Series, np.integer)
-    check(assert_type(s.drop(0, axis=0), "pd.Series[int]"), pd.Series, np.integer)
+    check(
+        assert_type(s.drop(0), "pd.Series[int, pd.arrays.NumpyExtensionArray]"),
+        pd.Series,
+        np.integer,
+    )
+    check(
+        assert_type(s.drop([0, 1]), "pd.Series[int, pd.arrays.NumpyExtensionArray]"),
+        pd.Series,
+        np.integer,
+    )
+    check(
+        assert_type(s.drop(0, axis=0), "pd.Series[int, pd.arrays.NumpyExtensionArray]"),
+        pd.Series,
+        np.integer,
+    )
     assert assert_type(s.drop([0, 1], inplace=True, errors="raise"), None) is None
     assert assert_type(s.drop([0, 1], inplace=True, errors="ignore"), None) is None
     # GH 302
     s = pd.Series([0, 1, 2])
     check(
-        assert_type(s.drop(pd.Index([0, 1])), "pd.Series[int]"), pd.Series, np.integer
+        assert_type(
+            s.drop(pd.Index([0, 1])), "pd.Series[int, pd.arrays.NumpyExtensionArray]"
+        ),
+        pd.Series,
+        np.integer,
     )
     check(
-        assert_type(s.drop(index=pd.Index([0, 1])), "pd.Series[int]"),
+        assert_type(
+            s.drop(index=pd.Index([0, 1])),
+            "pd.Series[int, pd.arrays.NumpyExtensionArray]",
+        ),
         pd.Series,
         np.integer,
     )
@@ -297,7 +324,10 @@ def test_types_drop_multilevel() -> None:
     )
     s = pd.Series(data=[1, 2, 3, 4, 5, 6], index=index)
     check(
-        assert_type(s.drop(labels="first", level=1), "pd.Series[int]"),
+        assert_type(
+            s.drop(labels="first", level=1),
+            "pd.Series[int, pd.arrays.NumpyExtensionArray]",
+        ),
         pd.Series,
         np.integer,
     )
@@ -305,7 +335,13 @@ def test_types_drop_multilevel() -> None:
 
 def test_types_drop_duplicates() -> None:
     s = pd.Series([1.0, 2.0, 2.0])
-    check(assert_type(s.drop_duplicates(), "pd.Series[float]"), pd.Series, float)
+    check(
+        assert_type(
+            s.drop_duplicates(), "pd.Series[float, pd.arrays.NumpyExtensionArray]"
+        ),
+        pd.Series,
+        float,
+    )
 
     with pytest_warns_bounded(
         Pandas4Warning, "The inplace keyword in Series", lower="3.0.99"
@@ -323,7 +359,11 @@ def test_types_drop_duplicates() -> None:
 
 def test_types_dropna() -> None:
     s = pd.Series([1.0, np.nan, np.nan])
-    check(assert_type(s.dropna(), "pd.Series[float]"), pd.Series, float)
+    check(
+        assert_type(s.dropna(), "pd.Series[float, pd.arrays.NumpyExtensionArray]"),
+        pd.Series,
+        float,
+    )
 
     with pytest_warns_bounded(
         Pandas4Warning, "The inplace keyword in Series", lower="3.0.99"
@@ -379,9 +419,16 @@ def test_types_fillna() -> None:
 
 def test_types_sort_index() -> None:
     s = pd.Series([1, 2, 3], index=[2, 3, 1])
-    check(assert_type(s.sort_index(), "pd.Series[int]"), pd.Series, np.integer)
     check(
-        assert_type(s.sort_index(ascending=False), "pd.Series[int]"),
+        assert_type(s.sort_index(), "pd.Series[int, pd.arrays.NumpyExtensionArray]"),
+        pd.Series,
+        np.integer,
+    )
+    check(
+        assert_type(
+            s.sort_index(ascending=False),
+            "pd.Series[int, pd.arrays.NumpyExtensionArray]",
+        ),
         pd.Series,
         np.integer,
     )
@@ -393,7 +440,10 @@ def test_types_sort_index() -> None:
     ):
         assert assert_type(s.sort_index(ascending=False, inplace=True), None) is None
     check(
-        assert_type(s.sort_index(kind="mergesort"), "pd.Series[int]"),
+        assert_type(
+            s.sort_index(kind="mergesort"),
+            "pd.Series[int, pd.arrays.NumpyExtensionArray]",
+        ),
         pd.Series,
         np.integer,
     )
@@ -403,7 +453,10 @@ def test_types_sort_index() -> None:
 def test_types_sort_index_with_key() -> None:
     s = pd.Series([1, 2, 3], index=["a", "B", "c"])
     check(
-        assert_type(s.sort_index(key=lambda k: k.str.lower()), "pd.Series[int]"),
+        assert_type(
+            s.sort_index(key=lambda k: k.str.lower()),
+            "pd.Series[int, pd.arrays.NumpyExtensionArray]",
+        ),
         pd.Series,
         np.integer,
     )
@@ -411,12 +464,25 @@ def test_types_sort_index_with_key() -> None:
 
 def test_types_sort_values() -> None:
     s = pd.Series([4, 2, 1, 3])
-    check(assert_type(s.sort_values(), "pd.Series[int]"), pd.Series, np.integer)
+    check(
+        assert_type(s.sort_values(), "pd.Series[int, pd.arrays.NumpyExtensionArray]"),
+        pd.Series,
+        np.integer,
+    )
     if TYPE_CHECKING_INVALID_USAGE:
         s.sort_values(0)  # type: ignore[call-overload] # pyright: ignore[reportCallIssue] # pyrefly: ignore[no-matching-overload]
-    check(assert_type(s.sort_values(axis=0), "pd.Series[int]"), pd.Series, np.integer)
     check(
-        assert_type(s.sort_values(ascending=False), "pd.Series[int]"),
+        assert_type(
+            s.sort_values(axis=0), "pd.Series[int, pd.arrays.NumpyExtensionArray]"
+        ),
+        pd.Series,
+        np.integer,
+    )
+    check(
+        assert_type(
+            s.sort_values(ascending=False),
+            "pd.Series[int, pd.arrays.NumpyExtensionArray]",
+        ),
         pd.Series,
         np.integer,
     )
@@ -428,12 +494,18 @@ def test_types_sort_values() -> None:
     ):
         assert assert_type(s.sort_values(inplace=True, kind="quicksort"), None) is None
     check(
-        assert_type(s.sort_values(na_position="last"), "pd.Series[int]"),
+        assert_type(
+            s.sort_values(na_position="last"),
+            "pd.Series[int, pd.arrays.NumpyExtensionArray]",
+        ),
         pd.Series,
         np.integer,
     )
     check(
-        assert_type(s.sort_values(ignore_index=True), "pd.Series[int]"),
+        assert_type(
+            s.sort_values(ignore_index=True),
+            "pd.Series[int, pd.arrays.NumpyExtensionArray]",
+        ),
         pd.Series,
         np.integer,
     )
@@ -443,7 +515,10 @@ def test_types_sort_values() -> None:
 def test_types_sort_values_with_key() -> None:
     s = pd.Series([1, 2, 3], index=[2, 3, 1])
     check(
-        assert_type(s.sort_values(key=lambda k: -k), "pd.Series[int]"),
+        assert_type(
+            s.sort_values(key=lambda k: -k),
+            "pd.Series[int, pd.arrays.NumpyExtensionArray]",
+        ),
         pd.Series,
         np.integer,
     )
@@ -536,25 +611,36 @@ def test_types_sum() -> None:
     # 2. Runtime return types of `series.sum(min_count=...)` are NOT
     #    tested (because of potential `nan`s).
 
-    s0 = assert_type(pd.Series([1.0, 2.0, 3.0, np.nan]), "pd.Series[float]")
+    s0 = assert_type(
+        pd.Series([1.0, 2.0, 3.0, np.nan]),
+        "pd.Series[float, pd.arrays.NumpyExtensionArray]",
+    )
     check(assert_type(s0.sum(), float), np.float64)
     check(assert_type(s0.sum(skipna=False), float), np.float64)
     check(assert_type(s0.sum(numeric_only=False), float), np.float64)
     assert_type(s0.sum(min_count=4), float)
 
-    s1 = assert_type(pd.Series([False, True], dtype=bool), "pd.Series[bool]")
+    s1 = assert_type(
+        pd.Series([False, True], dtype=bool),
+        "pd.Series[bool, pd.arrays.NumpyExtensionArray]",
+    )
     check(assert_type(s1.sum(), "int"), np.integer)
     check(assert_type(s1.sum(skipna=False), "int"), np.integer)
     check(assert_type(s1.sum(numeric_only=False), "int"), np.integer)
     assert_type(s1.sum(min_count=4), "int")
 
-    s2 = assert_type(pd.Series([0, 1], dtype=int), "pd.Series[int]")
+    s2 = assert_type(
+        pd.Series([0, 1], dtype=int), "pd.Series[int, pd.arrays.NumpyExtensionArray]"
+    )
     check(assert_type(s2.sum(), "int"), np.integer)
     check(assert_type(s2.sum(skipna=False), "int"), np.integer)
     check(assert_type(s2.sum(numeric_only=False), "int"), np.integer)
     assert_type(s2.sum(min_count=4), "int")
 
-    s3 = assert_type(pd.Series([1, 2, 3, np.nan], dtype=float), "pd.Series[float]")
+    s3 = assert_type(
+        pd.Series([1, 2, 3, np.nan], dtype=float),
+        "pd.Series[float, pd.arrays.NumpyExtensionArray]",
+    )
     check(assert_type(s3.sum(), "float"), np.float64)
     check(assert_type(s3.sum(skipna=False), "float"), np.float64)
     check(assert_type(s3.sum(numeric_only=False), "float"), np.float64)
@@ -625,7 +711,10 @@ def test_types_clip() -> None:
     lower = pd.Series([-10, -10, -3, -10])
     upper = pd.Series([50, 52, 53, 51])
     check(
-        assert_type(s.clip(lower=None, upper=None), "pd.Series[int]"),
+        assert_type(
+            s.clip(lower=None, upper=None),
+            "pd.Series[int]",
+        ),
         pd.Series,
         np.integer,
     )
@@ -643,7 +732,10 @@ def test_types_clip() -> None:
         np.integer,
     )
     check(
-        assert_type(s.clip(lower=None, upper=None, inplace=True), "pd.Series[int]"),
+        assert_type(
+            s.clip(lower=None, upper=None, inplace=True),
+            "pd.Series[int]",
+        ),
         pd.Series,
         np.integer,
     )
@@ -658,7 +750,10 @@ def test_types_clip() -> None:
         np.integer,
     )
     check(
-        assert_type(s.clip(lower=None, upper=None, inplace=True), "pd.Series[int]"),
+        assert_type(
+            s.clip(lower=None, upper=None, inplace=True),
+            "pd.Series[int]",
+        ),
         pd.Series,
         np.integer,
     )
@@ -704,10 +799,17 @@ def test_types_clip() -> None:
     )
 
     # without lower
-    check(assert_type(s.clip(upper=None), "pd.Series[int]"), pd.Series, np.integer)
+    check(
+        assert_type(s.clip(upper=None), "pd.Series[int]"),
+        pd.Series,
+        np.integer,
+    )
     check(assert_type(s.clip(upper=5), "pd.Series[int]"), pd.Series, np.integer)
     check(
-        assert_type(s.clip(upper=None, inplace=True), "pd.Series[int]"),
+        assert_type(
+            s.clip(upper=None, inplace=True),
+            "pd.Series[int]",
+        ),
         pd.Series,
         np.integer,
     )
@@ -744,11 +846,22 @@ def test_types_clip() -> None:
     )
 
     # without upper
-    check(assert_type(s.clip(lower=None), "pd.Series[int]"), pd.Series, np.integer)
-    check(assert_type(s.clip(lower=0), "pd.Series[int]"), pd.Series, np.integer)
-    check(assert_type(s.clip(lower=None), "pd.Series[int]"), pd.Series, np.integer)
     check(
-        assert_type(s.clip(lower=None, inplace=True), "pd.Series[int]"),
+        assert_type(s.clip(lower=None), "pd.Series[int]"),
+        pd.Series,
+        np.integer,
+    )
+    check(assert_type(s.clip(lower=0), "pd.Series[int]"), pd.Series, np.integer)
+    check(
+        assert_type(s.clip(lower=None), "pd.Series[int]"),
+        pd.Series,
+        np.integer,
+    )
+    check(
+        assert_type(
+            s.clip(lower=None, inplace=True),
+            "pd.Series[int]",
+        ),
         pd.Series,
         np.integer,
     )
@@ -758,7 +871,10 @@ def test_types_clip() -> None:
         np.integer,
     )
     check(
-        assert_type(s.clip(lower=None, inplace=True), "pd.Series[int]"),
+        assert_type(
+            s.clip(lower=None, inplace=True),
+            "pd.Series[int]",
+        ),
         pd.Series,
         np.integer,
     )
@@ -897,7 +1013,16 @@ def test_types_element_wise_arithmetic() -> None:
     _res_pow: pd.Series = s ** s2.abs()
     _res_pow2: pd.Series = s.pow(s2.abs(), fill_value=0)
 
-    check(assert_type(divmod(s, s2), tuple["pd.Series[int]", "pd.Series[int]"]), tuple)
+    check(
+        assert_type(
+            divmod(s, s2),
+            tuple[
+                "pd.Series[int, pd.arrays.NumpyExtensionArray]",
+                "pd.Series[int, pd.arrays.NumpyExtensionArray]",
+            ],
+        ),
+        tuple,
+    )
 
 
 def test_types_bool_removed() -> None:
@@ -1453,23 +1578,19 @@ def test_types_rename_axis() -> None:
 
 def test_types_values() -> None:
     check(
-        assert_type(
-            pd.Series([1, 2, 3]).values, np_1darray | ExtensionArray | pd.Categorical
-        ),
+        assert_type(pd.Series([1, 2, 3]).values, np_1darray),
         np_1darray,
         np.integer,
     )
     check(
-        assert_type(
-            pd.Series(list("aabc")).values, np_1darray | ExtensionArray | pd.Categorical
-        ),
+        assert_type(pd.Series(list("aabc")).values, BaseStringArray),
         BaseStringArray,
         str,
     )
     check(
         assert_type(
             pd.Series(list("aabc")).astype("category").values,
-            np_1darray | ExtensionArray | pd.Categorical,
+            "pd.Categorical[str]",
         ),
         pd.Categorical,
         str,
@@ -1482,7 +1603,7 @@ def test_types_values() -> None:
         check(
             assert_type(
                 pd.Series(pd.date_range("20130101", periods=3, tz="US/Eastern")).values,
-                np_1darray | ExtensionArray | pd.Categorical,
+                np_1darray,
             ),
             np_1darray,
             np.datetime64,
@@ -1492,28 +1613,51 @@ def test_types_values() -> None:
 def test_types_rename() -> None:
     # Scalar
     s1 = pd.Series([1, 2, 3]).rename("A")
-    check(assert_type(s1, "pd.Series[int]"), pd.Series, np.integer)
+    check(
+        assert_type(s1, "pd.Series[int, pd.arrays.NumpyExtensionArray]"),
+        pd.Series,
+        np.integer,
+    )
     # Hashable Sequence
     s2 = pd.Series([1, 2, 3]).rename(("A", "B"))
-    check(assert_type(s2, "pd.Series[int]"), pd.Series, np.integer)
+    check(
+        assert_type(s2, "pd.Series[int, pd.arrays.NumpyExtensionArray]"),
+        pd.Series,
+        np.integer,
+    )
 
     # Optional
     s3 = pd.Series([1, 2, 3]).rename(None)
-    check(assert_type(s3, "pd.Series[int]"), pd.Series, np.integer)
+    check(
+        assert_type(s3, "pd.Series[int, pd.arrays.NumpyExtensionArray]"),
+        pd.Series,
+        np.integer,
+    )
 
     # Functions
     def add1(x: int) -> int:
         return x + 1
 
     s4 = pd.Series([1, 2, 3]).rename(add1)
-    check(assert_type(s4, "pd.Series[int]"), pd.Series, np.integer)
+    check(
+        assert_type(s4, "pd.Series[int, pd.arrays.NumpyExtensionArray]"),
+        pd.Series,
+        np.integer,
+    )
 
     # Dictionary
     s5 = pd.Series([1, 2, 3]).rename({1: 10})
-    check(assert_type(s5, "pd.Series[int]"), pd.Series, np.integer)
+    check(
+        assert_type(s5, "pd.Series[int, pd.arrays.NumpyExtensionArray]"),
+        pd.Series,
+        np.integer,
+    )
     # inplace
     check(
-        assert_type(pd.Series([1, 2, 3]).rename("A", inplace=True), "pd.Series[int]"),
+        assert_type(
+            pd.Series([1, 2, 3]).rename("A", inplace=True),
+            "pd.Series[int, pd.arrays.NumpyExtensionArray]",
+        ),
         pd.Series,
         np.integer,
     )
@@ -1523,7 +1667,8 @@ def test_types_rename() -> None:
     )
     check(
         assert_type(
-            pd.Series([1, 2, 3]).rename(index=None, inplace=True), "pd.Series[int]"
+            pd.Series([1, 2, 3]).rename(index=None, inplace=True),
+            "pd.Series[int, pd.arrays.NumpyExtensionArray]",
         ),
         pd.Series,
         np.integer,
@@ -1584,21 +1729,27 @@ def test_types_ewm() -> None:
 
 def test_types_astype() -> None:
     s1 = pd.Series([1, 2, 8, 9])
-    check(assert_type(s1.astype("int32"), "pd.Series[int]"), pd.Series, np.int32)
+    check(
+        assert_type(
+            s1.astype("int32"), "pd.Series[int, pd.arrays.NumpyExtensionArray]"
+        ),
+        pd.Series,
+        np.int32,
+    )
 
     df = pd.DataFrame({"A": s1})
     s2 = df["A"]
     check(
-        assert_type(s2.astype("category"), "pd.Series[pd.CategoricalDtype[Any]]"),
+        assert_type(s2.astype("category"), "pd.Series[Any, pd.Categorical[Any]]"),
         pd.Series,
         np.int64,
     )
 
     s3 = pd.Series(pd.Series([1, 2, 3, 1, 3]), dtype="category")
-    check(assert_type(s3, "pd.Series[pd.CategoricalDtype[int]]"), pd.Series, np.int64)
+    check(assert_type(s3, "pd.Series[int, pd.Categorical[int]]"), pd.Series, np.int64)
 
     s4 = pd.Series(pd.Index([1, 2, 3, 1, 3]), dtype="category")
-    check(assert_type(s4, "pd.Series[pd.CategoricalDtype[int]]"), pd.Series, np.int64)
+    check(assert_type(s4, "pd.Series[int, pd.Categorical[int]]"), pd.Series, np.int64)
 
 
 def test_types_dot() -> None:
@@ -1633,11 +1784,23 @@ def test_reset_index() -> None:
     r3 = s.reset_index("ab")
     check(assert_type(r3, pd.DataFrame), pd.DataFrame)
     r4 = s.reset_index(drop=True)
-    check(assert_type(r4, "pd.Series[int]"), pd.Series, np.integer)
+    check(
+        assert_type(r4, "pd.Series[int, pd.arrays.NumpyExtensionArray]"),
+        pd.Series,
+        np.integer,
+    )
     r5 = s.reset_index(["ab"], drop=True)
-    check(assert_type(r5, "pd.Series[int]"), pd.Series, np.integer)
+    check(
+        assert_type(r5, "pd.Series[int, pd.arrays.NumpyExtensionArray]"),
+        pd.Series,
+        np.integer,
+    )
     r6 = s.reset_index(["ab"], drop=True, allow_duplicates=True)
-    check(assert_type(r6, "pd.Series[int]"), pd.Series, np.integer)
+    check(
+        assert_type(r6, "pd.Series[int, pd.arrays.NumpyExtensionArray]"),
+        pd.Series,
+        np.integer,
+    )
     assert assert_type(s.reset_index(inplace=True, drop=True), None) is None
 
 
@@ -1649,14 +1812,24 @@ def test_series_dtype() -> None:
 def test_types_replace() -> None:
     # GH 44
     s = pd.Series([1, 2, 3])
-    check(assert_type(s.replace(1, 2), "pd.Series[int]"), pd.Series, np.integer)
     check(
-        assert_type(s.replace(1, 2, inplace=False), "pd.Series[int]"),
+        assert_type(s.replace(1, 2), "pd.Series[int]"),
         pd.Series,
         np.integer,
     )
     check(
-        assert_type(s.replace(1, 2, inplace=True), "pd.Series[int]"),
+        assert_type(
+            s.replace(1, 2, inplace=False),
+            "pd.Series[int]",
+        ),
+        pd.Series,
+        np.integer,
+    )
+    check(
+        assert_type(
+            s.replace(1, 2, inplace=True),
+            "pd.Series[int]",
+        ),
         pd.Series,
         np.integer,
     )
@@ -1664,7 +1837,9 @@ def test_types_replace() -> None:
 
 def test_series_replace() -> None:
     s = check(
-        assert_type(pd.Series(["a", "ab", "ba"], name="col1"), "pd.Series[str]"),
+        assert_type(
+            pd.Series(["a", "ab", "ba"], name="col1"), "pd.Series[str, BaseStringArray]"
+        ),
         pd.Series,
         str,
     )
@@ -1723,7 +1898,11 @@ def test_series_replace() -> None:
     )
 
     s_i = pd.Series([1])
-    check(assert_type(s_i.replace({1: 2}), "pd.Series[int]"), pd.Series, np.integer)
+    check(
+        assert_type(s_i.replace({1: 2}), "pd.Series[int]"),
+        pd.Series,
+        np.integer,
+    )
 
     if TYPE_CHECKING_INVALID_USAGE:
         s.replace({"1": "2"}, regex={"1": "2"})  # type: ignore[call-overload] # pyright: ignore[reportArgumentType,reportCallIssue] # pyrefly: ignore[no-matching-overload]
@@ -1739,7 +1918,7 @@ def test_cat_accessor() -> None:
     ser = pd.Series([1, 2, 3], name="A").astype("category")
     check(
         assert_type(
-            ser.cat.set_categories([1, 2, 3]), "pd.Series[pd.CategoricalDtype[int]]"
+            ser.cat.set_categories([1, 2, 3]), "pd.Series[int, pd.Categorical[int]]"
         ),
         pd.Series,
         np.integer,
@@ -1747,44 +1926,45 @@ def test_cat_accessor() -> None:
     check(
         assert_type(
             ser.cat.reorder_categories([2, 3, 1], ordered=True),
-            "pd.Series[pd.CategoricalDtype[int]]",
+            "pd.Series[int, pd.Categorical[int]]",
         ),
         pd.Series,
         np.integer,
     )
     check(
         assert_type(
-            ser.cat.rename_categories([1, 2, 3]), "pd.Series[pd.CategoricalDtype[int]]"
+            ser.cat.rename_categories([1, 2, 3]),
+            "pd.Series[int, pd.Categorical[int]]",
         ),
         pd.Series,
         np.integer,
     )
     check(
         assert_type(
-            ser.cat.remove_unused_categories(), "pd.Series[pd.CategoricalDtype[int]]"
+            ser.cat.remove_unused_categories(), "pd.Series[int, pd.Categorical[int]]"
         ),
         pd.Series,
         np.integer,
     )
     check(
         assert_type(
-            ser.cat.remove_categories([2]), "pd.Series[pd.CategoricalDtype[int]]"
+            ser.cat.remove_categories([2]), "pd.Series[int, pd.Categorical[int]]"
         ),
         pd.Series,
         np.integer,
     )
     check(
-        assert_type(ser.cat.add_categories([4]), "pd.Series[pd.CategoricalDtype[int]]"),
+        assert_type(ser.cat.add_categories([4]), "pd.Series[int, pd.Categorical[int]]"),
         pd.Series,
         np.integer,
     )
     check(
-        assert_type(ser.cat.as_ordered(), "pd.Series[pd.CategoricalDtype[int]]"),
+        assert_type(ser.cat.as_ordered(), "pd.Series[int, pd.Categorical[int]]"),
         pd.Series,
         np.integer,
     )
     check(
-        assert_type(ser.cat.as_unordered(), "pd.Series[pd.CategoricalDtype[int]]"),
+        assert_type(ser.cat.as_unordered(), "pd.Series[int, pd.Categorical[int]]"),
         pd.Series,
         np.integer,
     )
@@ -1844,17 +2024,19 @@ def test_categorical_codes() -> None:
 
     sr_int = pd.Series([1], dtype="category")
     check(
-        assert_type(sr_int, "pd.Series[pd.CategoricalDtype[int]]"),
+        assert_type(sr_int, "pd.Series[int, pd.Categorical[int]]"),
         pd.Series,
         np.integer,
     )
 
     sr_str = pd.Series(["a", "b"], dtype="category")
-    check(assert_type(sr_str, "pd.Series[pd.CategoricalDtype[str]]"), pd.Series, str)
+    check(assert_type(sr_str, "pd.Series[str, pd.Categorical[str]]"), pd.Series, str)
 
     sr_float = pd.Series([1.0, 2.0], dtype="category")
     check(
-        assert_type(sr_float, "pd.Series[pd.CategoricalDtype[float]]"), pd.Series, float
+        assert_type(sr_float, "pd.Series[float, pd.Categorical[float]]"),
+        pd.Series,
+        float,
     )
 
 
@@ -1941,21 +2123,92 @@ def test_resample() -> None:
     index = pd.date_range("1/1/2000", periods=N, freq="min")
     x = list(range(N))
     s = pd.Series(x, index=index, dtype=float)
-    check(assert_type(s.resample("2min").std(), "pd.Series[float]"), pd.Series, float)
-    check(assert_type(s.resample("2min").var(), "pd.Series[float]"), pd.Series, float)
     check(
-        assert_type(s.resample("2min").quantile(), "pd.Series[float]"), pd.Series, float
+        assert_type(
+            s.resample("2min").std(), "pd.Series[float, pd.arrays.NumpyExtensionArray]"
+        ),
+        pd.Series,
+        float,
     )
-    check(assert_type(s.resample("2min").sum(), "pd.Series[float]"), pd.Series, float)
-    check(assert_type(s.resample("2min").prod(), "pd.Series[float]"), pd.Series, float)
-    check(assert_type(s.resample("2min").min(), "pd.Series[float]"), pd.Series, float)
-    check(assert_type(s.resample("2min").max(), "pd.Series[float]"), pd.Series, float)
-    check(assert_type(s.resample("2min").first(), "pd.Series[float]"), pd.Series, float)
-    check(assert_type(s.resample("2min").last(), "pd.Series[float]"), pd.Series, float)
-    check(assert_type(s.resample("2min").mean(), "pd.Series[float]"), pd.Series, float)
-    check(assert_type(s.resample("2min").sem(), "pd.Series[float]"), pd.Series, float)
     check(
-        assert_type(s.resample("2min").median(), "pd.Series[float]"), pd.Series, float
+        assert_type(
+            s.resample("2min").var(), "pd.Series[float, pd.arrays.NumpyExtensionArray]"
+        ),
+        pd.Series,
+        float,
+    )
+    check(
+        assert_type(
+            s.resample("2min").quantile(),
+            "pd.Series[float, pd.arrays.NumpyExtensionArray]",
+        ),
+        pd.Series,
+        float,
+    )
+    check(
+        assert_type(
+            s.resample("2min").sum(), "pd.Series[float, pd.arrays.NumpyExtensionArray]"
+        ),
+        pd.Series,
+        float,
+    )
+    check(
+        assert_type(
+            s.resample("2min").prod(), "pd.Series[float, pd.arrays.NumpyExtensionArray]"
+        ),
+        pd.Series,
+        float,
+    )
+    check(
+        assert_type(
+            s.resample("2min").min(), "pd.Series[float, pd.arrays.NumpyExtensionArray]"
+        ),
+        pd.Series,
+        float,
+    )
+    check(
+        assert_type(
+            s.resample("2min").max(), "pd.Series[float, pd.arrays.NumpyExtensionArray]"
+        ),
+        pd.Series,
+        float,
+    )
+    check(
+        assert_type(
+            s.resample("2min").first(),
+            "pd.Series[float, pd.arrays.NumpyExtensionArray]",
+        ),
+        pd.Series,
+        float,
+    )
+    check(
+        assert_type(
+            s.resample("2min").last(), "pd.Series[float, pd.arrays.NumpyExtensionArray]"
+        ),
+        pd.Series,
+        float,
+    )
+    check(
+        assert_type(
+            s.resample("2min").mean(), "pd.Series[float, pd.arrays.NumpyExtensionArray]"
+        ),
+        pd.Series,
+        float,
+    )
+    check(
+        assert_type(
+            s.resample("2min").sem(), "pd.Series[float, pd.arrays.NumpyExtensionArray]"
+        ),
+        pd.Series,
+        float,
+    )
+    check(
+        assert_type(
+            s.resample("2min").median(),
+            "pd.Series[float, pd.arrays.NumpyExtensionArray]",
+        ),
+        pd.Series,
+        float,
     )
     check(assert_type(s.resample("2min").ohlc(), pd.DataFrame), pd.DataFrame)
 
@@ -1976,8 +2229,16 @@ def test_neg() -> None:
     # GH 253
     sr = pd.Series([1, 2, 3])
     sr_int = pd.Series([1, 2, 3], dtype=int)
-    check(assert_type(-sr, "pd.Series[int]"), pd.Series, np.integer)
-    check(assert_type(-sr_int, "pd.Series[int]"), pd.Series, np.integer)
+    check(
+        assert_type(-sr, "pd.Series[int]"),
+        pd.Series,
+        np.integer,
+    )
+    check(
+        assert_type(-sr_int, "pd.Series[int]"),
+        pd.Series,
+        np.integer,
+    )
 
 
 def test_getattr() -> None:
@@ -1989,15 +2250,15 @@ def test_getattr() -> None:
 def test_dtype_type() -> None:
     # GH 216
     s1 = pd.Series(["foo"], dtype="string")
-    check(assert_type(s1.dtype, DtypeObj), ExtensionDtype)
+    check(assert_type(s1.dtype, StringDtype), ExtensionDtype)
     check(assert_type(s1.dtype.kind, _DTypeKind), str)
 
     s2 = pd.Series([1], dtype="Int64")
-    check(assert_type(s2.dtype, DtypeObj), ExtensionDtype)
+    check(assert_type(s2.dtype, IntegerDtype), ExtensionDtype)
     check(assert_type(s2.dtype.kind, _DTypeKind), str)
 
     s3 = pd.Series([1, 2, 3])
-    check(assert_type(s3.dtype, DtypeObj), np.dtype)
+    check(assert_type(s3.dtype, np.dtype[np.generic]), np.dtype)
     check(assert_type(s3.dtype.kind, _DTypeKind), str)
 
 
@@ -2684,15 +2945,27 @@ def test_where() -> None:
     def cond1(x: int) -> bool:
         return x % 2 == 0
 
-    check(assert_type(sr.where(cond1, other=0), "pd.Series[int]"), pd.Series, np.int_)
+    check(
+        assert_type(sr.where(cond1, other=0), "pd.Series[int]"),
+        pd.Series,
+        np.int_,
+    )
 
     def cond2(x: pd.Series[int]) -> pd.Series[bool]:
         return x > 1
 
-    check(assert_type(sr.where(cond2, other=0), "pd.Series[int]"), pd.Series, np.int_)
+    check(
+        assert_type(sr.where(cond2, other=0), "pd.Series[int]"),
+        pd.Series,
+        np.int_,
+    )
 
     cond3 = pd.Series([False, True, True])
-    check(assert_type(sr.where(cond3, other=0), "pd.Series[int]"), pd.Series, np.int_)
+    check(
+        assert_type(sr.where(cond3, other=0), "pd.Series[int]"),
+        pd.Series,
+        np.int_,
+    )
 
     sr = pd.Series([1, 2, 3])
     check(
@@ -2701,14 +2974,20 @@ def test_where() -> None:
 
     sr_n = pd.Series([1.0, 2.3, 3.5])
     check(
-        assert_type(sr_n.where(sr > 1, 0), "pd.Series[float]"), pd.Series, np.floating
+        assert_type(sr_n.where(sr > 1, 0), "pd.Series[float]"),
+        pd.Series,
+        np.floating,
     )
 
 
 def test_where_with_none() -> None:
     # https://github.com/vega/altair/issues/3961
     s = pd.Series([1.5, 2.6])
-    check(assert_type(s.where(s > 1, None), "pd.Series[float]"), pd.Series, float)
+    check(
+        assert_type(s.where(s > 1, None), "pd.Series[float]"),
+        pd.Series,
+        float,
+    )
 
 
 def test_bitwise_operators() -> None:
@@ -2806,7 +3085,10 @@ def test_series_iloc_series_bool() -> None:
     """Check that Series.__getitem__ supports a Series of boolean."""
     sr = pd.Series([0, 1, 2])
     check(
-        assert_type(sr.iloc[pd.Series([True, False, False])], "pd.Series[int]"),
+        assert_type(
+            sr.iloc[pd.Series([True, False, False])],
+            "pd.Series[int, pd.arrays.NumpyExtensionArray]",
+        ),
         pd.Series,
         np.integer,
     )
@@ -2817,9 +3099,19 @@ def test_loc_str() -> None:
     sr = pd.Series([1, 2, 3, 4], index=["a", "b", "c", "d"])
 
     check(assert_type(sr.loc["b"], int), np.integer)
-    check(assert_type(sr.loc[["b"]], "pd.Series[int]"), pd.Series, np.integer)
+    check(
+        assert_type(sr.loc[["b"]], "pd.Series[int, pd.arrays.NumpyExtensionArray]"),
+        pd.Series,
+        np.integer,
+    )
     check(assert_type(sr.loc[np.str_("a")], int), np.integer)
-    check(assert_type(sr.loc[[np.str_("b")]], "pd.Series[int]"), pd.Series, np.integer)
+    check(
+        assert_type(
+            sr.loc[[np.str_("b")]], "pd.Series[int, pd.arrays.NumpyExtensionArray]"
+        ),
+        pd.Series,
+        np.integer,
+    )
 
 
 def test_change_to_dict_return_type() -> None:
@@ -2927,7 +3219,11 @@ def test_all_astype_args_tested() -> None:
 def test_check_xs() -> None:
     s4 = pd.Series([1, 4])
     s4.xs(0, axis=0)
-    check(assert_type(s4, "pd.Series[int]"), pd.Series, np.integer)
+    check(
+        assert_type(s4, "pd.Series[int, pd.arrays.NumpyExtensionArray]"),
+        pd.Series,
+        np.integer,
+    )
 
     if TYPE_CHECKING_INVALID_USAGE:
         s4.xs([0])  # type: ignore[arg-type] # pyright: ignore[reportArgumentType] # pyrefly: ignore[bad-argument-type]
@@ -2978,13 +3274,17 @@ def test_convert_dtypes_convert_floating() -> None:
         lower="3.0.99",
     ):
         dfn = df.convert_dtypes(convert_floating=False)
-    check(assert_type(dfn, "pd.Series[int]"), pd.Series, np.integer)
+    check(
+        assert_type(dfn, "pd.Series[Any, pd.arrays.ArrowExtensionArray]"),
+        pd.Series,
+        np.integer,
+    )
 
 
 def test_convert_dtypes_dtype_backend() -> None:
     s = pd.Series([1, 2, 3, 4])
     s1 = s.convert_dtypes(dtype_backend="numpy_nullable")
-    check(assert_type(s1, "pd.Series[int]"), pd.Series, np.integer)
+    check(assert_type(s1, pd.Series), pd.Series, np.integer)
 
 
 def test_apply_returns_none() -> None:
@@ -3107,7 +3407,13 @@ def test_rank() -> None:
 def test_round() -> None:
     # GH 791
     check(assert_type(round(pd.DataFrame([])), pd.DataFrame), pd.DataFrame)
-    check(assert_type(round(pd.Series([1], dtype=int)), "pd.Series[int]"), pd.Series)
+    check(
+        assert_type(
+            round(pd.Series([1], dtype=int)),
+            "pd.Series[int, pd.arrays.NumpyExtensionArray]",
+        ),
+        pd.Series,
+    )
 
 
 def test_get() -> None:
@@ -3286,18 +3592,36 @@ def test_series_apply() -> None:
 def test_diff() -> None:
     s = pd.Series([1, 1, 2, 3, 5, 8])
     # int -> float
-    check(assert_type(s.diff(), "pd.Series[float]"), pd.Series, float)
+    check(
+        assert_type(s.diff(), "pd.Series[float, pd.arrays.NumpyExtensionArray]"),
+        pd.Series,
+        float,
+    )
     # unint -> float
-    check(assert_type(s.astype(np.uint32).diff(), "pd.Series[float]"), pd.Series, float)
+    check(
+        assert_type(
+            s.astype(np.uint32).diff(),
+            "pd.Series[float, pd.arrays.NumpyExtensionArray]",
+        ),
+        pd.Series,
+        float,
+    )
     # float -> float
-    check(assert_type(s.astype(float).diff(), "pd.Series[float]"), pd.Series, float)
+    check(
+        assert_type(
+            s.astype(float).diff(),
+            "pd.Series[float, pd.arrays.NumpyExtensionArray]",
+        ),
+        pd.Series,
+        float,
+    )
     # datetime.date -> timeDelta
     check(
         assert_type(
             pd.Series(
                 [datetime.datetime.now().date(), datetime.datetime.now().date()]
             ).diff(),
-            "pd.Series[pd.Timedelta]",
+            "pd.Series[pd.Timedelta, pd.arrays.TimedeltaArray]",
         ),
         pd.Series,
         pd.Timedelta,
@@ -3306,7 +3630,7 @@ def test_diff() -> None:
     # timestamp -> timedelta
     times = pd.Series([pd.Timestamp(0), pd.Timestamp(1)])
     check(
-        assert_type(times.diff(), "pd.Series[pd.Timedelta]"),
+        assert_type(times.diff(), "pd.Series[pd.Timedelta, pd.arrays.TimedeltaArray]"),
         pd.Series,
         pd.Timedelta,
         index_to_check_for_type=-1,
@@ -3315,7 +3639,7 @@ def test_diff() -> None:
     check(
         assert_type(
             pd.Series([pd.Timedelta(0), pd.Timedelta(1)]).diff(),
-            "pd.Series[pd.Timedelta]",
+            "pd.Series[pd.Timedelta, pd.arrays.TimedeltaArray]",
         ),
         pd.Series,
         pd.Timedelta,
@@ -3344,14 +3668,10 @@ def test_diff() -> None:
         index_to_check_for_type=-1,
     )
     # nullable bool -> nullable bool
-    # casting due to pandas-dev/pandas-stubs#1395
     check(
         assert_type(
-            cast(
-                "pd.Series[pd.BooleanDtype]",
-                pd.Series([True, True, False, False, True], dtype="boolean").diff(),
-            ),
-            "pd.Series[pd.BooleanDtype]",
+            pd.Series([True, True, False, False, True], dtype="boolean").diff(),
+            "pd.Series[bool, pd.arrays.BooleanArray]",
         ),
         pd.Series,
         np.bool_,
@@ -3588,7 +3908,7 @@ def test_series_empty_dtype() -> None:
     check(assert_type(pd.Series([]), pd.Series), pd.Series)
     # ensure that an empty string does not get matched to Sequence[Never]
     # pyrefly: ignore[string-as-iterable]
-    check(assert_type(pd.Series(""), "pd.Series[str]"), pd.Series)
+    check(assert_type(pd.Series(""), "pd.Series[str, BaseStringArray]"), pd.Series)
 
 
 def test_series_bool_fails() -> None:
@@ -3621,14 +3941,27 @@ def test_series_keys_type() -> None:
 
 def test_series_int_float() -> None:
     # pyright infers mixtures of int and float in a list as list[int | float]
-    check(assert_type(pd.Series([1, 2, 3]), "pd.Series[int]"), pd.Series, np.integer)
     check(
-        assert_type(pd.Series([1.0, 2.0, 3.0]), "pd.Series[float]"),
+        assert_type(
+            pd.Series([1, 2, 3]), "pd.Series[int, pd.arrays.NumpyExtensionArray]"
+        ),
+        pd.Series,
+        np.integer,
+    )
+    check(
+        assert_type(
+            pd.Series([1.0, 2.0, 3.0]),
+            "pd.Series[float, pd.arrays.NumpyExtensionArray]",
+        ),
         pd.Series,
         np.float64,
     )
     check(
-        assert_type(pd.Series([1, 2.0, 3]), "pd.Series[float]"), pd.Series, np.float64
+        assert_type(
+            pd.Series([1, 2.0, 3]), "pd.Series[float, pd.arrays.NumpyExtensionArray]"
+        ),
+        pd.Series,
+        np.float64,
     )
 
 
@@ -3754,12 +4087,17 @@ def test_series_index_type() -> None:
     lst = [1, 2]
 
     check(
-        assert_type(pd.Series(lst, index=index), "pd.Series[int]"),
+        assert_type(
+            pd.Series(lst, index=index), "pd.Series[int, pd.arrays.NumpyExtensionArray]"
+        ),
         pd.Series,
         np.integer,
     )
     check(
-        assert_type(pd.Series([1, 2], index=index.keys()), "pd.Series[int]"),
+        assert_type(
+            pd.Series([1, 2], index=index.keys()),
+            "pd.Series[int, pd.arrays.NumpyExtensionArray]",
+        ),
         pd.Series,
         np.integer,
     )
@@ -3794,7 +4132,7 @@ def test_timedelta_index_cumprod() -> None:
 def test_series_str_methods() -> None:
     """Test the returns of StringMethods match the type of the input series GH1149."""
     s_str = pd.Series(["a", "b"])
-    check(assert_type(s_str, "pd.Series[str]"), pd.Series, str)
+    check(assert_type(s_str, "pd.Series[str, BaseStringArray]"), pd.Series, str)
     check(assert_type(s_str.str.upper(), "pd.Series[str]"), pd.Series, str)
     check(assert_type(s_str.str.lower(), "pd.Series[str]"), pd.Series, str)
 

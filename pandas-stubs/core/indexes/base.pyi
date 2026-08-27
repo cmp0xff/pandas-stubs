@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import (
     Any,
     ClassVar,
+    Generic,
     Literal,
     Never,
     Self,
@@ -33,11 +34,19 @@ from pandas._stubs_only import (
     OrderableT,
     T_contra,
 )
-from pandas.core.arrays.boolean import (
-    BooleanArray,
-    BooleanDtype,
+from pandas._stubs_only import (
+    _IndexDtypeDescriptor,  # pyright: ignore[reportPrivateUsage]
 )
+from pandas.core.arrays.arrow.array import ArrowExtensionArray
+from pandas.core.arrays.boolean import BooleanArray
 from pandas.core.arrays.floating import FloatingArray
+from pandas.core.arrays.integer import IntegerArray
+from pandas.core.arrays.numpy_ import NumpyExtensionArray
+from pandas.core.arrays.string_ import (
+    BaseStringArray,
+    StringArray,
+)
+from pandas.core.arrays.string_arrow import ArrowStringArray
 from pandas.core.base import (
     ArrayIndexTimedeltaNoSeq,
     ElementOpsMixin,
@@ -77,6 +86,7 @@ from typing_extensions import override
 from pandas._libs.interval import Interval
 from pandas._libs.tslibs.period import Period
 from pandas._libs.tslibs.timedeltas import Timedelta
+from pandas._libs.tslibs.timestamps import Timestamp
 from pandas._typing import (
     C2,
     S1,
@@ -87,18 +97,21 @@ from pandas._typing import (
     AnyArrayLike,
     AnyArrayLikeInt,
     ArrayLike,
+    ArrayT_co,
     AxesData,
     Axis,
+    BuiltinBooleanDtypeArg,
+    BuiltinBytesDtypeArg,
     BuiltinFloatDtypeArg,
+    BuiltinIntDtypeArg,
+    BuiltinStrDtypeArg,
     CategoryDtypeArg,
     ComplexDtypeArg,
     DropKeep,
     Dtype,
     DtypeArg,
-    DtypeObj,
     HashableT,
     IgnoreRaise,
-    IntDtypeArg,
     JoinHow,
     Just,
     Label,
@@ -106,13 +119,30 @@ from pandas._typing import (
     MaskType,
     NaPosition,
     NDArrayT,
+    NumpyBooleanDtypeArg,
+    NumpyBytesDtypeArg,
     NumpyFloat16DtypeArg,
     NumpyFloatNot16DtypeArg,
+    NumpyIntDtypeArg,
     NumpyNotTimeDtypeArg,
+    NumpyStrDtypeArg,
     NumpyTimedeltaDtypeArg,
     NumpyTimestampDtypeArg,
+    NumpyUIntDtypeArg,
+    PandasBaseStrDtypeArg,
+    PandasBooleanDtypeArg,
     PandasFloatDtypeArg,
+    PandasIntDtypeArg,
+    PandasStrDtypeArg,
+    PandasUIntDtypeArg,
+    PyArrowBooleanDtypeArg,
+    PyArrowBytesDtypeArg,
     PyArrowFloatDtypeArg,
+    PyArrowIntDtypeArg,
+    PyArrowStrDtypeArg,
+    PyArrowTimedeltaDtypeArg,
+    PyArrowTimestampDtypeArg,
+    PyArrowUIntDtypeArg,
     ReindexMethod,
     Renamer,
     S2_contra,
@@ -122,7 +152,6 @@ from pandas._typing import (
     TakeIndexer,
     TimedeltaDtypeArg,
     TimestampDtypeArg,
-    UIntDtypeArg,
     np_1darray,
     np_1darray_bool,
     np_1darray_intp,
@@ -148,9 +177,121 @@ FloatNotNumpy16DtypeArg: TypeAlias = (
 
 class InvalidIndexError(Exception): ...
 
-class Index(IndexOpsMixin[S1], ElementOpsMixin[S1]):
+class Index(IndexOpsMixin[S1], ElementOpsMixin[S1], Generic[S1, ArrayT_co]):
+    @property
+    def array(self) -> ArrayT_co: ...
     __hash__: ClassVar[None]  # type: ignore[assignment] # pyright: ignore[reportIncompatibleMethodOverride]
     # overloads with additional dtypes
+    @overload
+    def __new__(
+        cls,
+        data: AxesData,
+        *,
+        dtype: PandasBooleanDtypeArg,
+        copy: bool = False,
+        name: Hashable = None,
+        tupleize_cols: bool = True,
+    ) -> Index[bool, BooleanArray]: ...
+    @overload
+    def __new__(
+        cls,
+        data: AxesData,
+        *,
+        dtype: PyArrowBooleanDtypeArg,
+        copy: bool = False,
+        name: Hashable = None,
+        tupleize_cols: bool = True,
+    ) -> Index[bool, ArrowExtensionArray]: ...
+    @overload
+    def __new__(
+        cls,
+        data: AxesData,
+        *,
+        dtype: PandasIntDtypeArg | PandasUIntDtypeArg,
+        copy: bool = False,
+        name: Hashable = None,
+        tupleize_cols: bool = True,
+    ) -> Index[int, IntegerArray]: ...
+    @overload
+    def __new__(
+        cls,
+        data: AxesData,
+        *,
+        dtype: PyArrowIntDtypeArg | PyArrowUIntDtypeArg,
+        copy: bool = False,
+        name: Hashable = None,
+        tupleize_cols: bool = True,
+    ) -> Index[int, ArrowExtensionArray]: ...
+    @overload
+    def __new__(
+        cls,
+        data: AxesData,
+        *,
+        dtype: PandasFloatDtypeArg,
+        copy: bool = False,
+        name: Hashable = None,
+        tupleize_cols: bool = True,
+    ) -> Index[float, FloatingArray]: ...
+    @overload
+    def __new__(
+        cls,
+        data: AxesData,
+        *,
+        dtype: PyArrowFloatDtypeArg,
+        copy: bool = False,
+        name: Hashable = None,
+        tupleize_cols: bool = True,
+    ) -> Index[float, ArrowExtensionArray]: ...
+    @overload
+    def __new__(
+        cls,
+        data: AxesData,
+        *,
+        dtype: PandasStrDtypeArg,
+        copy: bool = False,
+        name: Hashable = None,
+        tupleize_cols: bool = True,
+    ) -> Index[_str, StringArray]: ...
+    @overload
+    def __new__(
+        cls,
+        data: AxesData,
+        *,
+        dtype: PyArrowStrDtypeArg,
+        copy: bool = False,
+        name: Hashable = None,
+        tupleize_cols: bool = True,
+    ) -> Index[_str, ArrowStringArray]: ...
+    @overload
+    def __new__(
+        cls,
+        data: AxesData,
+        *,
+        dtype: PandasBaseStrDtypeArg,
+        copy: bool = False,
+        name: Hashable = None,
+        tupleize_cols: bool = True,
+    ) -> Index[_str, BaseStringArray]: ...
+    @overload
+    def __new__(  # type: ignore[overload-overlap] # pyright: ignore[reportOverlappingOverload]
+        cls,
+        data: AxesData,
+        *,
+        dtype: PyArrowTimestampDtypeArg,
+        copy: bool = False,
+        name: Hashable = None,
+        tupleize_cols: bool = True,
+    ) -> Index[Timestamp, ArrowExtensionArray]: ...
+    @overload
+    def __new__(  # type: ignore[overload-overlap] # pyright: ignore[reportOverlappingOverload]
+        cls,
+        data: AxesData,
+        *,
+        dtype: PyArrowTimedeltaDtypeArg,
+        copy: bool = False,
+        name: Hashable = None,
+        tupleize_cols: bool = True,
+    ) -> Index[Timedelta, ArrowExtensionArray]: ...
     @overload
     def __new__(  # pyright: ignore[reportOverlappingOverload]
         cls,
@@ -160,7 +301,17 @@ class Index(IndexOpsMixin[S1], ElementOpsMixin[S1]):
         copy: bool = False,
         name: Hashable = None,
         tupleize_cols: bool = True,
-    ) -> Index[bool]: ...
+    ) -> Index[bool, NumpyExtensionArray]: ...
+    @overload
+    def __new__(
+        cls,
+        data: Sequence[_str],
+        *,
+        dtype: None = None,
+        copy: bool = False,
+        name: Hashable = None,
+        tupleize_cols: bool = True,
+    ) -> Index[_str, BaseStringArray]: ...
     @overload
     def __new__(
         cls,
@@ -170,7 +321,7 @@ class Index(IndexOpsMixin[S1], ElementOpsMixin[S1]):
         copy: bool = False,
         name: Hashable = None,
         tupleize_cols: bool = True,
-    ) -> Index[int]: ...
+    ) -> Index[int, NumpyExtensionArray]: ...
     @overload
     def __new__(
         cls,
@@ -180,7 +331,7 @@ class Index(IndexOpsMixin[S1], ElementOpsMixin[S1]):
         copy: bool = False,
         name: Hashable = None,
         tupleize_cols: bool = True,
-    ) -> Index[int]: ...
+    ) -> Index[int, NumpyExtensionArray]: ...
     @overload
     def __new__(
         cls,
@@ -189,7 +340,7 @@ class Index(IndexOpsMixin[S1], ElementOpsMixin[S1]):
         copy: bool = False,
         name: Hashable = None,
         tupleize_cols: bool = True,
-    ) -> Index[float]: ...
+    ) -> Index[float, NumpyExtensionArray]: ...
     @overload
     def __new__(
         cls,
@@ -204,11 +355,11 @@ class Index(IndexOpsMixin[S1], ElementOpsMixin[S1]):
     def __new__(
         cls,
         data: AxesData,
-        dtype: FloatNotNumpy16DtypeArg,
+        dtype: BuiltinFloatDtypeArg | NumpyFloatNot16DtypeArg,
         copy: bool = False,
         name: Hashable = None,
         tupleize_cols: bool = True,
-    ) -> Index[float]: ...
+    ) -> Index[float, NumpyExtensionArray]: ...
     @overload
     def __new__(
         cls,
@@ -222,7 +373,7 @@ class Index(IndexOpsMixin[S1], ElementOpsMixin[S1]):
         copy: bool = False,
         name: Hashable = None,
         tupleize_cols: bool = True,
-    ) -> Index[complex]: ...
+    ) -> Index[complex, NumpyExtensionArray]: ...
     @overload
     def __new__(
         cls,
@@ -232,7 +383,7 @@ class Index(IndexOpsMixin[S1], ElementOpsMixin[S1]):
         copy: bool = False,
         name: Hashable = None,
         tupleize_cols: bool = True,
-    ) -> Index[complex]: ...
+    ) -> Index[complex, NumpyExtensionArray]: ...
     # special overloads with dedicated Index-subclasses
     @overload
     def __new__(
@@ -375,8 +526,7 @@ class Index(IndexOpsMixin[S1], ElementOpsMixin[S1]):
     def __array__(
         self, dtype: _str | np.dtype | None = None, copy: bool | None = None
     ) -> np_1darray: ...
-    @property
-    def dtype(self) -> DtypeObj: ...
+    dtype = _IndexDtypeDescriptor()
     @final
     def ravel(self, order: Literal["K", "A", "C", "F"] = "C") -> Self: ...
     @overload
@@ -391,15 +541,89 @@ class Index(IndexOpsMixin[S1], ElementOpsMixin[S1]):
     @overload
     def astype(self, dtype: NumpyFloat16DtypeArg, copy: bool = True) -> Never: ...
     @overload
-    def astype(
-        self, dtype: IntDtypeArg | UIntDtypeArg, copy: bool = True
-    ) -> Index[int]: ...
+    def astype(  # type: ignore[overload-overlap]
+        self,
+        dtype: BuiltinIntDtypeArg | NumpyIntDtypeArg | NumpyUIntDtypeArg,
+        copy: bool = True,
+    ) -> Index[int, NumpyExtensionArray]: ...
     @overload
     def astype(
-        self, dtype: FloatNotNumpy16DtypeArg, copy: bool = True
-    ) -> Index[float]: ...
+        self, dtype: PandasIntDtypeArg | PandasUIntDtypeArg, copy: bool = True
+    ) -> Index[int, IntegerArray]: ...
     @overload
-    def astype(self, dtype: ComplexDtypeArg, copy: bool = True) -> Index[complex]: ...
+    def astype(
+        self, dtype: PyArrowIntDtypeArg | PyArrowUIntDtypeArg, copy: bool = True
+    ) -> Index[int, ArrowExtensionArray]: ...
+    @overload
+    def astype(
+        self,
+        dtype: BuiltinFloatDtypeArg | NumpyFloatNot16DtypeArg,
+        copy: bool = True,
+    ) -> Index[float, NumpyExtensionArray]: ...
+    @overload
+    def astype(
+        self, dtype: PandasFloatDtypeArg, copy: bool = True
+    ) -> Index[float, FloatingArray]: ...
+    @overload
+    def astype(
+        self, dtype: PyArrowFloatDtypeArg, copy: bool = True
+    ) -> Index[float, ArrowExtensionArray]: ...
+    @overload
+    def astype(
+        self, dtype: BuiltinBooleanDtypeArg | NumpyBooleanDtypeArg, copy: bool = True
+    ) -> Index[bool, NumpyExtensionArray]: ...
+    @overload
+    def astype(
+        self, dtype: PandasBooleanDtypeArg, copy: bool = True
+    ) -> Index[bool, BooleanArray]: ...
+    @overload
+    def astype(
+        self, dtype: PyArrowBooleanDtypeArg, copy: bool = True
+    ) -> Index[bool, ArrowExtensionArray]: ...
+    @overload
+    def astype(  # type: ignore[overload-overlap]
+        self, dtype: BuiltinStrDtypeArg | PandasBaseStrDtypeArg, copy: bool = True
+    ) -> Index[_str, BaseStringArray]: ...
+    @overload
+    def astype(
+        self, dtype: PandasStrDtypeArg, copy: bool = True
+    ) -> Index[_str, StringArray]: ...
+    @overload
+    def astype(
+        self, dtype: PyArrowStrDtypeArg, copy: bool = True
+    ) -> Index[_str, ArrowStringArray]: ...
+    @overload
+    def astype(
+        self, dtype: NumpyStrDtypeArg, copy: bool = True
+    ) -> Index[_str, NumpyExtensionArray]: ...
+    @overload
+    def astype(
+        self, dtype: BuiltinBytesDtypeArg | NumpyBytesDtypeArg, copy: bool = True
+    ) -> Index[bytes, NumpyExtensionArray]: ...
+    @overload
+    def astype(
+        self, dtype: PyArrowBytesDtypeArg, copy: bool = True
+    ) -> Index[bytes, ArrowExtensionArray]: ...
+    @overload
+    def astype(
+        self, dtype: NumpyTimestampDtypeArg, copy: bool = True
+    ) -> DatetimeIndex: ...
+    @overload
+    def astype(
+        self, dtype: PyArrowTimestampDtypeArg, copy: bool = True
+    ) -> Index[Timestamp, ArrowExtensionArray]: ...
+    @overload
+    def astype(
+        self, dtype: NumpyTimedeltaDtypeArg, copy: bool = True
+    ) -> TimedeltaIndex: ...
+    @overload
+    def astype(
+        self, dtype: PyArrowTimedeltaDtypeArg, copy: bool = True
+    ) -> Index[Timedelta, ArrowExtensionArray]: ...
+    @overload
+    def astype(
+        self, dtype: ComplexDtypeArg, copy: bool = True
+    ) -> Index[complex, NumpyExtensionArray]: ...
     @overload
     def astype(self, dtype: DtypeArg, copy: bool = True) -> Index: ...
     def take(
@@ -416,7 +640,7 @@ class Index(IndexOpsMixin[S1], ElementOpsMixin[S1]):
     def copy(self, name: Hashable = None, deep: bool = False) -> Self: ...
     def to_series(
         self, index: Index | None = None, name: Hashable | None = None
-    ) -> Series[S1]: ...
+    ) -> Series[S1, ArrayT_co]: ...
     def to_frame(self, index: bool = True, name: Hashable = ...) -> DataFrame: ...
     @property
     def name(self) -> Hashable | None: ...
@@ -479,11 +703,47 @@ class Index(IndexOpsMixin[S1], ElementOpsMixin[S1]):
     ) -> Self: ...
     def difference(self, other: list[Any] | Self, sort: bool | None = None) -> Self: ...
     @overload
+    def diff(  # type: ignore[overload-overlap]
+        self: Index[bool, BooleanArray], periods: int = ...
+    ) -> Index[bool, BooleanArray]: ...
+    @overload
+    def diff(  # type: ignore[overload-overlap] # pyright: ignore[reportOverlappingOverload]
+        self: Index[int, IntegerArray], periods: int = ...
+    ) -> Index[int, IntegerArray]: ...
+    @overload
+    def diff(
+        self: Index[float, FloatingArray], periods: int = ...
+    ) -> Index[float, FloatingArray]: ...
+    @overload
+    def diff(  # type: ignore[overload-overlap]
+        self: Index[bool, ArrowExtensionArray], periods: int = ...
+    ) -> Index[bool, ArrowExtensionArray]: ...
+    @overload
+    def diff(  # type: ignore[overload-overlap]
+        self: Index[int, ArrowExtensionArray], periods: int = ...
+    ) -> Index[int, ArrowExtensionArray]: ...
+    @overload
+    def diff(
+        self: Index[float, ArrowExtensionArray], periods: int = ...
+    ) -> Index[float, ArrowExtensionArray]: ...
+    @overload
+    def diff(
+        self: Index[float, NumpyExtensionArray], periods: int = ...
+    ) -> Index[float, NumpyExtensionArray]: ...
+    @overload
+    def diff(
+        self: Index[Timestamp, ArrowExtensionArray], periods: int = ...
+    ) -> Index[Timedelta, ArrowExtensionArray]: ...
+    @overload
+    def diff(
+        self: Index[Timedelta, ArrowExtensionArray], periods: int = ...
+    ) -> Index[Timedelta, ArrowExtensionArray]: ...
+    @overload
+    def diff(
+        self: Index[int], periods: int = ...
+    ) -> Index[float, NumpyExtensionArray]: ...
+    @overload
     def diff(self: Index[bool], periods: int = ...) -> Index: ...
-    @overload
-    def diff(self: Index[int], periods: int = ...) -> Index[float]: ...
-    @overload
-    def diff(self: Index[BooleanDtype], periods: int = ...) -> Index[BooleanDtype]: ...
     @overload
     def diff(
         self: SupportsGetItem[int, SupportsSelfSub[S2]], periods: int = ...

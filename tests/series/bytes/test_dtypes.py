@@ -21,11 +21,20 @@ def test_astype_bytes(cast_arg: BytesDtypeArg, target_type: type) -> None:
 
     if TYPE_CHECKING:
         # python bytes
-        assert_type(s.astype(bytes), "pd.Series[bytes]")
-        assert_type(s.astype("bytes"), "pd.Series[bytes]")
+        assert_type(s.astype(bytes), "pd.Series[bytes, pd.arrays.NumpyExtensionArray]")
+        assert_type(
+            s.astype("bytes"), "pd.Series[bytes, pd.arrays.NumpyExtensionArray]"
+        )
         # numpy bytes
-        assert_type(s.astype(np.bytes_), "pd.Series[bytes]")
-        assert_type(s.astype("bytes_"), "pd.Series[bytes]")
-        assert_type(s.astype("S"), "pd.Series[bytes]")
+        assert_type(
+            s.astype(np.bytes_), "pd.Series[bytes, pd.arrays.NumpyExtensionArray]"
+        )
+        assert_type(
+            s.astype("bytes_"), "pd.Series[bytes, pd.arrays.NumpyExtensionArray]"
+        )
+        assert_type(s.astype("S"), "pd.Series[bytes, pd.arrays.NumpyExtensionArray]")
         # pyarrow bytes
-        assert_type(s.astype("binary[pyarrow]"), "pd.Series[bytes]")
+        assert_type(
+            s.astype("binary[pyarrow]"),
+            "pd.Series[bytes, pd.arrays.ArrowExtensionArray]",
+        )

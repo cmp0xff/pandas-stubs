@@ -250,13 +250,13 @@ def test_floordiv_pd_series(left_i: pd.Series) -> None:
         _04 = left_i // s  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation]
         # left_i // d  # This invalid one cannot be detected by static type checking
 
-    check(assert_type(b // left_i, pd.Series), pd.Series, np.integer)
-    check(assert_type(i // left_i, pd.Series), pd.Series, np.integer)
-    check(assert_type(f // left_i, pd.Series), pd.Series, np.floating)
+    check(assert_type(b // left_i, pd.Series), pd.Series, np.integer)  # type: ignore[assert-type]
+    check(assert_type(i // left_i, pd.Series), pd.Series, np.integer)  # type: ignore[assert-type]
+    check(assert_type(f // left_i, pd.Series), pd.Series, np.floating)  # type: ignore[assert-type]
     if TYPE_CHECKING_INVALID_USAGE:
         _13 = c // left_i  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation]
         _14 = s // left_i  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation]
-    check(assert_type(d // left_i, pd.Series), pd.Series, pd.Timedelta)
+    check(assert_type(d // left_i, pd.Series), pd.Series, pd.Timedelta)  # type: ignore[assert-type]
 
     check(assert_type(left_i.floordiv(b), pd.Series), pd.Series, np.integer)
     check(assert_type(left_i.floordiv(i), pd.Series), pd.Series, np.integer)

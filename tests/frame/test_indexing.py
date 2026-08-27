@@ -160,7 +160,11 @@ def test_indexslice_getitem() -> None:
     ind = pd.Index([2, 3])
     check(
         assert_type(
-            pd.IndexSlice[ind, :], tuple["pd.Index[int]", "slice[None, None, None]"]
+            pd.IndexSlice[ind, :],
+            tuple[
+                "pd.Index[int, pd.arrays.NumpyExtensionArray]",
+                "slice[None, None, None]",
+            ],
         ),
         tuple,
     )

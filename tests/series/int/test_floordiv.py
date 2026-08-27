@@ -24,7 +24,11 @@ from tests._typing import np_ndarray_int64
 def left() -> "pd.Series[int]":
     """Left operand"""
     lo = pd.Series([1, 2, 3])
-    return check(assert_type(lo, "pd.Series[int]"), pd.Series, np.integer)
+    return check(
+        assert_type(lo, "pd.Series[int, pd.arrays.NumpyExtensionArray]"),
+        pd.Series,
+        np.integer,
+    )
 
 
 def test_floordiv_py_scalar(left: "pd.Series[int]") -> None:

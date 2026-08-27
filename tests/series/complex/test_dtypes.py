@@ -36,23 +36,50 @@ def test_astype_complex(cast_arg: ComplexDtypeArg, target_type: type) -> None:
     check(s.astype(cast_arg), pd.Series, target_type)
 
     if TYPE_CHECKING:
-        assert_type(s.astype(complex), "pd.Series[complex]")
-        assert_type(s.astype("complex"), "pd.Series[complex]")
+        assert_type(
+            s.astype(complex), "pd.Series[complex, pd.arrays.NumpyExtensionArray]"
+        )
+        assert_type(
+            s.astype("complex"), "pd.Series[complex, pd.arrays.NumpyExtensionArray]"
+        )
         # numpy complex64
-        assert_type(s.astype(np.csingle), "pd.Series[complex]")
-        assert_type(s.astype("csingle"), "pd.Series[complex]")
-        assert_type(s.astype("complex64"), "pd.Series[complex]")
-        assert_type(s.astype("F"), "pd.Series[complex]")
-        assert_type(s.astype("c8"), "pd.Series[complex]")
+        assert_type(
+            s.astype(np.csingle), "pd.Series[complex, pd.arrays.NumpyExtensionArray]"
+        )
+        assert_type(
+            s.astype("csingle"), "pd.Series[complex, pd.arrays.NumpyExtensionArray]"
+        )
+        assert_type(
+            s.astype("complex64"), "pd.Series[complex, pd.arrays.NumpyExtensionArray]"
+        )
+        assert_type(s.astype("F"), "pd.Series[complex, pd.arrays.NumpyExtensionArray]")
+        assert_type(s.astype("c8"), "pd.Series[complex, pd.arrays.NumpyExtensionArray]")
         # numpy complex128
-        assert_type(s.astype(np.cdouble), "pd.Series[complex]")
-        assert_type(s.astype("cdouble"), "pd.Series[complex]")
-        assert_type(s.astype("complex128"), "pd.Series[complex]")
-        assert_type(s.astype("D"), "pd.Series[complex]")
-        assert_type(s.astype("c16"), "pd.Series[complex]")
+        assert_type(
+            s.astype(np.cdouble), "pd.Series[complex, pd.arrays.NumpyExtensionArray]"
+        )
+        assert_type(
+            s.astype("cdouble"), "pd.Series[complex, pd.arrays.NumpyExtensionArray]"
+        )
+        assert_type(
+            s.astype("complex128"), "pd.Series[complex, pd.arrays.NumpyExtensionArray]"
+        )
+        assert_type(s.astype("D"), "pd.Series[complex, pd.arrays.NumpyExtensionArray]")
+        assert_type(
+            s.astype("c16"), "pd.Series[complex, pd.arrays.NumpyExtensionArray]"
+        )
         # numpy complex256
-        assert_type(s.astype(np.clongdouble), "pd.Series[complex]")
-        assert_type(s.astype("clongdouble"), "pd.Series[complex]")
-        assert_type(s.astype("complex256"), "pd.Series[complex]")
-        assert_type(s.astype("G"), "pd.Series[complex]")
-        assert_type(s.astype("c32"), "pd.Series[complex]")
+        assert_type(
+            s.astype(np.clongdouble),
+            "pd.Series[complex, pd.arrays.NumpyExtensionArray]",
+        )
+        assert_type(
+            s.astype("clongdouble"), "pd.Series[complex, pd.arrays.NumpyExtensionArray]"
+        )
+        assert_type(
+            s.astype("complex256"), "pd.Series[complex, pd.arrays.NumpyExtensionArray]"
+        )
+        assert_type(s.astype("G"), "pd.Series[complex, pd.arrays.NumpyExtensionArray]")
+        assert_type(
+            s.astype("c32"), "pd.Series[complex, pd.arrays.NumpyExtensionArray]"
+        )

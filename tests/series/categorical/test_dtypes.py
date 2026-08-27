@@ -19,13 +19,13 @@ def test_astype_categorical(cast_arg: CategoryDtypeArg, target_type: type) -> No
 
     check(
         assert_type(
-            s.astype(pd.CategoricalDtype()), "pd.Series[pd.CategoricalDtype[str]]"
+            s.astype(pd.CategoricalDtype()), "pd.Series[str, pd.Categorical[str]]"
         ),
         pd.Series,
         str,
     )
     check(
-        assert_type(s.astype(cast_arg), "pd.Series[pd.CategoricalDtype[str]]"),
+        assert_type(s.astype(cast_arg), "pd.Series[str, pd.Categorical[str]]"),
         pd.Series,
         str,
     )
