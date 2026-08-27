@@ -201,7 +201,8 @@ _LocSetItemKey: TypeAlias = (
     | MaskType
     | Hashable
     | _IndexSliceTuple
-    | Iterable[Scalar]
+    | SequenceNotStr[Scalar]
+    | Iterator[Scalar]
     | IndexingInt
     | slice
 )
@@ -215,6 +216,8 @@ _SetItemValueNotDataFrame: TypeAlias = (
 )
 
 class _iLocIndexerFrame(_iLocIndexer, Generic[_T]):
+    @overload
+    def __getitem__(self, key: dict[Any, Any] | set[Any]) -> Never: ...
     @overload
     def __getitem__(self, key: tuple[int, int]) -> Scalar: ...
     @overload
@@ -245,6 +248,8 @@ class _iLocIndexerFrame(_iLocIndexer, Generic[_T]):
     ) -> None: ...
 
 class _LocIndexerFrame(_LocIndexer, Generic[_T]):
+    @overload
+    def __getitem__(self, idx: dict[Any, Any] | set[Any]) -> Never: ...
     @overload
     def __getitem__(self, idx: Expression) -> _T: ...
     @overload
@@ -317,7 +322,23 @@ class _LocIndexerFrame(_LocIndexer, Generic[_T]):
     # Keep in sync with `DataFrame.__setitem__`
     @overload
     def __setitem__(
-        self, key: tuple[_IndexSliceTuple, Hashable], value: _SetItemValueNotDataFrame
+        self,
+        key: tuple[
+            IndexType
+            | MaskType
+            | list[HashableT]
+            | slice
+            | _IndexSliceTuple
+            | Callable[..., Any],
+            MaskType
+            | SequenceNotStr[HashableT]
+            | Iterator[HashableT]
+            | IndexType
+            | Callable[..., Any]
+            | _IndexSliceTuple
+            | Hashable,
+        ],
+        value: _SetItemValueNotDataFrame | DataFrame,
     ) -> None: ...
     @overload
     def __setitem__(
@@ -343,6 +364,8 @@ class _AtIndexerFrame(_AtIndexer):
     ) -> None: ...
 
 class _GetItemHack:
+    @overload
+    def __getitem__(self, key: dict[Any, Any] | set[Any]) -> Never: ...
     @overload
     def __getitem__(self, key: Expression) -> Self: ...
     @overload
@@ -800,7 +823,7 @@ class DataFrame(NDFrame, OpsMixin, _GetItemHack):
     # Keep in sync with `_iLocIndexerFrame.__setitem__`
     @overload
     def __setitem__(
-        self, idex: tuple[slice, Hashable], value: _SetItemValueNotDataFrame
+        self, idx: tuple[slice, Hashable], value: _SetItemValueNotDataFrame
     ) -> None: ...
     @overload
     def __setitem__(
@@ -809,7 +832,23 @@ class DataFrame(NDFrame, OpsMixin, _GetItemHack):
     # Keep in sync with `_LocIndexerFrame.__setitem__`
     @overload
     def __setitem__(
-        self, idx: tuple[_IndexSliceTuple, Hashable], value: _SetItemValueNotDataFrame
+        self,
+        key: tuple[
+            IndexType
+            | MaskType
+            | list[HashableT]
+            | slice
+            | _IndexSliceTuple
+            | Callable[..., Any],
+            MaskType
+            | SequenceNotStr[HashableT]
+            | Iterator[HashableT]
+            | IndexType
+            | Callable[..., Any]
+            | _IndexSliceTuple
+            | Hashable,
+        ],
+        value: _SetItemValueNotDataFrame | DataFrame,
     ) -> None: ...
     @overload
     def __setitem__(

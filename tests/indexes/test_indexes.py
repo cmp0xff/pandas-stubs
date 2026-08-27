@@ -2106,3 +2106,21 @@ def test_diff() -> None:
         def _diff_invalid0() -> None:  # pyright: ignore[reportUnusedFunction]
             # interval -> TypeError: IntervalArray has no 'diff' method. Convert to a suitable dtype prior to calling 'diff'.
             assert_type(pd.Index([pd.Interval(0, 2), pd.Interval(1, 4)]).diff(), Never)
+
+
+def test_index_set_dict_indexing_restriction() -> None:
+    idx = pd.Index([1, 2, 3])
+    mi = pd.MultiIndex.from_arrays([[1, 2], [3, 4]])
+    if TYPE_CHECKING_INVALID_USAGE:
+
+        def _f0() -> None:  # pyright: ignore[reportUnusedFunction]
+            assert_type(idx[{0}], Never)
+
+        def _f1() -> None:  # pyright: ignore[reportUnusedFunction]
+            assert_type(idx[{0: 1}], Never)
+
+        def _f2() -> None:  # pyright: ignore[reportUnusedFunction]
+            assert_type(mi[{0}], Never)
+
+        def _f3() -> None:  # pyright: ignore[reportUnusedFunction]
+            assert_type(mi[{0: 1}], Never)

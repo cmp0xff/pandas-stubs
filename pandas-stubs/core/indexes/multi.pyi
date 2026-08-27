@@ -160,6 +160,10 @@ class MultiIndex(Index):
     @overload  # type: ignore[override]
     @override
     def __getitem__(  # pyrefly: ignore[bad-override]
+        self, idx: dict[Any, Any] | set[Any]
+    ) -> Never: ...
+    @overload
+    def __getitem__(
         self,
         idx: slice | np_ndarray_anyint | Sequence[int] | Index | MaskType,
     ) -> Self: ...

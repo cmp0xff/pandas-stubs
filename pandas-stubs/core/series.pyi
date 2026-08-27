@@ -292,6 +292,8 @@ class _iLocIndexerSeries(_iLocIndexer, Generic[S1]):
     # get item
     # Keep in sync with `Series.__getitem__`
     @overload
+    def __getitem__(self, idx: dict[Any, Any] | set[Any]) -> Never: ...
+    @overload
     def __getitem__(self, idx: IndexingInt) -> S1: ...
     @overload
     def __getitem__(
@@ -311,6 +313,8 @@ class _iLocIndexerSeries(_iLocIndexer, Generic[S1]):
 
 class _LocIndexerSeries(_LocIndexer, Generic[S1]):
     # Keep in sync with `Series.__getitem__`
+    @overload
+    def __getitem__(self, idx: dict[Any, Any] | set[Any]) -> Never: ...
     # ignore needed because of mypy.  Overlapping, but we want to distinguish
     # having a tuple of just scalars, versus tuples that include slices or Index
     @overload
@@ -705,6 +709,8 @@ class Series(IndexOpsMixin[S1], ElementOpsMixin[S1], NDFrame):
     def __getattr__(self, name: _str) -> S1: ...
 
     # Keep in sync with `_iLocIndexerSeries.__getitem__`
+    @overload
+    def __getitem__(self, idx: dict[Any, Any] | set[Any]) -> Never: ...
     @overload
     def __getitem__(self, idx: IndexingInt) -> S1: ...
     @overload

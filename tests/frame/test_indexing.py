@@ -15,6 +15,7 @@ import itertools
 from typing import (
     TYPE_CHECKING,
     Any,
+    Never,
     assert_type,
     cast,
 )
@@ -455,11 +456,11 @@ def test_frame_setitem_na() -> None:
     df.iloc[:, 0] = [None, pd.NA, pd.NaT]
 
     # TODO: mypy bug, remove after python/mypy#20420 is resolved
-    df.loc[:, ["x"]] = [[None], [pd.NA], [pd.NaT]]  # type: ignore[assignment,index]
+    df.loc[:, ["x"]] = [[None], [pd.NA], [pd.NaT]]  # type: ignore[assignment]
     df.iloc[:, [0]] = [[None], [pd.NA], [pd.NaT]]  # type: ignore[assignment,index]
 
     # TODO: mypy bug, remove after python/mypy#20420 is resolved
-    df.loc[:, iter(["x"])] = [[None], [pd.NA], [pd.NaT]]  # type: ignore[assignment,index]
+    df.loc[:, iter(["x"])] = [[None], [pd.NA], [pd.NaT]]  # type: ignore[assignment]
     # TODO: remove after python/mypy#21813 astral-sh/ty#4196 are resolved
     df.iloc[:, iter([0])] = [[None], [pd.NA], [pd.NaT]]  # type: ignore[assignment,index] # ty: ignore[invalid-assignment]
 
@@ -676,3 +677,33 @@ def test_frame_iat() -> None:
     df.iat[0, 0] = float("nan")
     if TYPE_CHECKING_INVALID_USAGE:
         df.iat[(0,), 0] = 999  # type: ignore[index] # pyright: ignore[reportArgumentType] # pyrefly: ignore[unsupported-operation] # ty: ignore[invalid-assignment]
+
+
+def test_frame_set_dict_indexing_restriction() -> None:
+    df = pd.DataFrame({"a": [1, 2]})
+    if TYPE_CHECKING_INVALID_USAGE:
+
+        def _f0() -> None:  # pyright: ignore[reportUnusedFunction]
+            assert_type(df[{"a"}], Never)
+
+        def _f1() -> None:  # pyright: ignore[reportUnusedFunction]
+            assert_type(df[{"a": 1}], Never)
+
+        def _f2() -> None:  # pyright: ignore[reportUnusedFunction]
+            assert_type(df.loc[{"a"}], Never)
+
+        def _f3() -> None:  # pyright: ignore[reportUnusedFunction]
+            assert_type(df.loc[{"a": 1}], Never)
+
+        def _f4() -> None:  # pyright: ignore[reportUnusedFunction]
+            assert_type(df.iloc[{0}], Never)
+
+        def _f5() -> None:  # pyright: ignore[reportUnusedFunction]
+            assert_type(df.iloc[{0: 1}], Never)
+
+        df[{"a"}] = 10  # type: ignore[call-overload] # pyright: ignore[reportArgumentType,reportCallIssue] # pyrefly: ignore[unsupported-operation,invalid-assignment] # ty: ignore[invalid-assignment]
+        df[{"a": 1}] = 10  # type: ignore[call-overload] # pyright: ignore[reportArgumentType,reportCallIssue] # pyrefly: ignore[unsupported-operation,invalid-assignment] # ty: ignore[invalid-assignment]
+        df.loc[{"a"}] = 10  # type: ignore[call-overload] # pyright: ignore[reportArgumentType,reportCallIssue] # pyrefly: ignore[unsupported-operation,invalid-assignment] # ty: ignore[invalid-assignment]
+        df.loc[{"a": 1}] = 10  # type: ignore[call-overload] # pyright: ignore[reportArgumentType,reportCallIssue] # pyrefly: ignore[unsupported-operation,invalid-assignment] # ty: ignore[invalid-assignment]
+        df.iloc[{0}] = 10  # type: ignore[call-overload] # pyright: ignore[reportArgumentType,reportCallIssue] # pyrefly: ignore[unsupported-operation,invalid-assignment] # ty: ignore[invalid-assignment]
+        df.iloc[{0: 1}] = 10  # type: ignore[call-overload] # pyright: ignore[reportArgumentType,reportCallIssue] # pyrefly: ignore[unsupported-operation,invalid-assignment] # ty: ignore[invalid-assignment]

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import (
     Any,
+    Never,
     assert_type,
 )
 
@@ -265,3 +266,33 @@ def test_series_index_timestamp() -> None:
     s = pd.Series([1, 2], index=[dt1, dt2])
     check(assert_type(s[dt1], int), np.integer)
     check(assert_type(s.loc[[dt1]], "pd.Series[int]"), pd.Series, np.integer)
+
+
+def test_series_set_dict_indexing_restriction() -> None:
+    s = pd.Series([1, 2], index=["a", "b"])
+    if TYPE_CHECKING_INVALID_USAGE:
+
+        def _f0() -> None:  # pyright: ignore[reportUnusedFunction]
+            assert_type(s[{"a"}], Never)
+
+        def _f1() -> None:  # pyright: ignore[reportUnusedFunction]
+            assert_type(s[{"a": 1}], Never)
+
+        def _f2() -> None:  # pyright: ignore[reportUnusedFunction]
+            assert_type(s.loc[{"a"}], Never)
+
+        def _f3() -> None:  # pyright: ignore[reportUnusedFunction]
+            assert_type(s.loc[{"a": 1}], Never)
+
+        def _f4() -> None:  # pyright: ignore[reportUnusedFunction]
+            assert_type(s.iloc[{0}], Never)
+
+        def _f5() -> None:  # pyright: ignore[reportUnusedFunction]
+            assert_type(s.iloc[{0: 1}], Never)
+
+        s[{"a"}] = 10  # type: ignore[call-overload] # pyright: ignore[reportArgumentType,reportCallIssue] # pyrefly: ignore[unsupported-operation,invalid-assignment] # ty: ignore[invalid-assignment]
+        s[{"a": 1}] = 10  # type: ignore[call-overload] # pyright: ignore[reportArgumentType,reportCallIssue] # pyrefly: ignore[unsupported-operation,invalid-assignment] # ty: ignore[invalid-assignment]
+        s.loc[{"a"}] = 10  # type: ignore[call-overload] # pyright: ignore[reportArgumentType,reportCallIssue] # pyrefly: ignore[unsupported-operation,invalid-assignment] # ty: ignore[invalid-assignment]
+        s.loc[{"a": 1}] = 10  # type: ignore[call-overload] # pyright: ignore[reportArgumentType,reportCallIssue] # pyrefly: ignore[unsupported-operation,invalid-assignment] # ty: ignore[invalid-assignment]
+        s.iloc[{0}] = 10  # type: ignore[call-overload] # pyright: ignore[reportArgumentType,reportCallIssue] # pyrefly: ignore[unsupported-operation,invalid-assignment] # ty: ignore[invalid-assignment]
+        s.iloc[{0: 1}] = 10  # type: ignore[call-overload] # pyright: ignore[reportArgumentType,reportCallIssue] # pyrefly: ignore[unsupported-operation,invalid-assignment] # ty: ignore[invalid-assignment]
