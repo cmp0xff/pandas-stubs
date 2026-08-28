@@ -99,19 +99,22 @@ cause new errors"). The general disagreement between mypy/pyright/pyrefly/ty on 
 resolution with `Any` arguments is tracked on this repo's own
 [pandas-dev/pandas-stubs#1781](https://github.com/pandas-dev/pandas-stubs/issues/1781),
 which cross-references #19952. Given a maintainer already confirmed the single-parameter
-case is intentional, no new mypy issue was filed for the multi-parameter case — it is the
-same rule, just newly visible because there are now two type arguments to widen instead
-of one.
+case is intentional, the multi-parameter case was filed as
+[python/mypy#21903](https://github.com/python/mypy/issues/21903) (open, filed 2026-08-28),
+asking whether widening *every* type argument — rather than only the ones the matched
+overloads actually disagree on — is intended, or whether the single-parameter rule was
+meant to stop at the parameter that actually varies.
 
-Minimal, pandas/numpy-free repro, re-verified at the repo's own floor
-(`python-version = "3.11"`) against all four checkers this project supports. Two prior
+Minimal, pandas/numpy-free repro (the one filed as `python/mypy#21903`), re-verified at
+the repo's own floor (`python-version = "3.11"`) against all four checkers this project
+supports. Two prior
 attempts at this repro were wrong and are recorded for posterity, not repeated: an
 earlier version used `typing.TypeVar(..., default=EA)`, which requires Python ≥ 3.13
 (PEP 696) and made pyright/ty fail on portability grounds alone, independent of the
 actual mechanism — the fix is `typing_extensions.TypeVar`, mirroring
 `pandas-stubs/_typing.pyi:44-46`. A second version additionally put the `Any` operand on
 the wrong side (`other`, not `self`) relative to the real failing call
-(`tests/series/test_add.py:51`, where the **receiver** `left_i` carries the `Any`), and
+(`tests/series/test_add.py:53`, where the **receiver** `left_i` carries the `Any`), and
 that version also happened to trip `ty` — an independent disagreement, not a cascade
 from the portability bug. The version below fixes both: it matches the real call shape
 (`Ser2[Any, EA] + Sequence[Any]`, with a `Supports_ProtoAdd`-style protocol overload
@@ -170,7 +173,7 @@ own floor), from this session:
 | ty | 0 errors — `All checks passed!` |
 
 So the repro is mypy-only, matching the real category-A/B/C ignores at
-`tests/series/test_add.py:51,57,63,69` etc., which carry a bare
+`tests/series/test_add.py:53,59,65,71` etc., which carry a bare
 `# type: ignore[assert-type]` with no ty/pyrefly companion.
 
 Two bounded stub-side workarounds were tried and abandoned (do not retry without a new
@@ -191,10 +194,15 @@ angle):
   order, so a hoisted catch-all doesn't prevent the widening once a later, narrower
   overload could also match. Reverted.
 
-No further stub-side fix attempt is planned. The path to actually removing these 95
-ignores (not attempted here) is adding them as `# type: ignore[assert-type]` with a
-comment pointing at this section, the same way the `test_natype.py` row already points
-at `facebook/pyrefly#3822` and the `test_types_unique` row points at `astral-sh/ty#2182`.
+No further stub-side fix attempt is planned. The tracker for these 95 ignores now exists:
+`python/mypy#21903`. A single anchor comment pointing at it has been added at the
+canonical site, `tests/series/test_add.py:51-52`, the same way the `test_natype.py` row
+already points at `facebook/pyrefly#3822` and the `test_types_unique` row points at
+`astral-sh/ty#2182`. The other 94 sites are left bare, since they share the identical
+root cause and are trivially found by the shared repro; annotate them individually only
+if that stops being true. Because this file is deleted before the PR, any per-site
+comments added later must cite `python/mypy#21903` / `pandas-dev/pandas-stubs#1781`
+directly rather than pointing back at this document.
 
 ## Re-running this after further changes
 

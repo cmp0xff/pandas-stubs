@@ -48,6 +48,8 @@ def test_add_i_py_sequence() -> None:
     f = [1.0, 2.0, 3.0]
     c = [1j, 1j, 4j]
 
+    # TODO: python/mypy#21903 mypy widens both type parameters, not just the
+    # one the matched overloads actually disagree on
     check(assert_type(left_i + a, pd.Series), pd.Series)  # type: ignore[assert-type]
     check(assert_type(left_i + b, pd.Series), pd.Series)
     check(assert_type(left_i + i, pd.Series), pd.Series)
