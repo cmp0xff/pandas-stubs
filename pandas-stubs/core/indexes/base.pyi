@@ -177,9 +177,7 @@ FloatNotNumpy16DtypeArg: TypeAlias = (
 
 class InvalidIndexError(Exception): ...
 
-class Index(IndexOpsMixin[S1], ElementOpsMixin[S1], Generic[S1, ArrayT_co]):
-    @property
-    def array(self) -> ArrayT_co: ...
+class Index(IndexOpsMixin[S1, ArrayT_co], ElementOpsMixin[S1], Generic[S1, ArrayT_co]):
     __hash__: ClassVar[None]  # type: ignore[assignment] # pyright: ignore[reportIncompatibleMethodOverride]
     # overloads with additional dtypes
     @overload

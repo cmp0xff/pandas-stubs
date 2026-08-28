@@ -385,7 +385,9 @@ _ReplaceValueStr: TypeAlias = (
     | None
 )
 
-class Series(IndexOpsMixin[S1], ElementOpsMixin[S1], NDFrame, Generic[S1, ArrayT_co]):
+class Series(
+    IndexOpsMixin[S1, ArrayT_co], ElementOpsMixin[S1], NDFrame, Generic[S1, ArrayT_co]
+):
     # Define __index__ because mypy thinks Series follows protocol `SupportsIndex` https://github.com/pandas-dev/pandas-stubs/pull/1332#discussion_r2285648790
     __index__: ClassVar[None]
     # Same as above to prevent primitive conversions of Series
@@ -804,8 +806,6 @@ class Series(IndexOpsMixin[S1], ElementOpsMixin[S1], NDFrame, Generic[S1, ArrayT
         name: Hashable = None,
         copy: bool | None = None,
     ) -> Series: ...
-    @property
-    def array(self) -> ArrayT_co: ...
     dtype = _SeriesDtypeDescriptor()
     @property
     def dtypes(self) -> DtypeObj: ...

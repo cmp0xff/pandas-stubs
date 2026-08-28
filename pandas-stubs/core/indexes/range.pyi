@@ -27,7 +27,7 @@ from pandas._typing import (
     np_ndarray_bool,
 )
 
-class RangeIndex(IndexSubclassBase[int, np.int64, NumpyExtensionArray]):
+class RangeIndex(IndexSubclassBase[int, NumpyExtensionArray, np.int64]):
     def __new__(
         cls,
         start: int | RangeIndex | range | None = None,

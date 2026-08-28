@@ -98,7 +98,7 @@ class _MidDescriptor:
     ) -> Index[OrderableT]: ...
 
 class IntervalIndex(
-    ExtensionIndex[IntervalT, np.object_, IntervalArray], IntervalMixin
+    ExtensionIndex[IntervalT, IntervalArray, np.object_], IntervalMixin
 ):
     closed: IntervalClosedType
 

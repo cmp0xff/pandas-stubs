@@ -23,8 +23,8 @@ from pandas._typing import (
 class CategoricalIndex(
     ExtensionIndex[
         S1,
-        Any,
         Categorical[object],
+        Any,
     ],
     PandasDelegate,
 ):

@@ -13,6 +13,7 @@ from pandas.core.arrays.integer import (
     IntegerDtype,
 )
 from pandas.core.arrays.numpy_ import NumpyExtensionArray
+from pandas.core.base import IndexOpsMixin
 
 from tests._typing import np_1darray
 
@@ -58,6 +59,13 @@ def test_constructor_backing_arrays() -> None:
     assert_type(datetime_series.values, np_1darray)
     assert_type(datetime_series.dtype, "np.dtypes.DateTime64DType | pd.DatetimeTZDtype")
     assert_type(datetime_series.unique(), DatetimeArray)
+
+
+def test_index_ops_mixin_array() -> None:
+    def read_array(obj: IndexOpsMixin[int, IntegerArray]) -> IntegerArray:
+        return obj.array
+
+    assert_type(read_array(pd.Series([1, 2], dtype="Int64")), IntegerArray)
 
 
 def test_backing_array_covariance() -> None:

@@ -33,6 +33,7 @@ from pandas._libs.tslibs.timedeltas import Timedelta
 from pandas._typing import (
     S1,
     S2,
+    ArrayT_co,
     AxisIndex,
     DropKeep,
     DTypeLike,
@@ -56,7 +57,7 @@ T_INTERVAL_NP = TypeVar("T_INTERVAL_NP", bound=np.bytes_ | np.str_)
 
 class PandasObject(DirNamesMixin): ...
 
-class IndexOpsMixin(OpsMixin, Generic[S1, GenericT_co]):
+class IndexOpsMixin(OpsMixin, Generic[S1, ArrayT_co, GenericT_co]):
     __array_priority__: int = ...
     @property
     def T(self) -> Self: ...
@@ -69,6 +70,8 @@ class IndexOpsMixin(OpsMixin, Generic[S1, GenericT_co]):
     def nbytes(self) -> int: ...
     @property
     def size(self) -> int: ...
+    @property
+    def array(self) -> ArrayT_co: ...
     @overload
     def to_numpy(
         self,

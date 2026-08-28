@@ -29,7 +29,7 @@ from pandas._typing import (
 )
 
 class PeriodIndex(
-    DatetimeIndexOpsMixin[Period, np.object_, PeriodArray], PeriodIndexFieldOps
+    DatetimeIndexOpsMixin[Period, PeriodArray, np.object_], PeriodIndexFieldOps
 ):
     def __new__(
         cls,

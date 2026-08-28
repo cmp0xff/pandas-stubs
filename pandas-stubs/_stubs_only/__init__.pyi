@@ -292,7 +292,7 @@ class _CatDescriptor:
     def __get__(self, instance: Series, owner: Any) -> CategoricalAccessor[Any]: ...
 
 @type_check_only
-class IndexSubclassBase(Index[S1, ArrayT_co], Generic[S1, GenericT_co, ArrayT_co]):
+class IndexSubclassBase(Index[S1, ArrayT_co], Generic[S1, ArrayT_co, GenericT_co]):
     @overload
     @override
     def to_numpy(

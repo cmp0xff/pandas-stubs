@@ -56,7 +56,7 @@ _DT_FACTOR: TypeAlias = timedelta | np.timedelta64 | Timedelta
 _DT_FACTOR_SEQ: TypeAlias = _DT_FACTOR | Sequence[_DT_FACTOR] | np_ndarray_td
 
 class TimedeltaIndex(
-    DatetimeTimedeltaMixin[Timedelta, np.timedelta64, TimedeltaArray],
+    DatetimeTimedeltaMixin[Timedelta, TimedeltaArray, np.timedelta64],
     TimedeltaIndexProperties,
 ):
     def __new__(

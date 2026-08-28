@@ -44,7 +44,7 @@ from pandas._typing import (
 from pandas.tseries.offsets import BaseOffset
 
 class DatetimeIndex(
-    DatetimeTimedeltaMixin[Timestamp, np.datetime64, DatetimeArray],
+    DatetimeTimedeltaMixin[Timestamp, DatetimeArray, np.datetime64],
     DatetimeIndexProperties,
 ):
     def __new__(

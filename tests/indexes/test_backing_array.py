@@ -23,6 +23,7 @@ from pandas.core.arrays.string_ import (
 from pandas.core.arrays.string_ import StringArray  # noqa: F401
 from pandas.core.arrays.string_arrow import ArrowStringArray  # noqa: F401
 from pandas.core.arrays.timedeltas import TimedeltaArray
+from pandas.core.base import IndexOpsMixin
 
 
 def test_constructor_backing_array() -> None:
@@ -42,6 +43,13 @@ def test_constructor_backing_array() -> None:
     )
     assert_type(arrow_index.array, ArrowExtensionArray)
     assert_type(arrow_index.dtype, pd.ArrowDtype)
+
+
+def test_index_ops_mixin_array() -> None:
+    def read_array(obj: IndexOpsMixin[int, IntegerArray]) -> IntegerArray:
+        return obj.array
+
+    assert_type(read_array(pd.Index([1, 2], dtype="Int64")), IntegerArray)
 
 
 def test_astype_backing_array() -> None:
