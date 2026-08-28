@@ -197,7 +197,7 @@ pandas API.
   equivalent yet.
 - Adding the storage parameter forced `@final` off four `NDFrame` methods —
   `set_flags`, `__neg__`, `__pos__`, `convert_dtypes` — in `pandas-stubs/core/generic.pyi`,
-  so `Series` can re-declare each with a storage-widening return type instead of
+  so `Series` can redeclare each with a storage-widening return type instead of
   `NDFrame`'s `Self`. This is a real loosening of a base contract: nothing stops
   another `NDFrame` subclass's stub from overriding these for an unrelated reason.
 
