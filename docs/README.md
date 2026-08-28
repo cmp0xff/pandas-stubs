@@ -6,6 +6,13 @@ a proposed change, and works with a proposed change.  See <https://github.com/pa
 The stubs are developed with a certain [philosophy](philosophy.md) that should be 
 understood by developers proposing changes to the stubs.
 
+The [`Series` and `Index` backing-array architecture](architecture.md) describes how
+the stubs track both element types and physical array storage.
+
+[Intentional type ignores](type_ignores.md) catalogs the `# type: ignore` /
+`# pyright: ignore` comments that are permanent by design, as opposed to checker-disagreement
+debt.
+
 Instructions for working with the code are found here:
 
 - [How to set up the environment](setup.md)

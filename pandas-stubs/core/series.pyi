@@ -67,6 +67,9 @@ from pandas._stubs_only import (
 from pandas._stubs_only import (
     _SeriesValuesDescriptor,  # pyright: ignore[reportPrivateUsage]
 )
+
+# _SeriesDtypeDescriptor, _SeriesValuesDescriptor, _CatDescriptor and _RetainedArrayT above and
+# below are private in pandas implementation. We have to ignore the private usage in the stubs.
 from pandas._stubs_only import _CatDescriptor  # pyright: ignore[reportPrivateUsage]
 from pandas._stubs_only import _RetainedArrayT  # pyright: ignore[reportPrivateUsage]
 from pandas.core.api import (

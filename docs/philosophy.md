@@ -176,3 +176,7 @@ for them.
 If type checkers report errors, for example, inside a `TYPE_CHECKING_INVALID_USAGE`
 block, please ensure that the comment for mypy comes first:
 `# type: ignore[<error code>] # pyright: ignore[<error code>] # pyrefly: ignore[<error code>] # ty: ignore[<error code>]`.
+
+See [`docs/type_ignores.md`](type_ignores.md) for the catalog of ignores that are permanent
+by design (private-symbol imports, unhashable containers, elementwise comparison dunders,
+subtype-driven overload overlap) rather than checker-disagreement debt.

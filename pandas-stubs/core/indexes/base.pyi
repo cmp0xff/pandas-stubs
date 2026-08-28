@@ -34,6 +34,8 @@ from pandas._stubs_only import (
     OrderableT,
     T_contra,
 )
+
+# The class is private in pandas implementation. We have to ignore the private usage in the stubs.
 from pandas._stubs_only import (
     _IndexDtypeDescriptor,  # pyright: ignore[reportPrivateUsage]
 )

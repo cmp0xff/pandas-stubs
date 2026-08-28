@@ -12,7 +12,7 @@ The `pandas-stubs` project is introduced in `README.md`.
 
 ## Project Guidelines
 
-- Follow `docs/philosophy.md`.
+- Follow `docs/philosophy.md`, `docs/architecture.md`, and `docs/type_ignores.md`.
 - Also follow all guidelines for contributing to the codebase specified at [Contributing to the code base](https://pandas.pydata.org/docs/development/contributing_codebase.html).
 
 ## Decision heuristics
