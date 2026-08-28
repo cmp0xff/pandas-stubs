@@ -71,6 +71,131 @@ Removal condition (all rows): all supported checkers materialize generic default
 arithmetic results consistently, or the expected type in the `assert_type` call can be
 made explicit without weakening the tested API.
 
+### Confirmed mechanism (95 of 98 rows: every row above except the single
+### `frame/test_frame.py` `test_types_unique` case and the `test_natype.py` row)
+
+Root cause, confirmed by live bisection against this branch and by a standalone
+pandas/numpy-free repro (`mypy 2.3.1`; not reproduced on pyright, pyrefly, or ty — see
+the four-checker matrix below):
+
+Whenever an `Any`-typed operand makes two or more `__add__`/`__sub__`/`__mul__`/
+`__truediv__`/`__floordiv__`/`.add`/`.radd`/... overloads on `Series`/`Index` match
+simultaneously (`Any` is compatible with every candidate's parameter type), and the
+matched overloads' return types are not "equivalent modulo `Any`" in mypy's sense, mypy
+intentionally infers `Any` for the *entire* return type's type arguments — not just the
+one argument that actually varies between the matched candidates. `Series`/`Index` had
+only one type parameter before this branch, so "the whole return became `Any`" and "the
+one parameter that differs became `Any`" were indistinguishable; the second
+(`ArrayT_co`) parameter this branch adds is what makes the over-widening visible as an
+`assert-type` mismatch (`Series[Any, Any]` instead of the expected
+`Series[Any, ExtensionArray]`).
+
+This is not a novel mypy bug: it is the intentional gradual-typing soundness rule
+explained by mypy core maintainer @ilevkivskyi on
+[python/mypy#19952](https://github.com/python/mypy/issues/19952) — filed from this
+project against a single-type-parameter reproduction of the identical mechanism,
+already closed as working-as-intended ("replacing a precise type with `Any` should not
+cause new errors"). The general disagreement between mypy/pyright/pyrefly/ty on overload
+resolution with `Any` arguments is tracked on this repo's own
+[pandas-dev/pandas-stubs#1781](https://github.com/pandas-dev/pandas-stubs/issues/1781),
+which cross-references #19952. Given a maintainer already confirmed the single-parameter
+case is intentional, no new mypy issue was filed for the multi-parameter case — it is the
+same rule, just newly visible because there are now two type arguments to widen instead
+of one.
+
+Minimal, pandas/numpy-free repro, re-verified at the repo's own floor
+(`python-version = "3.11"`) against all four checkers this project supports. Two prior
+attempts at this repro were wrong and are recorded for posterity, not repeated: an
+earlier version used `typing.TypeVar(..., default=EA)`, which requires Python ≥ 3.13
+(PEP 696) and made pyright/ty fail on portability grounds alone, independent of the
+actual mechanism — the fix is `typing_extensions.TypeVar`, mirroring
+`pandas-stubs/_typing.pyi:44-46`. A second version additionally put the `Any` operand on
+the wrong side (`other`, not `self`) relative to the real failing call
+(`tests/series/test_add.py:51`, where the **receiver** `left_i` carries the `Any`), and
+that version also happened to trip `ty` — an independent disagreement, not a cascade
+from the portability bug. The version below fixes both: it matches the real call shape
+(`Ser2[Any, EA] + Sequence[Any]`, with a `Supports_ProtoAdd`-style protocol overload
+alongside a concrete-`self` overload, mirroring `pandas-stubs/core/series.pyi:2232`) and
+is mypy-only.
+
+```python
+from collections.abc import Sequence
+from typing import Any, Generic, Protocol, assert_type, overload
+
+from typing_extensions import TypeVar
+
+S1 = TypeVar("S1")
+
+
+class EA: ...
+
+
+A = TypeVar("A", bound=EA, default=EA, covariant=True)
+S2 = TypeVar("S2", bound=EA)
+S2_contra = TypeVar("S2_contra", bound=EA, contravariant=True)
+
+
+class Supports_ProtoAdd(Protocol[S2_contra, S2]):
+    def _proto_add(self, other: S2_contra, /) -> "Ser2[S2, EA]": ...
+
+
+class Ser2(Generic[S1, A]):
+    def _proto_add(self, other: Any, /) -> "Ser2[Any, EA]":
+        raise NotImplementedError
+
+    @overload
+    def __add__(
+        self: Supports_ProtoAdd[S2_contra, S2],
+        other: "S2_contra | Sequence[S2_contra]",
+    ) -> "Ser2[S2]": ...
+    @overload
+    def __add__(self: "Ser2[bool, EA]", other: Sequence[Any]) -> "Ser2[int]": ...
+    def __add__(self, other: Any) -> Any:
+        raise NotImplementedError
+
+
+def f(a2: "Ser2[Any, EA]", seq: "Sequence[Any]") -> None:
+    assert_type(a2 + seq, "Ser2[Any, EA]")
+    # mypy 2.3.1 @3.11: error: Expression is of type "Ser2[Any, Any]", not "Ser2[Any, EA]"  [assert-type]
+```
+
+Measured matrix, all runs at `--python-version 3.11` / `--pythonversion 3.11` (the repo's
+own floor), from this session:
+
+| Checker | Result at repo floor (3.11) |
+| --- | --- |
+| mypy 2.3.1 | **fails** (the intended demo): `Ser2[Any, Any]`, not `Ser2[Any, EA]` |
+| pyright | 0 errors |
+| pyrefly | 0 errors — **caveat**: run outside the repo falls back to the `basic` preset ("No `pyrefly.toml` found"), so this is weaker evidence than a real project-config run, not a strict pass |
+| ty | 0 errors — `All checks passed!` |
+
+So the repro is mypy-only, matching the real category-A/B/C ignores at
+`tests/series/test_add.py:51,57,63,69` etc., which carry a bare
+`# type: ignore[assert-type]` with no ty/pyrefly companion.
+
+Two bounded stub-side workarounds were tried and abandoned (do not retry without a new
+angle):
+
+- **Change `ArrayT_co`'s default from `ExtensionArray` to `Any`**
+  (`pandas-stubs/_typing.pyi:938`). Since the degraded type is always `Any` in that slot,
+  this would make the 95 assertions correct without an ignore — but it also changes every
+  *other* bare `Series`/`Index` return elsewhere in the stubs to default to
+  `[…, Any]` instead of `[…, ExtensionArray]`. Tried directly: **270 new mypy errors**
+  across 48 files (`poetry run mypy pandas-stubs tests --no-incremental`), including
+  colliding with the `test_types_unique` one-off above by changing which overload it
+  dispatches to. Reverted.
+- **Hoist a `self: Series[Any, Any], other: Any -> Series` catch-all `__add__` overload
+  to the front of the overload list** (mirrors mypy's own suggested workaround of
+  reordering overloads). Tried on `Series.__add__` only: no effect — mypy's
+  ambiguous-overload-with-`Any` check evaluates all candidates regardless of declaration
+  order, so a hoisted catch-all doesn't prevent the widening once a later, narrower
+  overload could also match. Reverted.
+
+No further stub-side fix attempt is planned. The path to actually removing these 95
+ignores (not attempted here) is adding them as `# type: ignore[assert-type]` with a
+comment pointing at this section, the same way the `test_natype.py` row already points
+at `facebook/pyrefly#3822` and the `test_types_unique` row points at `astral-sh/ty#2182`.
+
 ## Re-running this after further changes
 
 ```bash
