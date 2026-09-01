@@ -8,12 +8,12 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from pandas.tseries.offsets import Day
-
 from tests import (
     TYPE_CHECKING_INVALID_USAGE,
     check,
 )
+
+from pandas.tseries.offsets import Day
 
 
 @pytest.fixture

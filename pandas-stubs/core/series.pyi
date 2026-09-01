@@ -3307,7 +3307,9 @@ class Series(IndexOpsMixin[S1], ElementOpsMixin[S1], NDFrame):
         /,
     ) -> Series[S2]: ...
     @overload
-    def __sub__(self: Series[int], other: ArrayIndexSeriesBoolNoSeq, /) -> Series[int]: ...
+    def __sub__(
+        self: Series[int], other: ArrayIndexSeriesBoolNoSeq, /
+    ) -> Series[int]: ...
     @overload
     def __sub__(
         self: Series[bool] | Series[int], other: ScalarArrayIndexSeriesJustInt, /
@@ -3471,7 +3473,8 @@ class Series(IndexOpsMixin[S1], ElementOpsMixin[S1], NDFrame):
     @overload
     def __rsub__(  # type: ignore[overload-overlap]
         self: Series[Never],
-        other: ScalarArrayIndexSeriesComplex | ScalarArrayIndexSeriesDatetime, /
+        other: ScalarArrayIndexSeriesComplex | ScalarArrayIndexSeriesDatetime,
+        /,
     ) -> Series: ...
     @overload
     def __rsub__(  # type: ignore[overload-overlap]

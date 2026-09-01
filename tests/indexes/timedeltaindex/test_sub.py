@@ -24,7 +24,7 @@ from tests._typing import (
 @pytest.fixture
 def left() -> pd.TimedeltaIndex:
     """Left operand"""
-    lo = pd.Index([pd.Timedelta(1, "s")])  # left operand
+    lo = pd.Index([pd.Timedelta(1, "s")])
     return check(assert_type(lo, pd.TimedeltaIndex), pd.TimedeltaIndex, pd.Timedelta)
 
 

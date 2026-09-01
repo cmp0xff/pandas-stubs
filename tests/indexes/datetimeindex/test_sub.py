@@ -24,7 +24,7 @@ from tests._typing import (
 @pytest.fixture
 def left() -> pd.DatetimeIndex:
     """Left operand"""
-    lo = pd.DatetimeIndex(["2025-08-20"])  # left operand
+    lo = pd.DatetimeIndex(["2025-08-20"])
     return check(assert_type(lo, pd.DatetimeIndex), pd.DatetimeIndex, pd.Timestamp)
 
 
