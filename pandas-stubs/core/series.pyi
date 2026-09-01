@@ -3318,7 +3318,6 @@ class Series(IndexOpsMixin[S1], ElementOpsMixin[S1], NDFrame):
         other: ArrayIndexSeriesBoolIntNoSeq,
         /,
     ) -> Series[float]: ...
-    ) -> Series[float]: ...
     @overload
     def __sub__(
         self: Series[complex],
@@ -3497,7 +3496,6 @@ class Series(IndexOpsMixin[S1], ElementOpsMixin[S1], NDFrame):
         self: Series[float],
         other: ArrayIndexSeriesBoolIntNoSeq,
         /,
-    ) -> Series[float]: ...
     ) -> Series[float]: ...
     @overload
     def __rsub__(

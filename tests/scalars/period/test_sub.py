@@ -83,3 +83,19 @@ def test_sub_pd_scalar(left: pd.Period) -> None:
     if TYPE_CHECKING_INVALID_USAGE:
         _0 = d - left  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation] # ty: ignore[unsupported-operator]
         _1 = off - left  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation] # ty: ignore[unsupported-operator]
+
+
+def test_sub_pd_index(left: pd.Period) -> None:
+    """Test pd.Period - pandas Indexes"""
+    pi = pd.PeriodIndex(["2025-08-20"], freq="D")
+    ti = pd.TimedeltaIndex([pd.Timedelta(days=1)])
+
+    check(assert_type(left - pi, pd.Index), pd.Index)
+    check(assert_type(left - ti, pd.PeriodIndex), pd.PeriodIndex)
+
+
+def test_sub_pd_series(left: pd.Period) -> None:
+    """Test pd.Period - pandas Series"""
+    td = pd.Series([pd.Timedelta(days=1)])
+
+    check(assert_type(left - td, "pd.Series[pd.Period]"), pd.Series, pd.Period)
