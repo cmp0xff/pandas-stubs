@@ -16,7 +16,7 @@ Pandas data accessors (`.loc`, `.iloc`, `.at`, `.iat`, and `__getitem__`) map 1D
 | `Series[S1]` | `.iloc[i]` | `int` | `S1` | Pure integer position scalar lookup | pandas-dev/pandas-stubs#760 |
 | `Series[S1]` | `.iloc[slice]` | `slice` \| `Sequence[int]` | `Series[S1]` | Positional subset selection | pandas-dev/pandas-stubs#760 |
 | `Series[S1]` | `.iat[i]` / `.at[label]` | `int` / `Scalar` | `S1` | High-speed scalar only (no sequences permitted) | pandas-dev/pandas-stubs#760 |
-| `DataFrame` | `[col_name]` | `Scalar` (str, int, etc.) | `Series[Any]` (or `Series[T]`) | Single column projection | pandas-dev/pandas-stubs#1803 |
+| `DataFrame` | `[col_name]` | `Scalar` (str, int, etc.) | `Series[Any]` (or `Series[T]`) | Single column projection | pandas-dev/pandas-stubs#1803; see [ADR-0021](../decisions/adr-0021-dataframe-is-not-schema-generic.md) |
 | `DataFrame` | `[[col1, col2]]` | `SequenceNotStr[Scalar]` | `DataFrame` | Multi-column projection | pandas-dev/pandas-stubs#1803 |
 | `DataFrame` | `.loc[row, col]` | `Scalar, Scalar` | `Any` (scalar value) | Single cell extraction | pandas-dev/pandas-stubs#1803 |
 | `DataFrame` | `.loc[row, cols]` | `Scalar, SequenceNotStr[Scalar]` | `Series[Any]` | Single row across multiple columns | pandas-dev/pandas-stubs#1803 |
