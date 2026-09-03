@@ -126,23 +126,38 @@ express.
   (`tests/indexes/int/test_sub.py::test_sub_external_reflected`): before the
   change pyright reported `Operator "-" not supported`, after it resolves the
   operand to `Index[int]`.
-- **Neutral**: the new overloads do not change the resolution of any existing
-  `tests/indexes/{bool,int,float,complex}/test_sub.py` result under mypy (the
-  full `tests/indexes` mypy corpus is byte-identical before/after the change).
-  The concrete numpy/`Index` overloads still win for the operand types they
+- **Neutral for non-bool**: the new overloads do not change the resolution of any
+  existing `tests/indexes/{int,float,complex}/test_sub.py` result, and the
+  top-level `tests/indexes/test_sub.py` corpus is unchanged — the full
+  `tests/indexes` source check is clean under mypy, pyright, and pyrefly. The
+  concrete numpy/`Index` overloads still win for the container operand types they
   enumerate, because a *container* (`Index[int]`, an ndarray) whose reflected
-  dunder returns a container rather than a scalar does not satisfy the
-  scalar-bound `S2_NSDT` contract.
-- **Open / checker divergence**: pyright and pyrefly infer `S2_NSDT` differently
-  for an operand whose reflected `__rsub__` returns a scalar type different from
-  the operand's own type. For `left: Index[int]` and an operand with
-  `__rsub__(x: int) -> float`, pyright resolves to `Index[float]` (uses the
-  reflected return type) while pyrefly resolves to `Index[int]` (ties it to the
-  operand's own dtype). This is a pre-existing inference difference latent in
-  `__add__`/`__mul__`, surfaced here because subtraction finally exercises the
-  same shape. It is recorded, not hidden: the focused test pins the
-  cross-checker-consistent case (operand reflected dunder returns the operand's
-  own scalar type), and the divergent case is left asserted per-checker.
+  dunder returns a container rather than a scalar does not satisfy the scalar
+  `S2_NSDT` contract.
+- **bool interaction (resolved)**: `Index[bool]` is the one case the greedy
+  `Supports*` overload does capture — `bool <: int` and `Index[bool]`'s
+  `__rsub__`/`__sub__` carry a `-> Never` guard, so `Index[bool]` structurally
+  satisfies `SupportsRSub[bool, Never]`/`SupportsSub[bool, Never]`. As a result
+  `Index[bool] - Index[bool]` (both directions) now resolves to `Index[Never]`
+  instead of an operator error — a strict precision improvement, asserted in
+  `tests/indexes/bool/test_sub.py`. `Index[bool] - np_ndarray_bool` would also have
+  moved through this overload, but pyrefly resolves it to bare `Never` while
+  mypy/pyright resolve it to `Index[Never]`; to keep it consistently `Never` (the
+  pre-change behavior) and avoid that divergence, the existing bool `Never` guard
+  was extended with `np_ndarray_bool`. These bool adjustments are the only
+  existing-sub-test change the parity work requires.
+- **Cross-checker consistency**: under the real harness (`poetry run pyright
+  --warnings …` / `poetry run pyrefly check …`, without an ad-hoc `--pythonpath`
+  or stub-path override), mypy, pyright, and pyrefly all resolve an operand whose
+  reflected `__rsub__` returns a scalar type different from the operand's own
+  type to the reflected-return dtype. For `left: Index[int]` and an operand with
+  `__rsub__(x: int) -> float`, all three checkers resolve both `index - operand`
+  and `operand - index` to `Index[float]`. An earlier apparent pyright/pyrefly
+  `S2_NSDT` divergence did **not** reproduce under the real harness; it was
+  traced to the ad-hoc `--pythonpath` invocation and is not a real checker
+  divergence, so no per-checker caveat is needed. ty is not exercised over this
+  test because `[tool.ty.src]` excludes the sub-test corpus
+  (`tests/**/*sub.py`).
 - **Scope**: this ADR covers only the `Index.__sub__`/`__rsub__` family. The
   `/`/`//` `Never` guards, a guard-checker, and `Series` parity are explicitly out
   of scope and deferred.
@@ -162,5 +177,8 @@ express.
   `ec114bec`) — landed the first `Index[bool] - bool -> Never` guard and aligned
   the `__sub__` family onto the `ElementOpsMixin` + `Supports_Proto*` idiom that
   this ADR extends.
-- This change (branch `typ-index-sub-parity`) — the focused parity diff that
-  implements the ADR.
+- This change — delivered as a commit on `typ-index-subtraction` (#1938) on top
+  of `ec114bec`, rather than as a standalone branch — the focused parity diff
+  that implements the ADR. It was originally prepared on a `typ-index-sub-parity`
+  branch and folded into #1938 so the parity work ships with the subtraction
+  series.
