@@ -42,6 +42,34 @@ def test_add_py_scalar(left: pd.DatetimeIndex) -> None:
     check(assert_type(d + left, pd.DatetimeIndex), pd.DatetimeIndex, pd.Timestamp)
 
 
+def test_add_numpy_scalar(left: pd.DatetimeIndex) -> None:
+    """Test pd.DatetimeIndex + numpy scalars"""
+    s = np.datetime64("2025-08-20")
+    d = np.timedelta64(1, "s")
+
+    if TYPE_CHECKING_INVALID_USAGE:
+        _0 = left + s  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation]
+    check(assert_type(left + d, pd.DatetimeIndex), pd.DatetimeIndex, pd.Timestamp)
+
+    if TYPE_CHECKING_INVALID_USAGE:
+        _1 = s + left  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation]
+    check(assert_type(d + left, pd.DatetimeIndex), pd.DatetimeIndex, pd.Timestamp)
+
+
+def test_add_pd_scalar(left: pd.DatetimeIndex) -> None:
+    """Test pd.DatetimeIndex + pandas scalars"""
+    s = pd.Timestamp("2025-08-20")
+    d = pd.Timedelta(seconds=1)
+
+    if TYPE_CHECKING_INVALID_USAGE:
+        _0 = left + s  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation]
+    check(assert_type(left + d, pd.DatetimeIndex), pd.DatetimeIndex, pd.Timestamp)
+
+    if TYPE_CHECKING_INVALID_USAGE:
+        _1 = s + left  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation]
+    check(assert_type(d + left, pd.DatetimeIndex), pd.DatetimeIndex, pd.Timestamp)
+
+
 def test_add_py_sequence(left: pd.DatetimeIndex) -> None:
     """Test pd.DatetimeIndex + Python native sequences"""
     s = [datetime(2025, 8, 20)]
@@ -54,6 +82,33 @@ def test_add_py_sequence(left: pd.DatetimeIndex) -> None:
     if TYPE_CHECKING_INVALID_USAGE:
         _1 = s + left  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation]
     check(assert_type(d + left, pd.DatetimeIndex), pd.DatetimeIndex, pd.Timestamp)
+
+
+def test_add_numpy_scalar_sequence(left: pd.DatetimeIndex) -> None:
+    """Test pd.DatetimeIndex + sequences of numpy scalars"""
+    s = [np.datetime64("2025-08-20")]
+    d = [np.timedelta64(1, "s")]
+
+    if TYPE_CHECKING_INVALID_USAGE:
+        _0 = left + s  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation]
+    check(assert_type(left + d, pd.DatetimeIndex), pd.DatetimeIndex, pd.Timestamp)
+
+    if TYPE_CHECKING_INVALID_USAGE:
+        _1 = s + left  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation]
+    check(assert_type(d + left, pd.DatetimeIndex), pd.DatetimeIndex, pd.Timestamp)
+
+
+def test_add_pd_array(left: pd.DatetimeIndex) -> None:
+    """Test pd.DatetimeIndex + pandas extension arrays"""
+    s = pd.array([datetime(2025, 8, 20)])
+    d = pd.array([timedelta(seconds=1)])
+
+    if TYPE_CHECKING_INVALID_USAGE:
+        _0 = left + s  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation]
+    check(assert_type(left + d, pd.DatetimeIndex), pd.DatetimeIndex, pd.Timestamp)
+
+    if TYPE_CHECKING_INVALID_USAGE:
+        _1 = s + left  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation]
 
 
 def test_add_numpy_array(left: pd.DatetimeIndex) -> None:

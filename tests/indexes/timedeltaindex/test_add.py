@@ -34,6 +34,32 @@ def test_add_py_scalar(left: pd.TimedeltaIndex) -> None:
     check(assert_type(d + left, pd.TimedeltaIndex), pd.TimedeltaIndex, pd.Timedelta)
 
 
+def test_add_numpy_scalar(left: pd.TimedeltaIndex) -> None:
+    """Test pd.TimedeltaIndex + numpy scalars"""
+    s = np.datetime64("2025-08-20")
+    d = np.timedelta64(1, "s")
+
+    check(assert_type(left + s, pd.DatetimeIndex), pd.DatetimeIndex, pd.Timestamp)
+    check(assert_type(left + d, pd.TimedeltaIndex), pd.TimedeltaIndex, pd.Timedelta)
+
+    check(assert_type(s + left, pd.DatetimeIndex), pd.DatetimeIndex, pd.Timestamp)
+    check(assert_type(d + left, pd.TimedeltaIndex), pd.TimedeltaIndex, pd.Timedelta)
+
+
+def test_add_pd_scalar(left: pd.TimedeltaIndex) -> None:
+    """Test pd.TimedeltaIndex + pandas scalars"""
+    s = pd.Timestamp("2025-08-20")
+    d = pd.Timedelta(seconds=1)
+    p = pd.Period("2025-08-20", freq="s")
+
+    check(assert_type(left + s, pd.DatetimeIndex), pd.DatetimeIndex, pd.Timestamp)
+    check(assert_type(left + d, pd.TimedeltaIndex), pd.TimedeltaIndex, pd.Timedelta)
+
+    check(assert_type(s + left, pd.DatetimeIndex), pd.DatetimeIndex, pd.Timestamp)
+    check(assert_type(d + left, pd.TimedeltaIndex), pd.TimedeltaIndex, pd.Timedelta)
+    check(assert_type(p + left, pd.PeriodIndex), pd.PeriodIndex, pd.Period)
+
+
 def test_add_py_sequence(left: pd.TimedeltaIndex) -> None:
     """Test pd.TimedeltaIndex + Python native sequences"""
     s = [datetime(2025, 8, 20)]
@@ -44,6 +70,30 @@ def test_add_py_sequence(left: pd.TimedeltaIndex) -> None:
 
     check(assert_type(s + left, pd.DatetimeIndex), pd.DatetimeIndex, pd.Timestamp)
     check(assert_type(d + left, pd.TimedeltaIndex), pd.TimedeltaIndex, pd.Timedelta)
+
+
+def test_add_numpy_scalar_sequence(left: pd.TimedeltaIndex) -> None:
+    """Test pd.TimedeltaIndex + sequences of numpy scalars"""
+    s = [np.datetime64("2025-08-20")]
+    d = [np.timedelta64(1, "s")]
+
+    check(assert_type(left + s, pd.DatetimeIndex), pd.DatetimeIndex, pd.Timestamp)
+    check(assert_type(left + d, pd.TimedeltaIndex), pd.TimedeltaIndex, pd.Timedelta)
+
+    check(assert_type(s + left, pd.DatetimeIndex), pd.DatetimeIndex, pd.Timestamp)
+    check(assert_type(d + left, pd.TimedeltaIndex), pd.TimedeltaIndex, pd.Timedelta)
+
+
+def test_add_pd_array(left: pd.TimedeltaIndex) -> None:
+    """Test pd.TimedeltaIndex + pandas extension arrays"""
+    s = pd.array([datetime(2025, 8, 20)])
+    d = pd.array([timedelta(seconds=1)])
+
+    check(assert_type(left + s, pd.DatetimeIndex), pd.DatetimeIndex, pd.Timestamp)
+    check(assert_type(left + d, pd.TimedeltaIndex), pd.TimedeltaIndex, pd.Timedelta)
+
+    check(s + left, pd.DatetimeIndex, pd.Timestamp)
+    check(d + left, pd.TimedeltaIndex, pd.Timedelta)
 
 
 def test_add_numpy_array(left: pd.TimedeltaIndex) -> None:

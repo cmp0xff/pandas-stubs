@@ -14,6 +14,8 @@ from tests._typing import (
     np_ndarray_td,
 )
 
+from pandas.tseries.offsets import Day
+
 
 @pytest.fixture
 def left() -> pd.PeriodIndex:
@@ -33,6 +35,33 @@ def test_add_py_scalar(left: pd.PeriodIndex) -> None:
 
     check(assert_type(left + i, pd.PeriodIndex), pd.PeriodIndex, pd.Period)
     check(assert_type(i + left, pd.PeriodIndex), pd.PeriodIndex, pd.Period)
+
+    if TYPE_CHECKING_INVALID_USAGE:
+        _0 = left + p  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation]
+        _1 = p + left  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation]
+
+
+def test_add_numpy_scalar(left: pd.PeriodIndex) -> None:
+    """Test pd.PeriodIndex + numpy scalars"""
+    d = np.timedelta64(1, "D")
+    i = np.int64(1)
+    s = np.datetime64("2025-08-20")
+
+    check(assert_type(left + d, pd.PeriodIndex), pd.PeriodIndex, pd.Period)
+    check(assert_type(left + i, pd.PeriodIndex), pd.PeriodIndex, pd.Period)
+
+    if TYPE_CHECKING_INVALID_USAGE:
+        _0 = left + s  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation]
+
+
+def test_add_pd_scalar(left: pd.PeriodIndex) -> None:
+    """Test pd.PeriodIndex + pandas scalars"""
+    d = pd.Timedelta(days=1)
+    off = Day(1)
+    p = pd.Period("2025-08-20", freq="D")
+
+    check(assert_type(left + d, pd.PeriodIndex), pd.PeriodIndex, pd.Period)
+    check(assert_type(left + off, pd.PeriodIndex), pd.PeriodIndex, pd.Period)
 
     if TYPE_CHECKING_INVALID_USAGE:
         _0 = left + p  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation]
