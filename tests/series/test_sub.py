@@ -352,3 +352,25 @@ def test_sub_str_py_str(left_i: pd.Series) -> None:
         _1 = s - left_i  # type: ignore[operator] # pyright:ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation]
         left_i.sub(s)  # type: ignore[arg-type] # pyright: ignore[reportArgumentType,reportCallIssue] # pyrefly: ignore[no-matching-overload]
         left_i.rsub(s)  # type: ignore[arg-type] # pyright: ignore[reportArgumentType,reportCallIssue] # pyrefly: ignore[no-matching-overload]
+
+
+def test_sub_fill_value() -> None:
+    s = pd.Series([0, 1, -10])
+    s2 = pd.Series([7, -5, 10])
+
+    check(assert_type(s.sub(s2, fill_value=0), "pd.Series[int]"), pd.Series, np.integer)
+
+
+def test_sub_scalar_fill_value() -> None:
+    s = pd.Series([0, 1, -10])
+
+    check(assert_type(s.sub(1, fill_value=0), "pd.Series[int]"), pd.Series, np.integer)
+
+
+def test_sub_frame_invalid() -> None:
+    """Test that the flex method does not allow passing a frame as other."""
+    df = pd.DataFrame([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+    s = pd.Series([0, 1, -10])
+
+    if TYPE_CHECKING_INVALID_USAGE:
+        _0 = s.sub(df)  # type: ignore[arg-type] # pyright: ignore[reportCallIssue,reportUnknownVariableType,reportArgumentType] # pyrefly: ignore[no-matching-overload] # ty: ignore[no-matching-overload]

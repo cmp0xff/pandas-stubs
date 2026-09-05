@@ -198,3 +198,57 @@ def test_mul_str_py_str(left_i: pd.Series) -> None:
         _1 = s * left_i  # type: ignore[operator] # pyright:ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation]
         left_i.mul(s)  # type: ignore[arg-type] # pyright: ignore[reportArgumentType,reportCallIssue] # pyrefly: ignore[no-matching-overload]
         left_i.rmul(s)  # type: ignore[arg-type] # pyright: ignore[reportArgumentType,reportCallIssue] # pyrefly: ignore[no-matching-overload]
+
+
+def test_mul_fill_value() -> None:
+    s = pd.Series([0, 1, -10])
+    s2 = pd.Series([7, -5, 10])
+
+    # TODO: remove the ignore astral-sh/ty#4401
+    check(
+        assert_type(
+            s.mul(s2, fill_value=0), "pd.Series[int]"
+        ),  # ty: ignore[type-assertion-failure]
+        pd.Series,
+        np.integer,
+    )
+
+
+def test_mul_scalar_fill_value() -> None:
+    s = pd.Series([0, 1, -10])
+
+    check(assert_type(s.mul(1, fill_value=0), "pd.Series[int]"), pd.Series, np.integer)
+
+
+def test_operator_constistency() -> None:
+    # created for #748
+    s = pd.Series([1, 2, 3])
+    check(
+        assert_type(s * np.timedelta64(1, "s"), "pd.Series[pd.Timedelta]"),
+        pd.Series,
+        pd.Timedelta,
+    )
+    check(
+        assert_type(np.timedelta64(1, "s") * s, "pd.Series[pd.Timedelta]"),
+        pd.Series,
+        pd.Timedelta,
+    )
+    check(
+        assert_type(s.mul(np.timedelta64(1, "s")), "pd.Series[pd.Timedelta]"),
+        pd.Series,
+        pd.Timedelta,
+    )
+    check(
+        assert_type(s.rmul(np.timedelta64(1, "s")), "pd.Series[pd.Timedelta]"),
+        pd.Series,
+        pd.Timedelta,
+    )
+
+
+def test_mul_frame_invalid() -> None:
+    """Test that the flex method does not allow passing a frame as other."""
+    df = pd.DataFrame([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+    s = pd.Series([0, 1, -10])
+
+    if TYPE_CHECKING_INVALID_USAGE:
+        _0 = s.mul(df)  # type: ignore[type-var] # pyright: ignore[reportCallIssue,reportUnknownVariableType,reportArgumentType] # pyrefly: ignore[no-matching-overload] # ty: ignore[no-matching-overload]

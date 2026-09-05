@@ -8,7 +8,10 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from tests import check
+from tests import (
+    TYPE_CHECKING_INVALID_USAGE,
+    check,
+)
 
 
 @pytest.fixture
@@ -205,3 +208,32 @@ def test_series_add_str() -> None:
     check(assert_type("c1" + sr, "pd.Series[str]"), pd.Series, str)
     check(assert_type(sr.add("c1"), "pd.Series[str]"), pd.Series, str)
     check(assert_type(sr.radd("c1"), "pd.Series[str]"), pd.Series, str)
+
+
+def test_add_fill_value() -> None:
+    s = pd.Series([0, 1, -10])
+    s2 = pd.Series([7, -5, 10])
+
+    # TODO: remove the ignore astral-sh/ty#4401
+    check(
+        assert_type(
+            s.add(s2, fill_value=0), "pd.Series[int]"
+        ),  # ty: ignore[type-assertion-failure]
+        pd.Series,
+        np.integer,
+    )
+
+
+def test_add_scalar_fill_value() -> None:
+    s = pd.Series([0, 1, -10])
+
+    check(assert_type(s.add(1, fill_value=0), "pd.Series[int]"), pd.Series, np.integer)
+
+
+def test_add_frame_invalid() -> None:
+    """Test that the flex method does not allow passing a frame as other."""
+    df = pd.DataFrame([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+    s = pd.Series([0, 1, -10])
+
+    if TYPE_CHECKING_INVALID_USAGE:
+        _0 = s.add(df)  # type: ignore[type-var] # pyright: ignore[reportCallIssue,reportUnknownVariableType,reportArgumentType] # pyrefly: ignore[no-matching-overload] # ty: ignore[no-matching-overload]

@@ -363,12 +363,6 @@ def test_index_dropna() -> None:
     check(assert_type(midx.dropna(how="any"), pd.MultiIndex), pd.MultiIndex)
 
 
-def test_index_neg() -> None:
-    # GH 253
-    idx = pd.Index([1, 2])
-    check(assert_type(-idx, "pd.Index[int]"), pd.Index)
-
-
 def test_types_to_numpy() -> None:
     idx = pd.Index([1, 2])
     check(assert_type(idx.to_numpy(), np_1darray), np_1darray)
@@ -982,33 +976,6 @@ def test_sorted_and_list() -> None:
     i1 = pd.Index([3, 2, 1])
     check(assert_type(sorted(i1), list[int]), list, int)
     check(assert_type(list(i1), list[int]), list, int)
-
-
-def test_index_operators() -> None:
-    # GH 405
-    i1 = pd.Index([1, 2, 3])
-    i2 = pd.Index([4, 5, 6])
-
-    check(assert_type(i1**i2, "pd.Index[int]"), pd.Index)
-    check(assert_type(i1**2, "pd.Index[int]"), pd.Index)
-    check(assert_type(2**i1, "pd.Index[int]"), pd.Index)
-    check(assert_type(i1 % i2, "pd.Index[int]"), pd.Index)
-    check(assert_type(i1 % 10, "pd.Index[int]"), pd.Index)
-    check(assert_type(10 % i1, "pd.Index[int]"), pd.Index)
-    check(assert_type(divmod(i1, i2), tuple["pd.Index[int]", "pd.Index[int]"]), tuple)
-    check(assert_type(divmod(i1, 10), tuple["pd.Index[int]", "pd.Index[int]"]), tuple)
-    check(assert_type(divmod(10, i1), tuple["pd.Index[int]", "pd.Index[int]"]), tuple)
-
-    if TYPE_CHECKING_INVALID_USAGE:
-        _i1_a_i2 = i1 & i2  # type: ignore[operator,var-annotated] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation] # ty: ignore[unsupported-operator]
-        _i1_a_10 = i1 & 10  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation] # ty: ignore[unsupported-operator]
-        _1_a_i1 = 1 & i1  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation] # ty: ignore[unsupported-operator]
-        _i1_o_i2 = i1 | i2  # type: ignore[operator,var-annotated] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation] # ty: ignore[unsupported-operator]
-        _i1_o_10 = i1 | 10  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation] # ty: ignore[unsupported-operator]
-        _1_o_i1 = 1 | i1  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation] # ty: ignore[unsupported-operator]
-        _i1_x_i2 = i1 ^ i2  # type: ignore[operator,var-annotated] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation] # ty: ignore[unsupported-operator]
-        _i1_x_10 = i1 ^ 10  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation] # ty: ignore[unsupported-operator]
-        _1_x_i1 = 1 ^ i1  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation] # ty: ignore[unsupported-operator]
 
 
 def test_getitem() -> None:

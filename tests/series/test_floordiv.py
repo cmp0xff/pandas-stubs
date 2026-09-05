@@ -278,3 +278,24 @@ def test_floordiv_pd_series(left_i: pd.Series) -> None:
         pd.Series,
         pd.Timedelta,
     )
+
+
+def test_floordiv_fill_value() -> None:
+    s = pd.Series([0, 1, -10])
+    s2 = pd.Series([7, -5, 10])
+
+    check(
+        assert_type(s.floordiv(s2, fill_value=0), "pd.Series[int]"),
+        pd.Series,
+        np.integer,
+    )
+
+
+def test_floordiv_scalar_fill_value() -> None:
+    s = pd.Series([0, 1, -10])
+
+    check(
+        assert_type(s.floordiv(2, fill_value=0), "pd.Series[int]"),
+        pd.Series,
+        np.integer,
+    )

@@ -849,11 +849,6 @@ def test_types_clip() -> None:
         s.clip(lower=lower, axis="column")  # type: ignore[call-overload] # pyright: ignore[reportCallIssue,reportArgumentType] # pyrefly: ignore[no-matching-overload] # ty: ignore[no-matching-overload]
 
 
-def test_types_abs() -> None:
-    s = pd.Series([-10, 2, 3, 10])
-    check(assert_type(s.abs(), "pd.Series[int]"), pd.Series, np.integer)
-
-
 def test_types_var() -> None:
     s = pd.Series([-10, 2, 3, 10])
     check(assert_type(s.var(), float), np.float64)
@@ -932,92 +927,11 @@ def test_types_apply() -> None:
     check(assert_type(s.apply(lambda _: pd.NA), pd.Series), pd.Series, NAType)
 
 
-def test_types_element_wise_arithmetic() -> None:
-    s = pd.Series([0, 1, -10])
-    s2 = pd.Series([7, -5, 10])
-
-    # TODO: remove the ignore astral-sh/ty#4401
-    check(
-        assert_type(
-            s.add(s2, fill_value=0), "pd.Series[int]"
-        ),  # ty: ignore[type-assertion-failure]
-        pd.Series,
-        np.integer,
-    )
-
-    check(assert_type(s.sub(s2, fill_value=0), "pd.Series[int]"), pd.Series, np.integer)
-
-    # TODO: remove the ignore astral-sh/ty#4401
-    check(
-        assert_type(
-            s.mul(s2, fill_value=0), "pd.Series[int]"
-        ),  # ty: ignore[type-assertion-failure]
-        pd.Series,
-        np.integer,
-    )
-
-    check(
-        assert_type(s.div(s2, fill_value=0), "pd.Series[float]"), pd.Series, np.float64
-    )
-
-    _res_floordiv2: pd.Series = s.floordiv(s2, fill_value=0)
-
-    _res_mod: pd.Series = s % s2
-    _res_mod2: pd.Series = s.mod(s2, fill_value=0)
-
-    _res_pow: pd.Series = s ** s2.abs()
-    _res_pow2: pd.Series = s.pow(s2.abs(), fill_value=0)
-
-    check(assert_type(divmod(s, s2), tuple["pd.Series[int]", "pd.Series[int]"]), tuple)
-
-
 def test_types_bool_removed() -> None:
     # `bool()` was removed from `NDFrame` in pandas 2.1
     s = pd.Series([1])
     if TYPE_CHECKING_INVALID_USAGE:
         s.bool()  # type: ignore[operator] # pyright: ignore[reportCallIssue] # pyrefly: ignore[not-callable] # ty: ignore[call-non-callable]
-
-
-def test_types_scalar_arithmetic() -> None:
-    s = pd.Series([0, 1, -10])
-
-    check(assert_type(s.add(1, fill_value=0), "pd.Series[int]"), pd.Series, np.integer)
-
-    check(assert_type(s.sub(1, fill_value=0), "pd.Series[int]"), pd.Series, np.integer)
-
-    check(assert_type(s.mul(1, fill_value=0), "pd.Series[int]"), pd.Series, np.integer)
-
-    check(
-        assert_type(s.truediv(2, fill_value=0), "pd.Series[float]"),
-        pd.Series,
-        np.floating,
-    )
-    check(
-        assert_type(s.div(2, fill_value=0), "pd.Series[float]"), pd.Series, np.floating
-    )
-
-    _res_floordiv2: pd.Series = s.floordiv(2, fill_value=0)
-
-    _res_mod: pd.Series = s % 2
-    _res_mod2: pd.Series = s.mod(2, fill_value=0)
-
-    _res_pow: pd.Series = s**2
-    _res_pow1: pd.Series = s**0
-    _res_pow2: pd.Series = s**0.213
-    _res_pow3: pd.Series = s.pow(0.5)
-
-
-def test_series_frame_ops() -> None:
-    """Test that flex methods like add/sub/div/truediv/... don't allow passing a frame as other."""
-    df = pd.DataFrame([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
-    s = pd.Series([0, 1, -10])
-
-    if TYPE_CHECKING_INVALID_USAGE:
-        _0 = s.add(df)  # type: ignore[type-var] # pyright: ignore[reportCallIssue,reportUnknownVariableType,reportArgumentType] # pyrefly: ignore[no-matching-overload] # ty: ignore[no-matching-overload]
-        _1 = s.sub(df)  # type: ignore[arg-type] # pyright: ignore[reportCallIssue,reportUnknownVariableType,reportArgumentType] # pyrefly: ignore[no-matching-overload] # ty: ignore[no-matching-overload]
-        _2 = s.mul(df)  # type: ignore[type-var] # pyright: ignore[reportCallIssue,reportUnknownVariableType,reportArgumentType] # pyrefly: ignore[no-matching-overload] # ty: ignore[no-matching-overload]
-        _3 = s.truediv(df)  # type: ignore[arg-type] # pyright: ignore[reportCallIssue,reportUnknownVariableType,reportArgumentType] # pyrefly: ignore[no-matching-overload] # ty: ignore[no-matching-overload]
-        _4 = s.divmod(df)  # type: ignore[arg-type] # pyright: ignore[reportArgumentType] # pyrefly: ignore[bad-argument-type] # ty: ignore[invalid-argument-type]
 
 
 def test_types_groupby() -> None:
@@ -2070,14 +1984,6 @@ def test_to_xarray() -> None:
     check(assert_type(s.to_xarray(), xr.DataArray), xr.DataArray)
 
 
-def test_neg() -> None:
-    # GH 253
-    sr = pd.Series([1, 2, 3])
-    sr_int = pd.Series([1, 2, 3], dtype=int)
-    check(assert_type(-sr, "pd.Series[int]"), pd.Series, np.integer)
-    check(assert_type(-sr_int, "pd.Series[int]"), pd.Series, np.integer)
-
-
 def test_getattr() -> None:
     # GH 261
     series = pd.Series([1, 2, 3], index=["a", "b", "c"], dtype=int)
@@ -2895,40 +2801,6 @@ def test_where_with_none() -> None:
     check(assert_type(s.where(s > 1, None), "pd.Series[float]"), pd.Series, float)
 
 
-def test_bitwise_operators() -> None:
-    s = pd.Series([1, 2, 3, 4], dtype=int)
-    s2 = pd.Series([9, 10, 11, 12], dtype=int)
-    # for issue #348 (bitwise operators on Series should support int)
-    # The bitwise integers return platform-dependent numpy integers in the Series
-    check(assert_type(s & 3, "pd.Series[int]"), pd.Series, np.integer)
-    check(assert_type(3 & s, "pd.Series[int]"), pd.Series, np.integer)
-
-    check(assert_type(s | 3, "pd.Series[int]"), pd.Series, np.integer)
-    check(assert_type(3 | s, "pd.Series[int]"), pd.Series, np.integer)
-
-    check(assert_type(s ^ 3, "pd.Series[int]"), pd.Series, np.integer)
-    check(assert_type(3 ^ s, "pd.Series[int]"), pd.Series, np.integer)
-
-    check(assert_type(s & s2, "pd.Series[int]"), pd.Series, np.integer)
-    check(assert_type(s2 & s, "pd.Series[int]"), pd.Series, np.integer)
-
-    check(assert_type(s | s2, "pd.Series[int]"), pd.Series, np.integer)
-    check(assert_type(s2 | s, "pd.Series[int]"), pd.Series, np.integer)
-
-    check(assert_type(s ^ s2, "pd.Series[int]"), pd.Series, np.integer)
-    check(assert_type(s2 ^ s, "pd.Series[int]"), pd.Series, np.integer)
-
-    if TYPE_CHECKING_INVALID_USAGE:
-        _0 = s & [1, 2, 3, 4]  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation] # ty: ignore[unsupported-operator]
-        _1 = [1, 2, 3, 4] & s  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation] # ty: ignore[unsupported-operator]
-
-        _2 = s | [1, 2, 3, 4]  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation] # ty: ignore[unsupported-operator]
-        _3 = [1, 2, 3, 4] | s  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation] # ty: ignore[unsupported-operator]
-
-        _4 = s ^ [1, 2, 3, 4]  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation] # ty: ignore[unsupported-operator]
-        _5 = [1, 2, 3, 4] ^ s  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation] # ty: ignore[unsupported-operator]
-
-
 def test_logical_operators() -> None:
     # GH 380
     df = pd.DataFrame({"a": [1, 2, 3], "b": [2, 3, 4]})
@@ -3594,31 +3466,6 @@ def test_diff() -> None:
         def _diff_invalid0() -> None:  # pyright: ignore[reportUnusedFunction]
             # interval -> TypeError: IntervalArray has no 'diff' method. Convert to a suitable dtype prior to calling 'diff'.
             assert_type(pd.Series([pd.Interval(0, 2), pd.Interval(1, 4)]).diff(), Never)
-
-
-def test_operator_constistency() -> None:
-    # created for #748
-    s = pd.Series([1, 2, 3])
-    check(
-        assert_type(s * np.timedelta64(1, "s"), "pd.Series[pd.Timedelta]"),
-        pd.Series,
-        pd.Timedelta,
-    )
-    check(
-        assert_type(np.timedelta64(1, "s") * s, "pd.Series[pd.Timedelta]"),
-        pd.Series,
-        pd.Timedelta,
-    )
-    check(
-        assert_type(s.mul(np.timedelta64(1, "s")), "pd.Series[pd.Timedelta]"),
-        pd.Series,
-        pd.Timedelta,
-    )
-    check(
-        assert_type(s.rmul(np.timedelta64(1, "s")), "pd.Series[pd.Timedelta]"),
-        pd.Series,
-        pd.Timedelta,
-    )
 
 
 def test_map() -> None:

@@ -401,3 +401,34 @@ def test_truediv_str_py_str(left_i: pd.Series) -> None:
 
         left_i.rtruediv(s)  # type: ignore[arg-type] # pyright: ignore[reportArgumentType,reportCallIssue] # pyrefly: ignore[no-matching-overload]
         left_i.rdiv(s)  # type: ignore[arg-type] # pyright: ignore[reportArgumentType,reportCallIssue] # pyrefly: ignore[no-matching-overload]
+
+
+def test_truediv_fill_value() -> None:
+    s = pd.Series([0, 1, -10])
+    s2 = pd.Series([7, -5, 10])
+
+    check(
+        assert_type(s.div(s2, fill_value=0), "pd.Series[float]"), pd.Series, np.float64
+    )
+
+
+def test_truediv_scalar_fill_value() -> None:
+    s = pd.Series([0, 1, -10])
+
+    check(
+        assert_type(s.truediv(2, fill_value=0), "pd.Series[float]"),
+        pd.Series,
+        np.floating,
+    )
+    check(
+        assert_type(s.div(2, fill_value=0), "pd.Series[float]"), pd.Series, np.floating
+    )
+
+
+def test_truediv_frame_invalid() -> None:
+    """Test that the flex method does not allow passing a frame as other."""
+    df = pd.DataFrame([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+    s = pd.Series([0, 1, -10])
+
+    if TYPE_CHECKING_INVALID_USAGE:
+        _0 = s.truediv(df)  # type: ignore[arg-type] # pyright: ignore[reportCallIssue,reportUnknownVariableType,reportArgumentType] # pyrefly: ignore[no-matching-overload] # ty: ignore[no-matching-overload]
