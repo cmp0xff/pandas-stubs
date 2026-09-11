@@ -1052,6 +1052,13 @@ def test_some_offsets() -> None:
     )
 
 
+def test_timestampseries_offset() -> None:
+    """Test that adding an offset to a timestamp series works."""
+    vv = pd.bdate_range("2024-09-01", "2024-09-10")
+    shifted_vv = vv + pd.tseries.offsets.YearEnd(0)
+    check(assert_type(shifted_vv, pd.DatetimeIndex), pd.DatetimeIndex)
+
+
 def test_series_types_to_numpy() -> None:
     td_s = pd.to_timedelta(pd.Series([10, 20]), "minutes")
     ts_s = pd.to_datetime(pd.Series(["2020-01-01", "2020-01-02"]))
