@@ -1,5 +1,8 @@
 import datetime as dt
-from typing import assert_type
+from typing import (
+    Any,
+    assert_type,
+)
 
 import numpy as np
 import pandas as pd
@@ -36,8 +39,8 @@ def test_easter_numpy_scalars(left: Easter) -> None:
     check(assert_type(left + np.datetime64("2026-01-01"), pd.Timestamp), pd.Timestamp)
     check(assert_type(np.datetime64("2026-01-01") + left, pd.Timestamp), pd.Timestamp)
     if TYPE_CHECKING_INVALID_USAGE:
-        _0 = left.__add__(np.timedelta64(2, "h"))  # type: ignore[operator] # pyright: ignore[reportCallIssue,reportArgumentType,reportUnknownVariableType] # pyrefly: ignore[no-matching-overload] # ty: ignore[no-matching-overload]
-        _1 = left.__radd__(np.timedelta64(2, "h"))  # type: ignore[operator] # pyright: ignore[reportCallIssue,reportArgumentType,reportUnknownVariableType] # pyrefly: ignore[no-matching-overload] # ty: ignore[no-matching-overload]
+        _0 = left + np.timedelta64(2, "h")  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation] # ty: ignore[unsupported-operator]
+        _1 = np.timedelta64(2, "h") + left  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation] # ty: ignore[unsupported-operator]
 
 
 def test_easter_pandas_scalars(left: Easter) -> None:
@@ -55,17 +58,18 @@ def test_easter_numpy_arrays(left: Easter) -> None:
     """Easter supports object arrays, including empty arrays."""
     values = np.array([dt.datetime(2026, 1, 1)], dtype=object)
     empty = np.array([], dtype=object)
-    check(left + values, np.ndarray)
-    check(values + left, np.ndarray)
-    check(left + empty, np.ndarray)
-    check(empty + left, np.ndarray)
-    # NumPy expressions can hide the offset's declared array result.
     check(
-        assert_type(
-            left.__add__(values), np.ndarray[tuple[int, ...], np.dtype[np.generic]]
-        ),
+        assert_type(left + values, np.ndarray[tuple[int, ...], np.dtype[np.generic]]),
         np.ndarray,
     )
+    check(assert_type(values + left, Any), np.ndarray)
+    check(
+        assert_type(left + empty, np.ndarray[tuple[int, ...], np.dtype[np.generic]]),
+        np.ndarray,
+    )
+    check(assert_type(empty + left, Any), np.ndarray)
+    # NumPy's forward array operator returns Any, masking offset.__radd__.
+    # Check the reflected contract directly as well as the expression above.
     check(
         assert_type(
             left.__radd__(values), np.ndarray[tuple[int, ...], np.dtype[np.generic]]

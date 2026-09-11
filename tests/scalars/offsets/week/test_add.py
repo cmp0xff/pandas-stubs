@@ -1,5 +1,8 @@
 import datetime as dt
-from typing import assert_type
+from typing import (
+    Any,
+    assert_type,
+)
 
 import numpy as np
 import pandas as pd
@@ -100,17 +103,18 @@ def test_week_numpy_arrays(left: Week) -> None:
     """Week supports object arrays, including empty arrays."""
     values = np.array([dt.datetime(2026, 1, 1)], dtype=object)
     empty = np.array([], dtype=object)
-    check(left + values, np.ndarray)
-    check(values + left, np.ndarray)
-    check(left + empty, np.ndarray)
-    check(empty + left, np.ndarray)
-    # NumPy expressions can hide the offset's declared array result.
     check(
-        assert_type(
-            left.__add__(values), np.ndarray[tuple[int, ...], np.dtype[np.generic]]
-        ),
+        assert_type(left + values, np.ndarray[tuple[int, ...], np.dtype[np.generic]]),
         np.ndarray,
     )
+    check(assert_type(values + left, Any), np.ndarray)
+    check(
+        assert_type(left + empty, np.ndarray[tuple[int, ...], np.dtype[np.generic]]),
+        np.ndarray,
+    )
+    check(assert_type(empty + left, Any), np.ndarray)
+    # NumPy's forward array operator returns Any, masking offset.__radd__.
+    # Check the reflected contract directly as well as the expression above.
     check(
         assert_type(
             left.__radd__(values), np.ndarray[tuple[int, ...], np.dtype[np.generic]]

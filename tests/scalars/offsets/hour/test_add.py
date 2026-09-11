@@ -1,5 +1,8 @@
 import datetime as dt
-from typing import assert_type
+from typing import (
+    Any,
+    assert_type,
+)
 
 import numpy as np
 import pandas as pd
@@ -77,5 +80,5 @@ def test_subclass(left: Hour) -> None:
 def test_tick_numpy_arrays(left: Hour) -> None:
     """Object-array results do not promise shape or dtype preservation."""
     values = np.array([dt.datetime(2026, 1, 1)], dtype=object)
-    # NumPy accepts broad object operations; it cannot enforce direct-call rejection.
-    check(left + values, np.ndarray)
+    # NumPy accepts Hour through its broad object-array operator and returns Any.
+    check(assert_type(left + values, Any), np.ndarray)
