@@ -56,16 +56,7 @@ class BaseOffset:
     def __add__(self, other: date, /) -> Timestamp: ...
     @overload
     def __add__(self, other: _TimedeltaT, /) -> _TimedeltaT: ...
-    @overload
-    def __radd__(
-        self, other: np_ndarray_object[ShapeT], /
-    ) -> np_ndarray_object[ShapeT]: ...
-    @overload
-    def __radd__(self, other: _DatetimeT, /) -> _DatetimeT: ...  # type: ignore[overload-overlap] # pyright: ignore[reportOverlappingOverload]
-    @overload
-    def __radd__(self, other: date, /) -> Timestamp: ...
-    @overload
-    def __radd__(self, other: _TimedeltaT, /) -> _TimedeltaT: ...
+    __radd__ = __add__
     def __sub__(self, other: BaseOffset, /) -> Self: ...
     @overload
     def __rsub__(
@@ -113,6 +104,10 @@ def to_offset(freq: None, is_period: bool = False) -> None: ...
 def to_offset(freq: Frequency | timedelta, is_period: bool = False) -> BaseOffset: ...
 
 class Tick(SingleConstructorOffset):
+    def __init__(self, n: int = ..., normalize: bool = ...) -> None: ...
+    @property
+    @override
+    def nanos(self) -> int: ...
     @overload
     @override
     def __add__(
@@ -126,25 +121,13 @@ class Tick(SingleConstructorOffset):
     def __add__(self, other: _TimedeltaT, /) -> _TimedeltaT: ...
     @overload
     def __add__(self, other: Tick, /) -> Tick: ...
-    @overload
-    @override
-    def __radd__(
-        self, other: np_ndarray_object[ShapeT], /
-    ) -> np_ndarray_object[ShapeT]: ...
-    @overload
-    def __radd__(self, other: _DatetimeT, /) -> _DatetimeT: ...  # type: ignore[overload-overlap] # pyright: ignore[reportOverlappingOverload]
-    @overload
-    def __radd__(self, other: date, /) -> Timestamp: ...
-    @overload
-    def __radd__(self, other: _TimedeltaT, /) -> _TimedeltaT: ...
-    @overload
-    def __radd__(self, other: Tick, /) -> Tick: ...
+    __radd__ = __add__
+
+class Day(SingleConstructorOffset):
     def __init__(self, n: int = ..., normalize: bool = ...) -> None: ...
     @property
     @override
     def nanos(self) -> int: ...
-
-class Day(SingleConstructorOffset):
     @overload
     @override
     def __add__(
@@ -162,23 +145,7 @@ class Day(SingleConstructorOffset):
     def __add__(self, other: Tick, /) -> Timedelta: ...
     @overload
     def __add__(self, other: BusinessDay, /) -> BusinessDay: ...
-    @overload
-    @override
-    def __radd__(
-        self, other: np_ndarray_object[ShapeT], /
-    ) -> np_ndarray_object[ShapeT]: ...
-    @overload
-    def __radd__(self, other: _DatetimeT, /) -> _DatetimeT: ...  # type: ignore[overload-overlap] # pyright: ignore[reportOverlappingOverload]
-    @overload
-    def __radd__(self, other: date, /) -> Timestamp: ...
-    @overload
-    def __radd__(self, other: _TimedeltaT, /) -> _TimedeltaT: ...
-    @overload
-    def __radd__(self, other: Day, /) -> Day: ...
-    @overload
-    def __radd__(self, other: Tick, /) -> Timedelta: ...
-    @overload
-    def __radd__(self, other: BusinessDay, /) -> BusinessDay: ...
+    __radd__ = __add__
 
 # Pyright rejects added homogeneous overloads despite the inherited Tick fallback.
 class Hour(Tick):
@@ -199,23 +166,7 @@ class Hour(Tick):
     def __add__(  # pyright: ignore[reportIncompatibleMethodOverride]
         self, other: Tick, /
     ) -> Tick: ...
-    @overload
-    @override
-    def __radd__(
-        self, other: np_ndarray_object[ShapeT], /
-    ) -> np_ndarray_object[ShapeT]: ...
-    @overload
-    def __radd__(self, other: _DatetimeT, /) -> _DatetimeT: ...  # type: ignore[overload-overlap] # pyright: ignore[reportOverlappingOverload]
-    @overload
-    def __radd__(self, other: date, /) -> Timestamp: ...
-    @overload
-    def __radd__(self, other: _TimedeltaT, /) -> _TimedeltaT: ...
-    @overload
-    def __radd__(self: Just[Hour], other: Just[Hour], /) -> Hour: ...
-    @overload
-    def __radd__(  # pyright: ignore[reportIncompatibleMethodOverride]
-        self, other: Tick, /
-    ) -> Tick: ...
+    __radd__ = __add__
 
 class Minute(Tick):
     @overload
@@ -235,23 +186,7 @@ class Minute(Tick):
     def __add__(  # pyright: ignore[reportIncompatibleMethodOverride]
         self, other: Tick, /
     ) -> Tick: ...
-    @overload
-    @override
-    def __radd__(
-        self, other: np_ndarray_object[ShapeT], /
-    ) -> np_ndarray_object[ShapeT]: ...
-    @overload
-    def __radd__(self, other: _DatetimeT, /) -> _DatetimeT: ...  # type: ignore[overload-overlap] # pyright: ignore[reportOverlappingOverload]
-    @overload
-    def __radd__(self, other: date, /) -> Timestamp: ...
-    @overload
-    def __radd__(self, other: _TimedeltaT, /) -> _TimedeltaT: ...
-    @overload
-    def __radd__(self: Just[Minute], other: Just[Minute], /) -> Minute: ...
-    @overload
-    def __radd__(  # pyright: ignore[reportIncompatibleMethodOverride]
-        self, other: Tick, /
-    ) -> Tick: ...
+    __radd__ = __add__
 
 class Second(Tick):
     @overload
@@ -271,23 +206,7 @@ class Second(Tick):
     def __add__(  # pyright: ignore[reportIncompatibleMethodOverride]
         self, other: Tick, /
     ) -> Tick: ...
-    @overload
-    @override
-    def __radd__(
-        self, other: np_ndarray_object[ShapeT], /
-    ) -> np_ndarray_object[ShapeT]: ...
-    @overload
-    def __radd__(self, other: _DatetimeT, /) -> _DatetimeT: ...  # type: ignore[overload-overlap] # pyright: ignore[reportOverlappingOverload]
-    @overload
-    def __radd__(self, other: date, /) -> Timestamp: ...
-    @overload
-    def __radd__(self, other: _TimedeltaT, /) -> _TimedeltaT: ...
-    @overload
-    def __radd__(self: Just[Second], other: Just[Second], /) -> Second: ...
-    @overload
-    def __radd__(  # pyright: ignore[reportIncompatibleMethodOverride]
-        self, other: Tick, /
-    ) -> Tick: ...
+    __radd__ = __add__
 
 class Milli(Tick):
     @overload
@@ -307,23 +226,7 @@ class Milli(Tick):
     def __add__(  # pyright: ignore[reportIncompatibleMethodOverride]
         self, other: Tick, /
     ) -> Tick: ...
-    @overload
-    @override
-    def __radd__(
-        self, other: np_ndarray_object[ShapeT], /
-    ) -> np_ndarray_object[ShapeT]: ...
-    @overload
-    def __radd__(self, other: _DatetimeT, /) -> _DatetimeT: ...  # type: ignore[overload-overlap] # pyright: ignore[reportOverlappingOverload]
-    @overload
-    def __radd__(self, other: date, /) -> Timestamp: ...
-    @overload
-    def __radd__(self, other: _TimedeltaT, /) -> _TimedeltaT: ...
-    @overload
-    def __radd__(self: Just[Milli], other: Just[Milli], /) -> Milli: ...
-    @overload
-    def __radd__(  # pyright: ignore[reportIncompatibleMethodOverride]
-        self, other: Tick, /
-    ) -> Tick: ...
+    __radd__ = __add__
 
 class Micro(Tick):
     @overload
@@ -343,23 +246,7 @@ class Micro(Tick):
     def __add__(  # pyright: ignore[reportIncompatibleMethodOverride]
         self, other: Tick, /
     ) -> Tick: ...
-    @overload
-    @override
-    def __radd__(
-        self, other: np_ndarray_object[ShapeT], /
-    ) -> np_ndarray_object[ShapeT]: ...
-    @overload
-    def __radd__(self, other: _DatetimeT, /) -> _DatetimeT: ...  # type: ignore[overload-overlap] # pyright: ignore[reportOverlappingOverload]
-    @overload
-    def __radd__(self, other: date, /) -> Timestamp: ...
-    @overload
-    def __radd__(self, other: _TimedeltaT, /) -> _TimedeltaT: ...
-    @overload
-    def __radd__(self: Just[Micro], other: Just[Micro], /) -> Micro: ...
-    @overload
-    def __radd__(  # pyright: ignore[reportIncompatibleMethodOverride]
-        self, other: Tick, /
-    ) -> Tick: ...
+    __radd__ = __add__
 
 class Nano(Tick):
     @overload
@@ -379,29 +266,16 @@ class Nano(Tick):
     def __add__(  # pyright: ignore[reportIncompatibleMethodOverride]
         self, other: Tick, /
     ) -> Tick: ...
-    @overload
-    @override
-    def __radd__(
-        self, other: np_ndarray_object[ShapeT], /
-    ) -> np_ndarray_object[ShapeT]: ...
-    @overload
-    def __radd__(self, other: _DatetimeT, /) -> _DatetimeT: ...  # type: ignore[overload-overlap] # pyright: ignore[reportOverlappingOverload]
-    @overload
-    def __radd__(self, other: date, /) -> Timestamp: ...
-    @overload
-    def __radd__(self, other: _TimedeltaT, /) -> _TimedeltaT: ...
-    @overload
-    def __radd__(self: Just[Nano], other: Just[Nano], /) -> Nano: ...
-    @overload
-    def __radd__(  # pyright: ignore[reportIncompatibleMethodOverride]
-        self, other: Tick, /
-    ) -> Tick: ...
+    __radd__ = __add__
 
 class RelativeDeltaOffset(BaseOffset):
     def __init__(self, n: int = ..., normalize: bool = ..., **kwds: Any) -> None: ...
 
 # Changed from implementation because it is not allowed for `PeriodDtype`
 class BusinessDay(BaseOffset):
+    def __init__(
+        self, n: int = ..., normalize: bool = ..., offset: timedelta = ...
+    ) -> None: ...
     @overload
     @override
     def __add__(
@@ -415,22 +289,7 @@ class BusinessDay(BaseOffset):
     def __add__(self, other: _TimedeltaT, /) -> _TimedeltaT: ...
     @overload
     def __add__(self, other: Tick, /) -> BusinessDay: ...
-    @overload
-    @override
-    def __radd__(
-        self, other: np_ndarray_object[ShapeT], /
-    ) -> np_ndarray_object[ShapeT]: ...
-    @overload
-    def __radd__(self, other: _DatetimeT, /) -> _DatetimeT: ...  # type: ignore[overload-overlap] # pyright: ignore[reportOverlappingOverload]
-    @overload
-    def __radd__(self, other: date, /) -> Timestamp: ...
-    @overload
-    def __radd__(self, other: _TimedeltaT, /) -> _TimedeltaT: ...
-    @overload
-    def __radd__(self, other: Tick, /) -> BusinessDay: ...
-    def __init__(
-        self, n: int = ..., normalize: bool = ..., offset: timedelta = ...
-    ) -> None: ...
+    __radd__ = __add__
 
 class BusinessHour(SingleConstructorOffset):
     def __init__(

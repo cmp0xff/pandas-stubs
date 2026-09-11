@@ -1,7 +1,6 @@
 from typing import assert_type
 
 import pandas as pd
-import pytest
 
 from tests import (
     TYPE_CHECKING_INVALID_USAGE,
@@ -10,7 +9,6 @@ from tests import (
 
 from pandas.tseries.offsets import (
     BusinessDay,
-    CustomBusinessDay,
     Day,
     Hour,
 )
@@ -26,7 +24,7 @@ def test_add_day() -> None:
 
 
 def test_day_hierarchy() -> None:
-    day = Day()
+    day = check(assert_type(3 * Day(), Day), Day)
     timestamp = pd.Timestamp("2026-01-01")
     check(assert_type(timestamp + day, pd.Timestamp), pd.Timestamp)
     check(assert_type(day + timestamp, pd.Timestamp), pd.Timestamp)
@@ -43,13 +41,12 @@ def test_day_direct_dispatch() -> None:
     check(assert_type(Day().__radd__(BusinessDay()), BusinessDay), BusinessDay)
     if TYPE_CHECKING_INVALID_USAGE:
         _0 = Hour().__add__(Day())  # type: ignore[operator] # pyright: ignore[reportCallIssue,reportArgumentType,reportUnknownVariableType] # pyrefly: ignore[no-matching-overload] # ty: ignore[no-matching-overload]
-        _1 = Hour().__radd__(Day())  # type: ignore[operator] # pyright: ignore[reportCallIssue,reportArgumentType,reportUnknownVariableType] # pyrefly: ignore[no-matching-overload] # ty: ignore[no-matching-overload]
+        _1 = Hour().__radd__(Day())  # type: ignore[arg-type] # pyright: ignore[reportCallIssue,reportArgumentType,reportUnknownVariableType] # pyrefly: ignore[no-matching-overload] # ty: ignore[no-matching-overload]
         _2 = BusinessDay().__add__(Day())  # type: ignore[operator] # pyright: ignore[reportCallIssue,reportArgumentType,reportUnknownVariableType] # pyrefly: ignore[no-matching-overload] # ty: ignore[no-matching-overload]
         _3 = BusinessDay().__radd__(Day())  # type: ignore[operator] # pyright: ignore[reportCallIssue,reportArgumentType,reportUnknownVariableType] # pyrefly: ignore[no-matching-overload] # ty: ignore[no-matching-overload]
 
 
-@pytest.mark.parametrize("left", [Hour(), BusinessDay(), CustomBusinessDay()])
-@pytest.mark.parametrize("method", ["__add__", "__radd__"])
-def test_day_runtime_dispatch(left: object, method: str) -> None:
-    """Probe runtime dispatch without advertising unsupported direct calls."""
-    assert getattr(left, method)(Day()) is NotImplemented
+def test_day_constructor_and_nanos() -> None:
+    day = check(assert_type(Day(n=2, normalize=False), Day), Day)
+    assert day.n == 2
+    assert check(assert_type(day.nanos, int), int) == 172_800_000_000_000

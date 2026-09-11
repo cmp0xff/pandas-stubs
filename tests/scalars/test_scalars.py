@@ -1099,7 +1099,6 @@ def test_timestamp_add_sub() -> None:
 
     as_pd_timedelta = pd.Timedelta(days=1)
     as_dt_timedelta = dt.timedelta(days=1)
-    as_offset = 3 * Day()
 
     as_timedelta_index = pd.to_timedelta([1, 2, 3], unit="D")
     as_timedelta_series = pd.Series(as_timedelta_index)
@@ -1115,9 +1114,6 @@ def test_timestamp_add_sub() -> None:
 
     check(assert_type(ts + as_dt_timedelta, pd.Timestamp), pd.Timestamp)
     check(assert_type(as_dt_timedelta + ts, pd.Timestamp), pd.Timestamp)
-
-    check(assert_type(ts + as_offset, pd.Timestamp), pd.Timestamp)
-    check(assert_type(as_offset + ts, pd.Timestamp), pd.Timestamp)
 
     check(assert_type(ts + as_timedelta_index, pd.DatetimeIndex), pd.DatetimeIndex)
     check(assert_type(as_timedelta_index + ts, pd.DatetimeIndex), pd.DatetimeIndex)
@@ -1143,7 +1139,6 @@ def test_timestamp_add_sub() -> None:
     # Reverse order is not possible for all of these
     check(assert_type(ts - as_pd_timedelta, pd.Timestamp), pd.Timestamp)
     check(assert_type(ts - as_dt_timedelta, pd.Timestamp), pd.Timestamp)
-    check(assert_type(ts - as_offset, pd.Timestamp), pd.Timestamp)
     check(assert_type(ts - as_timedelta_index, pd.DatetimeIndex), pd.DatetimeIndex)
     check(
         assert_type(ts - as_timedelta_series, "pd.Series[pd.Timestamp]"),

@@ -1,6 +1,7 @@
-from typing import assert_type
-
-import pytest
+from typing import (
+    assert_type,
+    cast,
+)
 
 from tests import (
     check,
@@ -60,8 +61,15 @@ def test_add_mixed_ticks() -> None:
     check(assert_type(Milli(1000) + Micro(1_000_000), Tick), Second)
 
 
-@pytest.mark.parametrize("left, right", [(Hour(), Hour()), (Hour(), Minute())])
-def test_add_broad_ticks(left: Tick, right: Tick) -> None:
+def test_add_broad_ticks() -> None:
+    left = cast(Tick, Hour())
+    right = cast(Tick, Hour())
+    check(assert_type(left + right, Tick), Tick)
+    check(assert_type(right + left, Tick), Tick)
+    check(assert_type(left.__radd__(right), Tick), Tick)
+    check(assert_type(right.__radd__(left), Tick), Tick)
+
+    right = cast(Tick, Minute())
     check(assert_type(left + right, Tick), Tick)
     check(assert_type(right + left, Tick), Tick)
     check(assert_type(left.__radd__(right), Tick), Tick)
@@ -92,3 +100,12 @@ def test_add_tick_subclass_normalization() -> None:
     check(assert_type(special.__radd__(Minute(30)), Tick), Hour)
     check(assert_type(Minute(30).__radd__(special), Tick), Hour)
     check(assert_type(special + SpecialMinute(30), Tick), SpecialMinute)
+
+
+def test_tick_constructor_and_nanos() -> None:
+    tick = check(assert_type(Tick(n=2, normalize=False), Tick), Tick)
+    assert tick.n == 2
+    assert (
+        check(assert_type(Hour(n=2, normalize=False).nanos, int), int)
+        == 7_200_000_000_000
+    )
