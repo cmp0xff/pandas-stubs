@@ -918,6 +918,7 @@ def test_periodindex_accessors() -> None:
 
 
 def test_some_offsets() -> None:
+    """Offset scalars support calendar construction and date arithmetic."""
     # GH 222
     check(
         assert_type(
@@ -969,8 +970,8 @@ def test_some_offsets() -> None:
     check(assert_type(dt.date.today() + Day(), pd.Timestamp), pd.Timestamp)
     check(assert_type(Day() + dt.date.today(), pd.Timestamp), pd.Timestamp)
     check(assert_type(dt.datetime.now() - Day(), dt.datetime), dt.datetime)
-    check(assert_type(dt.datetime.now() + Day(), dt.datetime), dt.datetime)
-    check(assert_type(Day() + dt.datetime.now(), dt.datetime), dt.datetime)
+    check(assert_type(dt.datetime.now() + Day(), pd.Timestamp), pd.Timestamp)
+    check(assert_type(Day() + dt.datetime.now(), pd.Timestamp), pd.Timestamp)
     # GH 235
     check(
         assert_type(

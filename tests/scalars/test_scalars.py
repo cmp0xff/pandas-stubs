@@ -41,6 +41,8 @@ from tests._typing import (
 from pandas.tseries.offsets import (
     BaseOffset,
     Day,
+    Hour,
+    Tick,
 )
 
 
@@ -1977,3 +1979,23 @@ def test_nat_comparison_with_date() -> None:
         _rgt = date_obj > pd.NaT  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation] # ty: ignore[unsupported-operator]
         _rle = date_obj <= pd.NaT  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation] # ty: ignore[unsupported-operator]
         _rge = date_obj >= pd.NaT  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation] # ty: ignore[unsupported-operator]
+
+
+def test_day_hierarchy_and_subtraction() -> None:
+    """Day supports scaling and timestamp subtraction, but is not a duration."""
+    day = check(assert_type(3 * Day(), Day), Day)
+    timestamp = pd.Timestamp("2026-01-01")
+    check(assert_type(timestamp - day, pd.Timestamp), pd.Timestamp)
+    check(assert_type(day.__rsub__(timestamp), pd.Timestamp), pd.Timestamp)
+    if TYPE_CHECKING_INVALID_USAGE:
+        pd.Timedelta(day)  # type: ignore[arg-type] # pyright: ignore[reportArgumentType] # pyrefly: ignore[bad-argument-type] # ty: ignore[invalid-argument-type]
+
+
+def test_offset_constructors_and_nanos() -> None:
+    """Day and Tick expose constructors and fixed nanosecond counts."""
+    day = check(assert_type(Day(n=2, normalize=False), Day), Day)
+    assert day.n == 2
+    assert check(assert_type(day.nanos, int), int) == 172_800_000_000_000
+    tick = check(assert_type(Tick(n=2, normalize=False), Tick), Tick)
+    assert tick.n == 2
+    assert check(assert_type(Hour(2).nanos, int), int) == 7_200_000_000_000
