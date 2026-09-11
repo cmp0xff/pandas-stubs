@@ -22,6 +22,7 @@ from pandas._libs.tslibs.timestamps import Timestamp
 from pandas._typing import (
     Frequency,
     ShapeT,
+    np_ndarray,
     np_ndarray_object,
 )
 
@@ -232,7 +233,7 @@ class Easter(SingleConstructorOffset):
     @override
     def __add__(  # pyrefly: ignore[bad-override]
         self, other: np_ndarray_object[tuple[int, ...]], /
-    ) -> np.ndarray[tuple[int, ...], np.dtype[np.generic]]: ...
+    ) -> np_ndarray: ...
     @overload
     def __add__(self, other: NaTType, /) -> NaTType: ...
     @overload
@@ -243,7 +244,7 @@ class Easter(SingleConstructorOffset):
     @override
     def __radd__(  # pyrefly: ignore[bad-override]
         self, other: np_ndarray_object[tuple[int, ...]], /
-    ) -> np.ndarray[tuple[int, ...], np.dtype[np.generic]]: ...
+    ) -> np_ndarray: ...
     @overload
     def __radd__(self, other: NaTType, /) -> NaTType: ...
     @overload

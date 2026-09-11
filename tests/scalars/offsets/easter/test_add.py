@@ -13,6 +13,7 @@ from tests import (
     TYPE_CHECKING_INVALID_USAGE,
     check,
 )
+from tests._typing import np_ndarray
 
 from pandas.tseries.offsets import Easter
 
@@ -59,20 +60,18 @@ def test_easter_numpy_arrays(left: Easter) -> None:
     values = np.array([dt.datetime(2026, 1, 1)], dtype=object)
     empty = np.array([], dtype=object)
     check(
-        assert_type(left + values, np.ndarray[tuple[int, ...], np.dtype[np.generic]]),
-        np.ndarray,
+        assert_type(left + values, np_ndarray),
+        np_ndarray,
     )
-    check(assert_type(values + left, Any), np.ndarray)
+    check(assert_type(values + left, Any), np_ndarray)
     check(
-        assert_type(left + empty, np.ndarray[tuple[int, ...], np.dtype[np.generic]]),
-        np.ndarray,
+        assert_type(left + empty, np_ndarray),
+        np_ndarray,
     )
-    check(assert_type(empty + left, Any), np.ndarray)
+    check(assert_type(empty + left, Any), np_ndarray)
     # NumPy's forward array operator returns Any, masking offset.__radd__.
     # Check the reflected contract directly as well as the expression above.
     check(
-        assert_type(
-            left.__radd__(values), np.ndarray[tuple[int, ...], np.dtype[np.generic]]
-        ),
-        np.ndarray,
+        assert_type(left.__radd__(values), np_ndarray),
+        np_ndarray,
     )
