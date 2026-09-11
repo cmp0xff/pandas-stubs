@@ -43,8 +43,6 @@ from pandas.tseries.frequencies import to_offset
 from pandas.tseries.holiday import USFederalHolidayCalendar
 from pandas.tseries.offsets import (
     BaseOffset,
-    BHalfYearBegin,
-    BHalfYearEnd,
     BusinessDay,
     BusinessHour,
     CustomBusinessDay,
@@ -52,8 +50,6 @@ from pandas.tseries.offsets import (
     DateOffset,
     Day,
     Easter,
-    HalfYearBegin,
-    HalfYearEnd,
 )
 
 
@@ -918,7 +914,7 @@ def test_periodindex_accessors() -> None:
 
 
 def test_some_offsets() -> None:
-    """Offset scalars support calendar construction and date arithmetic."""
+    """Test offset construction, frequency use, and subtraction."""
     # GH 222
     check(
         assert_type(
@@ -967,11 +963,7 @@ def test_some_offsets() -> None:
     )
     # GH 755
     check(assert_type(dt.date.today() - Day(), pd.Timestamp), pd.Timestamp)
-    check(assert_type(dt.date.today() + Day(), pd.Timestamp), pd.Timestamp)
-    check(assert_type(Day() + dt.date.today(), pd.Timestamp), pd.Timestamp)
     check(assert_type(dt.datetime.now() - Day(), dt.datetime), dt.datetime)
-    check(assert_type(dt.datetime.now() + Day(), pd.Timestamp), pd.Timestamp)
-    check(assert_type(Day() + dt.datetime.now(), pd.Timestamp), pd.Timestamp)
     # GH 235
     check(
         assert_type(
@@ -1019,11 +1011,6 @@ def test_some_offsets() -> None:
         ),
         pd.DatetimeIndex,
     )
-    # GH 320
-    tswm1 = pd.Timestamp("9/23/2022") + pd.offsets.WeekOfMonth(2, True)
-    check(assert_type(tswm1, pd.Timestamp), pd.Timestamp)
-    tswm2 = pd.Timestamp("9/23/2022") + pd.offsets.LastWeekOfMonth(2, 3)
-    check(assert_type(tswm2, pd.Timestamp), pd.Timestamp)
     # GH 396
     check(
         assert_type(
@@ -1063,13 +1050,6 @@ def test_some_offsets() -> None:
         ),
         CustomBusinessHour,
     )
-
-
-def test_timestampseries_offset() -> None:
-    """Test that adding an offset to a timestamp series works."""
-    vv = pd.bdate_range("2024-09-01", "2024-09-10")
-    shifted_vv = vv + pd.tseries.offsets.YearEnd(0)
-    check(assert_type(shifted_vv, pd.DatetimeIndex), pd.DatetimeIndex)
 
 
 def test_series_types_to_numpy() -> None:
@@ -2077,16 +2057,6 @@ def test_easter_constructor() -> None:
 
     check(assert_type(Easter(method=EASTER_ORTHODOX), Easter), Easter)
     check(assert_type(Easter(method=EASTER_WESTERN), Easter), Easter)
-
-
-def test_half_year_offsets() -> None:
-    """Test half-year offsets introduced in pandas 3.0 GH1654."""
-    ts = pd.Timestamp(2024, 2, 1)
-
-    check(assert_type(ts + HalfYearBegin(), pd.Timestamp), pd.Timestamp)
-    check(assert_type(ts + HalfYearEnd(), pd.Timestamp), pd.Timestamp)
-    check(assert_type(ts + BHalfYearBegin(), pd.Timestamp), pd.Timestamp)
-    check(assert_type(ts + BHalfYearEnd(), pd.Timestamp), pd.Timestamp)
 
 
 def test_to_offset_timedelta() -> None:

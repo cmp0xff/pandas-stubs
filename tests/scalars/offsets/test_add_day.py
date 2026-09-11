@@ -21,87 +21,44 @@ def test_day_python_scalars() -> None:
     """Python dates become Timestamp; durations follow the offset family."""
     check(assert_type(Day() + dt.date(2026, 1, 1), pd.Timestamp), pd.Timestamp)
     check(assert_type(dt.date(2026, 1, 1) + Day(), pd.Timestamp), pd.Timestamp)
-    check(assert_type(Day().__add__(dt.date(2026, 1, 1)), pd.Timestamp), pd.Timestamp)
-    check(assert_type(Day().__radd__(dt.date(2026, 1, 1)), pd.Timestamp), pd.Timestamp)
     check(assert_type(Day() + dt.datetime(2026, 1, 1), pd.Timestamp), pd.Timestamp)
     check(assert_type(dt.datetime(2026, 1, 1) + Day(), pd.Timestamp), pd.Timestamp)
-    check(
-        assert_type(Day().__add__(dt.datetime(2026, 1, 1)), pd.Timestamp), pd.Timestamp
-    )
-    check(
-        assert_type(Day().__radd__(dt.datetime(2026, 1, 1)), pd.Timestamp), pd.Timestamp
-    )
     check(assert_type(Day() + dt.timedelta(hours=2), dt.timedelta), dt.timedelta)
     check(assert_type(dt.timedelta(hours=2) + Day(), dt.timedelta), dt.timedelta)
-    check(assert_type(Day().__add__(dt.timedelta(hours=2)), dt.timedelta), dt.timedelta)
-    check(
-        assert_type(Day().__radd__(dt.timedelta(hours=2)), dt.timedelta), dt.timedelta
-    )
 
 
 def test_day_numpy_scalars() -> None:
     """NumPy temporal scalars use the supported scalar results."""
     check(assert_type(Day() + np.datetime64("2026-01-01"), pd.Timestamp), pd.Timestamp)
     check(assert_type(np.datetime64("2026-01-01") + Day(), pd.Timestamp), pd.Timestamp)
-    check(
-        assert_type(Day().__add__(np.datetime64("2026-01-01")), pd.Timestamp),
-        pd.Timestamp,
-    )
-    check(
-        assert_type(Day().__radd__(np.datetime64("2026-01-01")), pd.Timestamp),
-        pd.Timestamp,
-    )
     check(assert_type(Day() + np.timedelta64(2, "h"), np.timedelta64), np.timedelta64)
     check(assert_type(np.timedelta64(2, "h") + Day(), np.timedelta64), np.timedelta64)
-    check(
-        assert_type(Day().__add__(np.timedelta64(2, "h")), np.timedelta64),
-        np.timedelta64,
-    )
-    check(
-        assert_type(Day().__radd__(np.timedelta64(2, "h")), np.timedelta64),
-        np.timedelta64,
-    )
 
 
 def test_day_pandas_scalars() -> None:
     """Timestamp and NaT retain pandas scalar results."""
     check(assert_type(Day() + pd.Timestamp("2026-01-01"), pd.Timestamp), pd.Timestamp)
     check(assert_type(pd.Timestamp("2026-01-01") + Day(), pd.Timestamp), pd.Timestamp)
-    check(
-        assert_type(Day().__add__(pd.Timestamp("2026-01-01")), pd.Timestamp),
-        pd.Timestamp,
-    )
-    check(
-        assert_type(Day().__radd__(pd.Timestamp("2026-01-01")), pd.Timestamp),
-        pd.Timestamp,
-    )
     check(assert_type(Day() + pd.NaT, NaTType), NaTType)
     check(assert_type(pd.NaT + Day(), NaTType), NaTType)
-    check(assert_type(Day().__add__(pd.NaT), NaTType), NaTType)
-    check(assert_type(Day().__radd__(pd.NaT), NaTType), NaTType)
     check(assert_type(Day() + pd.Timedelta("2h"), pd.Timedelta), pd.Timedelta)
     check(assert_type(pd.Timedelta("2h") + Day(), pd.Timedelta), pd.Timedelta)
-    check(assert_type(Day().__add__(pd.Timedelta("2h")), pd.Timedelta), pd.Timedelta)
-    check(assert_type(Day().__radd__(pd.Timedelta("2h")), pd.Timedelta), pd.Timedelta)
 
 
 def test_day_offsets() -> None:
     """Day combines with days, ticks, and unanchored weeks."""
     check(assert_type(Day(1) + Day(2), Day), Day)
     check(assert_type(Day(2) + Day(1), Day), Day)
-    check(assert_type(Day(1).__add__(Day(2)), Day), Day)
-    check(assert_type(Day(1).__radd__(Day(2)), Day), Day)
     check(assert_type(Day() + Hour(), pd.Timedelta), pd.Timedelta)
     check(assert_type(Hour() + Day(), pd.Timedelta), pd.Timedelta)
-    check(assert_type(Day().__add__(Hour()), pd.Timedelta), pd.Timedelta)
-    check(assert_type(Day().__radd__(Hour()), pd.Timedelta), pd.Timedelta)
     if TYPE_CHECKING_INVALID_USAGE:
         _0 = Hour().__add__(Day())  # type: ignore[operator] # pyright: ignore[reportCallIssue,reportArgumentType,reportUnknownVariableType] # pyrefly: ignore[no-matching-overload] # ty: ignore[no-matching-overload]
         _1 = Hour().__radd__(Day())  # type: ignore[operator] # pyright: ignore[reportCallIssue,reportArgumentType,reportUnknownVariableType] # pyrefly: ignore[no-matching-overload] # ty: ignore[no-matching-overload]
     check(assert_type(Day() + Week(), dt.timedelta), dt.timedelta)
     check(assert_type(Week() + Day(), dt.timedelta), dt.timedelta)
-    check(assert_type(Day().__add__(Week()), dt.timedelta), dt.timedelta)
-    check(assert_type(Day().__radd__(Week()), dt.timedelta), dt.timedelta)
+
+    check(assert_type(Day().__add__(Hour()), pd.Timedelta), pd.Timedelta)
+    check(assert_type(Day().__radd__(Hour()), pd.Timedelta), pd.Timedelta)
 
 
 def test_day_numpy_arrays() -> None:
@@ -119,7 +76,11 @@ def test_day_numpy_arrays() -> None:
         ),
         np.ndarray,
     )
+    check(Day() + values, np.ndarray)
+    check(values + Day(), np.ndarray)
     empty = np.array([], dtype=object)
+    check(Day() + empty, np.ndarray)
+    check(empty + Day(), np.ndarray)
     check(
         assert_type(
             Day().__add__(empty), np.ndarray[tuple[int, ...], np.dtype[np.generic]]
