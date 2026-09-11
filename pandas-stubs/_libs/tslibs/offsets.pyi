@@ -17,6 +17,7 @@ from dateutil.relativedelta import weekday as WeekdayClass
 import numpy as np
 from typing_extensions import override
 
+from pandas._libs.tslibs.nattype import NaTType
 from pandas._libs.tslibs.timestamps import Timestamp
 from pandas._typing import (
     Frequency,
@@ -227,6 +228,28 @@ class Easter(SingleConstructorOffset):
         normalize: bool = False,
         method: int = ...,
     ) -> None: ...
+    @overload  # type: ignore[override]
+    @override
+    def __add__(  # pyrefly: ignore[bad-override]
+        self, other: np_ndarray_object[tuple[int, ...]], /
+    ) -> np.ndarray[tuple[int, ...], np.dtype[np.generic]]: ...
+    @overload
+    def __add__(self, other: NaTType, /) -> NaTType: ...
+    @overload
+    def __add__(  # pyright: ignore[reportIncompatibleMethodOverride] # ty: ignore[invalid-method-override]
+        self, other: date | np.datetime64, /
+    ) -> Timestamp: ...
+    @overload  # type: ignore[override]
+    @override
+    def __radd__(  # pyrefly: ignore[bad-override]
+        self, other: np_ndarray_object[tuple[int, ...]], /
+    ) -> np.ndarray[tuple[int, ...], np.dtype[np.generic]]: ...
+    @overload
+    def __radd__(self, other: NaTType, /) -> NaTType: ...
+    @overload
+    def __radd__(  # pyright: ignore[reportIncompatibleMethodOverride] # ty: ignore[invalid-method-override]
+        self, other: date | np.datetime64, /
+    ) -> Timestamp: ...
 
 class _CustomBusinessMonth(SingleConstructorOffset):
     def __init__(
