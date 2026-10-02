@@ -47,7 +47,36 @@ TIER_OPERANDS: Final[dict[str, int]] = {
     "MultiIndex": 2,
     "Series": 3,
     "DataFrame": 4,
+    # The offsets are scalars, so they take sub-tiers of the scalar tier instead of a rung
+    # above the containers: a container or scalar naming an offset is then an ordinary
+    # lower-or-equal-tier operand, not a violation. ``BaseOffset`` is the contract every
+    # offset keeps — a datetime-like operand maps to ``Timestamp`` — and is the offsets'
+    # lower sub-tier. The delta families additionally accept durations and one another, and
+    # are scalar operands themselves, so they take the scalar tier: a non-delta offset
+    # naming a ``Tick``/``Day``/``Week``/``BusinessDay`` is the violation these two
+    # sub-tiers exist to catch. ``Tick`` names the delta sub-tier in diagnostics and
+    # exception keys; the family has no common base to name it by, since ``Day``, ``Week``
+    # and ``BusinessDay`` are peers of ``Tick``, not its subclasses.
+    "BaseOffset": -1,
+    "Tick": 0,
+    "Day": 0,
+    "Week": 0,
+    "BusinessDay": 0,
 }
+
+# Subtrees whose classes take a tier by walking real base classes rather than by a literal
+# ``TIER_OPERANDS`` entry. Order matters: a subtree walked earlier claims its own classes,
+# so the delta roots — whose classes also descend from ``BaseOffset`` — are walked before
+# ``BaseOffset`` itself. ``Day`` is a root in its own right because pandas moved it off
+# ``Tick`` to ``SingleConstructorOffset``; it must stay a delta either way.
+TIER_ROOTS: Final[tuple[tuple[str, int], ...]] = (
+    ("Index", TIER_OPERANDS["Index"]),
+    ("Tick", TIER_OPERANDS["Tick"]),
+    ("Day", TIER_OPERANDS["Day"]),
+    ("Week", TIER_OPERANDS["Week"]),
+    ("BusinessDay", TIER_OPERANDS["BusinessDay"]),
+    ("BaseOffset", TIER_OPERANDS["BaseOffset"]),
+)
 
 # Tier 1 is the array-likes, registered under the ``ExtensionArray`` ABC: the operand name
 # above, its canonical name below, and its stub file in ``CLASS_STUB_FILES``. It took no
@@ -60,12 +89,16 @@ TIER_OPERANDS: Final[dict[str, int]] = {
 # ``TimedeltaIndex`` or ``MultiIndex`` is looked up as ``Index``. Keyed by tier, not by
 # spelling, so a spelling cannot drift out of the exception list. Spelled out rather than
 # derived from ``TIER_OPERANDS`` because a tier's canonical name is a choice, not a
-# derivation: ``Index`` and ``MultiIndex`` share tier 2.
+# derivation: ``Index`` and ``MultiIndex`` share tier 2. Tier 0 is shared by the plain
+# scalars and the delta offsets, so its entry names the delta family; the only references
+# into it come from ``BaseOffset`` below, which names none of them today.
 CANONICAL_OPERAND_BY_TIER: Final[dict[int, str]] = {
     TIER_OPERANDS["ExtensionArray"]: "ExtensionArray",
     TIER_OPERANDS["Index"]: "Index",
     TIER_OPERANDS["Series"]: "Series",
     TIER_OPERANDS["DataFrame"]: "DataFrame",
+    TIER_OPERANDS["BaseOffset"]: "BaseOffset",
+    TIER_OPERANDS["Tick"]: "Tick",
 }
 
 # Every tier-0 scalar and the array-like, mapped to the stub file that declares it, so the
@@ -81,6 +114,7 @@ CLASS_STUB_FILES: Final[dict[str, Path]] = {
     "Interval": Path("_libs/interval.pyi"),
     "NAType": Path("_libs/missing.pyi"),
     "ExtensionArray": Path("core/arrays/base.pyi"),
+    "BaseOffset": Path("_libs/tslibs/offsets.pyi"),
 }
 
 # Every file that declares a scanned class. The list is explicit so that moving a class

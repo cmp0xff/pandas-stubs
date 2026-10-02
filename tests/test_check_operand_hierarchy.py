@@ -37,6 +37,7 @@ _INTERVAL = "_libs/interval.pyi"
 _NATYPE = "_libs/missing.pyi"
 _TIMEDELTAS = "_libs/tslibs/timedeltas.pyi"
 _TIMESTAMPS = "_libs/tslibs/timestamps.pyi"
+_OFFSETS = "_libs/tslibs/offsets.pyi"
 
 # The smallest tree the checker requires, as data: every required stub file and the
 # ``(class, base)`` pairs it declares. ``IndexSubclassBase`` resolves ``Index`` by name, so
@@ -61,6 +62,19 @@ _DEFAULT_FILES: Mapping[str, tuple[tuple[str, str | None], ...]] = {
     "core/series.pyi": (("Series", None),),
     "_libs/interval.pyi": (("Interval", None),),
     "_libs/missing.pyi": (("NAType", None),),
+    # ``Day``'s base has moved between ``Tick`` and ``SingleConstructorOffset``; it is a
+    # delta root under either, which is why it is a ``TIER_ROOTS`` entry rather than a class
+    # the ``Tick`` walk has to find.
+    "_libs/tslibs/offsets.pyi": (
+        ("BaseOffset", None),
+        ("SingleConstructorOffset", "BaseOffset"),
+        ("Tick", "SingleConstructorOffset"),
+        ("Day", "SingleConstructorOffset"),
+        ("Hour", "Tick"),
+        ("Week", "SingleConstructorOffset"),
+        ("BusinessDay", "BaseOffset"),
+        ("CustomBusinessDay", "BusinessDay"),
+    ),
     "_libs/tslibs/period.pyi": (("Period", None),),
     "_libs/tslibs/timedeltas.pyi": (("Timedelta", None),),
     "_libs/tslibs/timestamps.pyi": (("Timestamp", None),),
@@ -258,6 +272,30 @@ _SINGLE_SITE_REJECTIONS: Mapping[
         ("MultiIndex.__add__ `other` operand references DataFrame",),
         ("MultiIndex", "*", "DataFrame"),
     ),
+    # The offsets are scalars with their own sub-tiers: ``BaseOffset`` is the universal
+    # contract, one rung below the scalar tier, and the delta families take the scalar tier
+    # itself. A non-delta offset naming a delta is the violation these rows pin, and the
+    # delta tier is the whole subtree, not just its roots: ``Hour`` descends from ``Tick``
+    # and ``CustomBusinessDay`` from ``BusinessDay``, and both resolve to the tier's
+    # canonical operand.
+    "offset-naming-a-delta": (
+        (
+            _dunders(
+                _OFFSETS,
+                "BaseOffset",
+                ("__add__", "BusinessDay"),
+                ("__sub__", "CustomBusinessDay"),
+                ("__mul__", "Hour"),
+            ),
+        ),
+        (
+            "BaseOffset.__add__ `other` operand references BusinessDay",
+            "BaseOffset.__sub__ `other` operand references CustomBusinessDay",
+            "BaseOffset.__mul__ `other` operand references Hour",
+            "(the tier-0 operand Tick)",
+        ),
+        ("BaseOffset", "*", "Tick"),
+    ),
     # Every ``Index`` subclass the base walk discovers spells its base with arguments --
     # ``MultiIndex`` is an operand name in its own right, so the walk never has to find it
     # -- and only the unwrapping of a subscripted base reads those bases at all.
@@ -312,6 +350,17 @@ _ACCEPTED_OPERANDS: Mapping[str, tuple[Mapping[str, str], ...]] = {
         _dunders(_INDEX, "Index", ("__add__", "int")),
         _dunders(_MULTI, "MultiIndex", ("__add__", "int")),
         _dunders(_SERIES, "Series", ("__add__", "int | Series")),
+    ),
+    # A delta naming a delta stays inside the delta sub-tier, and a scalar or container
+    # naming an offset is an ordinary lower-tier operand -- the shape the real stubs use
+    # for ``Timestamp + Tick`` and ``Series + BaseOffset``.
+    "offset-delta-naming-a-delta": (
+        _dunders(_OFFSETS, "Tick", ("__add__", "Hour"), ("__add__", "Day")),
+        _dunders(_OFFSETS, "BusinessDay", ("__add__", "CustomBusinessDay")),
+    ),
+    "scalar-and-container-naming-an-offset": (
+        _dunders(_TIMESTAMPS, "Timestamp", ("__add__", "Tick")),
+        _dunders(_SERIES, "Series", ("__add__", "BaseOffset")),
     ),
 }
 
