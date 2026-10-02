@@ -120,6 +120,10 @@ from pandas._typing import (
     Scalar,
     SequenceNotStr,
     SliceType,
+    SupportsS2GE,
+    SupportsS2GT,
+    SupportsS2LE,
+    SupportsS2LT,
     TakeIndexer,
     TimedeltaDtypeArg,
     TimestampDtypeArg,
@@ -632,14 +636,50 @@ class Index(IndexOpsMixin[S1], ElementOpsMixin[S1]):
     def __eq__(self, other: object, /) -> np_1darray_bool: ...  # type: ignore[override] # pyright: ignore[reportIncompatibleMethodOverride] # pyrefly: ignore[bad-override] # ty: ignore[invalid-method-override]
     @override
     def __ne__(self, other: object, /) -> np_1darray_bool: ...  # type: ignore[override] # pyright: ignore[reportIncompatibleMethodOverride] # pyrefly: ignore[bad-override] # ty: ignore[invalid-method-override]
+    @overload  # type: ignore[override]
     @override
-    def __le__(self, other: Self | S1, /) -> np_1darray_bool: ...  # type: ignore[override] # pyright: ignore[reportIncompatibleMethodOverride] # pyrefly: ignore[bad-override] # ty: ignore[invalid-method-override]
+    def __le__(  # pyrefly: ignore[bad-override]
+        self: Index[int], other: float, /
+    ) -> np_1darray_bool: ...
+    @overload
+    def __le__(self, other: Self, /) -> np_1darray_bool: ...
+    @overload
+    def __le__(  # pyright: ignore[reportIncompatibleMethodOverride] # ty: ignore[invalid-method-override]
+        self: Iterable[SupportsS2LE[S2_contra]], other: S2_contra, /
+    ) -> np_1darray_bool: ...
+    @overload  # type: ignore[override]
     @override
-    def __ge__(self, other: Self | S1, /) -> np_1darray_bool: ...  # type: ignore[override] # pyright: ignore[reportIncompatibleMethodOverride] # pyrefly: ignore[bad-override] # ty: ignore[invalid-method-override]
+    def __ge__(  # pyrefly: ignore[bad-override]
+        self: Index[int], other: float, /
+    ) -> np_1darray_bool: ...
+    @overload
+    def __ge__(self, other: Self, /) -> np_1darray_bool: ...
+    @overload
+    def __ge__(  # pyright: ignore[reportIncompatibleMethodOverride] # ty: ignore[invalid-method-override]
+        self: Iterable[SupportsS2GE[S2_contra]], other: S2_contra, /
+    ) -> np_1darray_bool: ...
+    @overload  # type: ignore[override]
     @override
-    def __lt__(self, other: Self | S1, /) -> np_1darray_bool: ...  # type: ignore[override] # pyright: ignore[reportIncompatibleMethodOverride] # pyrefly: ignore[bad-override] # ty: ignore[invalid-method-override]
+    def __lt__(  # pyrefly: ignore[bad-override]
+        self: Index[int], other: float, /
+    ) -> np_1darray_bool: ...
+    @overload
+    def __lt__(self, other: Self, /) -> np_1darray_bool: ...
+    @overload
+    def __lt__(  # pyright: ignore[reportIncompatibleMethodOverride] # ty: ignore[invalid-method-override]
+        self: Iterable[SupportsS2LT[S2_contra]], other: S2_contra, /
+    ) -> np_1darray_bool: ...
+    @overload  # type: ignore[override]
     @override
-    def __gt__(self, other: Self | S1, /) -> np_1darray_bool: ...  # type: ignore[override] # pyright: ignore[reportIncompatibleMethodOverride] # pyrefly: ignore[bad-override] # ty: ignore[invalid-method-override]
+    def __gt__(  # pyrefly: ignore[bad-override]
+        self: Index[int], other: float, /
+    ) -> np_1darray_bool: ...
+    @overload
+    def __gt__(self, other: Self, /) -> np_1darray_bool: ...
+    @overload
+    def __gt__(  # pyright: ignore[reportIncompatibleMethodOverride] # ty: ignore[invalid-method-override]
+        self: Iterable[SupportsS2GT[S2_contra]], other: S2_contra, /
+    ) -> np_1darray_bool: ...
     @overload
     def __add__(self: Index[Never], other: _str, /) -> Index[_str]: ...
     @overload
