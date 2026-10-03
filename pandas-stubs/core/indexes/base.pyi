@@ -38,11 +38,14 @@ from pandas._stubs_only import (
     IndexReal,
     OrderableT,
     ScalarArrayIndexComplex,
+    ScalarArrayIndexDatetime,
     ScalarArrayIndexJustComplex,
     ScalarArrayIndexJustFloat,
     ScalarArrayIndexJustInt,
     ScalarArrayIndexReal,
+    ScalarArrayIndexStrBytes,
     ScalarArrayIndexTimedelta,
+    ScalarSequenceIndexComplex,
     Supports_ProtoAdd,
     Supports_ProtoFloorDiv,
     Supports_ProtoMul,
@@ -79,6 +82,7 @@ from typing_extensions import override
 from pandas._libs.interval import Interval
 from pandas._libs.tslibs.period import Period
 from pandas._libs.tslibs.timedeltas import Timedelta
+from pandas._libs.tslibs.timestamps import Timestamp
 from pandas._typing import (
     C2,
     S1,
@@ -644,6 +648,26 @@ class Index(IndexOpsMixin[S1], ElementOpsMixin[S1]):
     @overload
     def __le__(self, other: Self, /) -> np_1darray_bool: ...
     @overload
+    def __le__(
+        self: IndexComplex, other: ScalarSequenceIndexComplex, /
+    ) -> np_1darray_bool: ...
+    @overload
+    def __le__(
+        self: Index[Timestamp], other: ScalarArrayIndexDatetime, /
+    ) -> np_1darray_bool: ...
+    @overload
+    def __le__(
+        self: Index[Timedelta], other: ScalarArrayIndexTimedelta, /
+    ) -> np_1darray_bool: ...
+    @overload
+    def __le__(
+        self: Index[_str] | Index[bytes], other: ScalarArrayIndexStrBytes, /
+    ) -> np_1darray_bool: ...
+    @overload
+    def __le__(
+        self: Index[Period], other: Sequence[Period] | Index[Period], /
+    ) -> np_1darray_bool: ...
+    @overload
     def __le__(  # pyright: ignore[reportIncompatibleMethodOverride] # ty: ignore[invalid-method-override]
         self: Iterable[SupportsS2LE[S2_contra]], other: S2_contra, /
     ) -> np_1darray_bool: ...
@@ -654,6 +678,26 @@ class Index(IndexOpsMixin[S1], ElementOpsMixin[S1]):
     ) -> np_1darray_bool: ...
     @overload
     def __ge__(self, other: Self, /) -> np_1darray_bool: ...
+    @overload
+    def __ge__(
+        self: IndexComplex, other: ScalarSequenceIndexComplex, /
+    ) -> np_1darray_bool: ...
+    @overload
+    def __ge__(
+        self: Index[Timestamp], other: ScalarArrayIndexDatetime, /
+    ) -> np_1darray_bool: ...
+    @overload
+    def __ge__(
+        self: Index[Timedelta], other: ScalarArrayIndexTimedelta, /
+    ) -> np_1darray_bool: ...
+    @overload
+    def __ge__(
+        self: Index[_str] | Index[bytes], other: ScalarArrayIndexStrBytes, /
+    ) -> np_1darray_bool: ...
+    @overload
+    def __ge__(
+        self: Index[Period], other: Sequence[Period] | Index[Period], /
+    ) -> np_1darray_bool: ...
     @overload
     def __ge__(  # pyright: ignore[reportIncompatibleMethodOverride] # ty: ignore[invalid-method-override]
         self: Iterable[SupportsS2GE[S2_contra]], other: S2_contra, /
@@ -666,6 +710,26 @@ class Index(IndexOpsMixin[S1], ElementOpsMixin[S1]):
     @overload
     def __lt__(self, other: Self, /) -> np_1darray_bool: ...
     @overload
+    def __lt__(
+        self: IndexComplex, other: ScalarSequenceIndexComplex, /
+    ) -> np_1darray_bool: ...
+    @overload
+    def __lt__(
+        self: Index[Timestamp], other: ScalarArrayIndexDatetime, /
+    ) -> np_1darray_bool: ...
+    @overload
+    def __lt__(
+        self: Index[Timedelta], other: ScalarArrayIndexTimedelta, /
+    ) -> np_1darray_bool: ...
+    @overload
+    def __lt__(
+        self: Index[_str] | Index[bytes], other: ScalarArrayIndexStrBytes, /
+    ) -> np_1darray_bool: ...
+    @overload
+    def __lt__(
+        self: Index[Period], other: Sequence[Period] | Index[Period], /
+    ) -> np_1darray_bool: ...
+    @overload
     def __lt__(  # pyright: ignore[reportIncompatibleMethodOverride] # ty: ignore[invalid-method-override]
         self: Iterable[SupportsS2LT[S2_contra]], other: S2_contra, /
     ) -> np_1darray_bool: ...
@@ -676,6 +740,26 @@ class Index(IndexOpsMixin[S1], ElementOpsMixin[S1]):
     ) -> np_1darray_bool: ...
     @overload
     def __gt__(self, other: Self, /) -> np_1darray_bool: ...
+    @overload
+    def __gt__(
+        self: IndexComplex, other: ScalarSequenceIndexComplex, /
+    ) -> np_1darray_bool: ...
+    @overload
+    def __gt__(
+        self: Index[Timestamp], other: ScalarArrayIndexDatetime, /
+    ) -> np_1darray_bool: ...
+    @overload
+    def __gt__(
+        self: Index[Timedelta], other: ScalarArrayIndexTimedelta, /
+    ) -> np_1darray_bool: ...
+    @overload
+    def __gt__(
+        self: Index[_str] | Index[bytes], other: ScalarArrayIndexStrBytes, /
+    ) -> np_1darray_bool: ...
+    @overload
+    def __gt__(
+        self: Index[Period], other: Sequence[Period] | Index[Period], /
+    ) -> np_1darray_bool: ...
     @overload
     def __gt__(  # pyright: ignore[reportIncompatibleMethodOverride] # ty: ignore[invalid-method-override]
         self: Iterable[SupportsS2GT[S2_contra]], other: S2_contra, /

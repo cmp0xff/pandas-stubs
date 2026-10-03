@@ -61,6 +61,7 @@ from pandas._typing import (
     np_ndarray_complex,
     np_ndarray_dt,
     np_ndarray_float,
+    np_ndarray_str,
     np_ndarray_td,
 )
 
@@ -155,11 +156,20 @@ ScalarArrayIndexComplex: TypeAlias = (
 )
 SeriesComplex: TypeAlias = SeriesReal | Series[complex]
 ScalarArrayIndexSeriesComplex: TypeAlias = ScalarArrayIndexComplex | SeriesComplex
+ScalarSequenceIndexComplex: TypeAlias = complex | Sequence[complex] | IndexComplex
 
 ArrayIndexBoolNoSeq: TypeAlias = np_ndarray_bool | Index[bool]
 
 ArrayIndexBoolIntNoSeq: TypeAlias = (
     np_ndarray_bool | np_ndarray_anyint | Index[bool] | Index[int]
+)
+
+ArrayIndexStrBytesNoSeq: TypeAlias = np_ndarray_str | Index[str] | Index[bytes]
+ScalarArrayIndexStrBytes: TypeAlias = (
+    str | bytes | Sequence[str] | Sequence[bytes] | ArrayIndexStrBytesNoSeq
+)
+ScalarArrayIndexSeriesStrBytes: TypeAlias = (
+    ScalarArrayIndexStrBytes | Series[str] | Series[bytes]
 )
 
 ArrayIndexTimedeltaNoSeq: TypeAlias = np_ndarray_td | TimedeltaArray | TimedeltaIndex
