@@ -9,6 +9,7 @@ import pandas as pd
 from pandas.errors import Pandas4Warning
 
 from tests import (
+    TYPE_CHECKING_INVALID_USAGE,
     check,
     pytest_warns_bounded,
 )
@@ -44,6 +45,13 @@ def test_index_relops() -> None:
     check(assert_type(ind < 2, np_1darray_bool), np_1darray_bool)
     check(assert_type(ind >= 2, np_1darray_bool), np_1darray_bool)
     check(assert_type(ind > 2, np_1darray_bool), np_1darray_bool)
+    check(assert_type(ind <= 1.0, np_1darray_bool), np_1darray_bool)
+    check(assert_type(ind < 1.0, np_1darray_bool), np_1darray_bool)
+    check(assert_type(ind >= 1.0, np_1darray_bool), np_1darray_bool)
+    check(assert_type(ind > 1.0, np_1darray_bool), np_1darray_bool)
+
+    if TYPE_CHECKING_INVALID_USAGE:
+        _0 = pd.Index(["a", "b"]) < 1.0  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation] # ty: ignore[unsupported-operator]
 
 
 def test_datetime_index_constructor() -> None:

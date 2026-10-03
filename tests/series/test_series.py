@@ -2021,10 +2021,27 @@ def test_relops() -> None:
     check(assert_type(pd.Series([b]) >= b, "pd.Series[bool]"), pd.Series, np.bool_)
 
     dtd = datetime.date(2022, 7, 31)
-    check(assert_type(pd.Series([dtd]) > dtd, "pd.Series[bool]"), pd.Series, np.bool_)
-    check(assert_type(pd.Series([dtd]) < dtd, "pd.Series[bool]"), pd.Series, np.bool_)
-    check(assert_type(pd.Series([dtd]) <= dtd, "pd.Series[bool]"), pd.Series, np.bool_)
-    check(assert_type(pd.Series([dtd]) >= dtd, "pd.Series[bool]"), pd.Series, np.bool_)
+    # `date` alone would be inferred as `Timestamp`; object dtype keeps it as `date`
+    check(
+        assert_type(pd.Series([dtd], dtype=object) > dtd, "pd.Series[bool]"),
+        pd.Series,
+        np.bool_,
+    )
+    check(
+        assert_type(pd.Series([dtd], dtype=object) < dtd, "pd.Series[bool]"),
+        pd.Series,
+        np.bool_,
+    )
+    check(
+        assert_type(pd.Series([dtd], dtype=object) <= dtd, "pd.Series[bool]"),
+        pd.Series,
+        np.bool_,
+    )
+    check(
+        assert_type(pd.Series([dtd], dtype=object) >= dtd, "pd.Series[bool]"),
+        pd.Series,
+        np.bool_,
+    )
 
     dtdt = datetime.datetime(2022, 7, 31, 8, 32, 21)
     check(assert_type(pd.Series([dtdt]) > dtdt, "pd.Series[bool]"), pd.Series, np.bool_)
@@ -2092,6 +2109,14 @@ def test_relops() -> None:
     check(assert_type(pd.Series([ac]) < ac, "pd.Series[bool]"), pd.Series, np.bool_)
     check(assert_type(pd.Series([ac]) <= ac, "pd.Series[bool]"), pd.Series, np.bool_)
     check(assert_type(pd.Series([ac]) >= ac, "pd.Series[bool]"), pd.Series, np.bool_)
+
+    if TYPE_CHECKING_INVALID_USAGE:
+        # `date` and `timedelta` are incomparable at runtime; the protocol rejects
+        # the cross-type comparison that the old hardcoded union used to accept.
+        _4 = pd.Series([dtd]) < dttd  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation] # ty: ignore[unsupported-operator]
+        _5 = pd.Series([dtd]) > dttd  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation] # ty: ignore[unsupported-operator]
+        _6 = pd.Series([dttd]) < dtd  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation] # ty: ignore[unsupported-operator]
+        _7 = pd.Series([dttd]) > dtd  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation] # ty: ignore[unsupported-operator]
 
     ts = pd.Timestamp("2022-07-31 08:35:12")
     check(assert_type(pd.Series([ts]) > ts, "pd.Series[bool]"), pd.Series, np.bool_)
