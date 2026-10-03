@@ -62,12 +62,15 @@ from pandas._stubs_only import (
     ElementOpsMixin,
     NumListLike,
     OrderableT,
+    ScalarArrayIndexDatetime,
     ScalarArrayIndexSeriesComplex,
     ScalarArrayIndexSeriesJustComplex,
     ScalarArrayIndexSeriesJustFloat,
     ScalarArrayIndexSeriesJustInt,
     ScalarArrayIndexSeriesReal,
+    ScalarArrayIndexSeriesStrBytes,
     ScalarArrayIndexSeriesTimedelta,
+    ScalarArrayIndexTimedelta,
     SeriesComplex,
     SeriesReal,
     Supports_ProtoAdd,
@@ -2789,9 +2792,25 @@ class Series(IndexOpsMixin[S1], ElementOpsMixin[S1], NDFrame):
     @overload
     def __ge__(self: Series[Timedelta], other: timedelta, /) -> Series[_bool]: ...
     @overload
+    def __ge__(
+        self: SeriesComplex, other: ScalarArrayIndexSeriesComplex, /
+    ) -> Series[_bool]: ...
+    @overload
+    def __ge__(
+        self: Series[Timestamp], other: ScalarArrayIndexDatetime | Series[Timestamp], /
+    ) -> Series[_bool]: ...
+    @overload
+    def __ge__(
+        self: Series[Timedelta], other: ScalarArrayIndexTimedelta | Series[Timedelta], /
+    ) -> Series[_bool]: ...
+    @overload
+    def __ge__(
+        self: Series[_str] | Series[bytes], other: ScalarArrayIndexSeriesStrBytes, /
+    ) -> Series[_bool]: ...
+    @overload
     def __ge__(  # ty: ignore[invalid-method-override]
         self: Iterable[SupportsS2GE[S2_contra]],
-        other: S2_contra | ListLike | Series[S2_contra],
+        other: S2_contra | Sequence[S2_contra] | Series[S2_contra] | Index[S2_contra],
         /,
     ) -> Series[_bool]: ...
     @overload  # type: ignore[override]
@@ -2808,9 +2827,25 @@ class Series(IndexOpsMixin[S1], ElementOpsMixin[S1], NDFrame):
     @overload
     def __gt__(self: Series[Timedelta], other: timedelta, /) -> Series[_bool]: ...
     @overload
+    def __gt__(
+        self: SeriesComplex, other: ScalarArrayIndexSeriesComplex, /
+    ) -> Series[_bool]: ...
+    @overload
+    def __gt__(
+        self: Series[Timestamp], other: ScalarArrayIndexDatetime | Series[Timestamp], /
+    ) -> Series[_bool]: ...
+    @overload
+    def __gt__(
+        self: Series[Timedelta], other: ScalarArrayIndexTimedelta | Series[Timedelta], /
+    ) -> Series[_bool]: ...
+    @overload
+    def __gt__(
+        self: Series[_str] | Series[bytes], other: ScalarArrayIndexSeriesStrBytes, /
+    ) -> Series[_bool]: ...
+    @overload
     def __gt__(  # ty: ignore[invalid-method-override]
         self: Iterable[SupportsS2GT[S2_contra]],
-        other: S2_contra | ListLike | Series[S2_contra],
+        other: S2_contra | Sequence[S2_contra] | Series[S2_contra] | Index[S2_contra],
         /,
     ) -> Series[_bool]: ...
     @overload  # type: ignore[override]
@@ -2827,9 +2862,25 @@ class Series(IndexOpsMixin[S1], ElementOpsMixin[S1], NDFrame):
     @overload
     def __le__(self: Series[Timedelta], other: timedelta, /) -> Series[_bool]: ...
     @overload
+    def __le__(
+        self: SeriesComplex, other: ScalarArrayIndexSeriesComplex, /
+    ) -> Series[_bool]: ...
+    @overload
+    def __le__(
+        self: Series[Timestamp], other: ScalarArrayIndexDatetime | Series[Timestamp], /
+    ) -> Series[_bool]: ...
+    @overload
+    def __le__(
+        self: Series[Timedelta], other: ScalarArrayIndexTimedelta | Series[Timedelta], /
+    ) -> Series[_bool]: ...
+    @overload
+    def __le__(
+        self: Series[_str] | Series[bytes], other: ScalarArrayIndexSeriesStrBytes, /
+    ) -> Series[_bool]: ...
+    @overload
     def __le__(  # ty: ignore[invalid-method-override]
         self: Iterable[SupportsS2LE[S2_contra]],
-        other: S2_contra | ListLike | Series[S2_contra],
+        other: S2_contra | Sequence[S2_contra] | Series[S2_contra] | Index[S2_contra],
         /,
     ) -> Series[_bool]: ...
     @overload  # type: ignore[override]
@@ -2846,9 +2897,25 @@ class Series(IndexOpsMixin[S1], ElementOpsMixin[S1], NDFrame):
     @overload
     def __lt__(self: Series[Timedelta], other: timedelta, /) -> Series[_bool]: ...
     @overload
+    def __lt__(
+        self: SeriesComplex, other: ScalarArrayIndexSeriesComplex, /
+    ) -> Series[_bool]: ...
+    @overload
+    def __lt__(
+        self: Series[Timestamp], other: ScalarArrayIndexDatetime | Series[Timestamp], /
+    ) -> Series[_bool]: ...
+    @overload
+    def __lt__(
+        self: Series[Timedelta], other: ScalarArrayIndexTimedelta | Series[Timedelta], /
+    ) -> Series[_bool]: ...
+    @overload
+    def __lt__(
+        self: Series[_str] | Series[bytes], other: ScalarArrayIndexSeriesStrBytes, /
+    ) -> Series[_bool]: ...
+    @overload
     def __lt__(  # ty: ignore[invalid-method-override]
         self: Iterable[SupportsS2LT[S2_contra]],
-        other: S2_contra | ListLike | Series[S2_contra],
+        other: S2_contra | Sequence[S2_contra] | Series[S2_contra] | Index[S2_contra],
         /,
     ) -> Series[_bool]: ...
     @overload
