@@ -40,6 +40,7 @@ from .model import (
     FORWARD_BINARY_DUNDERS,
     REQUIRED_STUB_FILES,
     TIER_OPERANDS,
+    TIER_ROOTS,
 )
 
 
@@ -393,21 +394,23 @@ def _class_tiers(bases: Mapping[str, tuple[str, ...]]) -> dict[str, int]:
     ``TIER_OPERANDS`` is spread over ``CLASS_STUB_FILES`` last, so it, and not the tier-0
     seed, decides the tier of a name both hold.
 
-    ``bases`` is needed only because ``Index`` has subclasses: the registry names
-    ``Index``, so a spelling such as ``TimedeltaIndex`` is a tier-2 operand only because
-    this walk resolves its base by name. It runs for ``Index`` alone, so an array-like
-    such as ``Categorical`` is deliberately not registered and is not read at tier 1; a
-    second walk is what registering an array-like subclass would take.
+    ``bases`` is needed for the subclasses: the registry names ``Index``, so a spelling
+    such as ``TimedeltaIndex`` is a tier-2 operand only because the walk resolves its base
+    by name, and the same walk puts ``Hour`` in the delta tier through ``Tick`` rather than
+    leaving it at ``BaseOffset``. ``TIER_ROOTS`` is walked in order and each root claims
+    only names no earlier one did, which is why the delta roots precede ``BaseOffset``. A
+    subtree not rooted there — an array-like such as ``Categorical`` — is deliberately
+    not registered and is not read at its tier.
     """
     tiers: dict[str, int] = {**dict.fromkeys(CLASS_STUB_FILES, 0), **TIER_OPERANDS}
-    index_tier = TIER_OPERANDS["Index"]
-    tiers.update(
-        {
-            name: index_tier
-            for name in bases
-            if name not in tiers and _descends_from(name, "Index", bases)
-        }
-    )
+    for root, tier in TIER_ROOTS:
+        tiers.update(
+            {
+                name: tier
+                for name in bases
+                if name not in tiers and _descends_from(name, root, bases)
+            }
+        )
     return tiers
 
 
