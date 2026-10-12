@@ -1812,7 +1812,7 @@ def test_timedelta64_and_arithmatic_operator() -> None:
     s4 = s1.astype(object)
     # TODO: pandas-dev/pandas-stubs#1799 investigate and report to ty
     check(
-        assert_type(  # ty: ignore[type-assertion-failure]
+        assert_type(  # type: ignore[assert-type,unused-ignore] # ty: ignore[type-assertion-failure]
             s4 - td1, "pd.Series[pd.Timestamp]"
         ),
         pd.Series,

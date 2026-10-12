@@ -18,24 +18,25 @@ from tests import (
 
 def test_agg_any_float() -> None:
     series = pd.DataFrame({"A": [1.0, float("nan"), 2.0]})["A"]
+    # python/mypy#22011 resolves these calls on Series[Any] to Any.
     # TODO: remove the ignore astral-sh/ty#4055
     check(
-        assert_type(series.mean(), float),  # ty: ignore[type-assertion-failure]
+        assert_type(series.mean(), float),  # type: ignore[assert-type,unused-ignore] # ty: ignore[type-assertion-failure]
         np.float64,
     )
     # TODO: remove the ignore astral-sh/ty#4055
     check(
-        assert_type(series.median(), float),  # ty: ignore[type-assertion-failure]
+        assert_type(series.median(), float),  # type: ignore[assert-type,unused-ignore] # ty: ignore[type-assertion-failure]
         np.float64,
     )
     # TODO: remove the ignore astral-sh/ty#4055
     check(
-        assert_type(series.std(), float),  # ty: ignore[type-assertion-failure]
+        assert_type(series.std(), float),  # type: ignore[assert-type,unused-ignore] # ty: ignore[type-assertion-failure]
         np.float64,
     )
     # TODO: remove the ignore astral-sh/ty#4055
     check(
-        assert_type(series.var(), float),  # ty: ignore[type-assertion-failure]
+        assert_type(series.var(), float),  # type: ignore[assert-type,unused-ignore] # ty: ignore[type-assertion-failure]
         np.float64,
     )
 

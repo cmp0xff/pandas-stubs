@@ -1151,7 +1151,7 @@ def test_types_unique() -> None:
     df = pd.DataFrame(data={"col1": [1, 2], "col2": [1, 4]})
     # TODO: astral-sh/ty#2182
     check(
-        assert_type(  # ty: ignore[type-assertion-failure]
+        assert_type(  # type: ignore[assert-type,unused-ignore] # ty: ignore[type-assertion-failure]
             df["col1"].unique(), np_1darray
         ),
         np_1darray,

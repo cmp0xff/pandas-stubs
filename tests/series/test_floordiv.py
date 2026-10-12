@@ -60,8 +60,9 @@ def test_floordiv_py_scalar(left_i: pd.Series) -> None:
     if TYPE_CHECKING_INVALID_USAGE:
         left_i.rfloordiv(c)  # type: ignore[call-overload] # pyright: ignore[reportArgumentType,reportCallIssue] # pyrefly: ignore[no-matching-overload]
         left_i.rfloordiv(s)  # type: ignore[call-overload] # pyright: ignore[reportArgumentType,reportCallIssue] # pyrefly: ignore[no-matching-overload]
+    # python/mypy#22011 considers all overloads matching Series[Any].
     check(
-        assert_type(left_i.rfloordiv(d), "pd.Series[pd.Timedelta]"),
+        assert_type(left_i.rfloordiv(d), "pd.Series[pd.Timedelta]"),  # type: ignore[assert-type,unused-ignore]
         pd.Series,
         pd.Timedelta,
     )
@@ -132,7 +133,7 @@ def test_floordiv_numpy_array(left_i: pd.Series) -> None:
         assert_type(left_i // s, Never)
 
     def _05() -> None:  # pyright: ignore[reportUnusedFunction]
-        assert_type(left_i // d, Never)
+        assert_type(left_i // d, Never)  # type: ignore[assert-type,unused-ignore]
 
     # `numpy` typing gives the corresponding `ndarray`s in the static type
     # checking, where our `__rfloordiv__` cannot override. At runtime, they lead to
@@ -168,7 +169,7 @@ def test_floordiv_numpy_array(left_i: pd.Series) -> None:
         )
 
     def _25() -> None:  # pyright: ignore[reportUnusedFunction]
-        assert_type(left_i.floordiv(d), Never)
+        assert_type(left_i.floordiv(d), Never)  # type: ignore[assert-type,unused-ignore]
 
     check(assert_type(left_i.rfloordiv(b), pd.Series), pd.Series, np.integer)
     check(assert_type(left_i.rfloordiv(i), pd.Series), pd.Series, np.integer)
@@ -177,7 +178,7 @@ def test_floordiv_numpy_array(left_i: pd.Series) -> None:
         left_i.rfloordiv(c)  # type: ignore[arg-type] # pyright: ignore[reportArgumentType,reportCallIssue] # pyrefly: ignore[no-matching-overload]
         left_i.rfloordiv(s)  # type: ignore[arg-type] # pyright: ignore[reportArgumentType,reportCallIssue] # pyrefly: ignore[no-matching-overload]
     check(
-        assert_type(left_i.rfloordiv(d), "pd.Series[pd.Timedelta]"),
+        assert_type(left_i.rfloordiv(d), "pd.Series[pd.Timedelta]"),  # type: ignore[assert-type,unused-ignore]
         pd.Series,
         pd.Timedelta,
     )
@@ -200,7 +201,7 @@ def test_floordiv_pd_index(left_i: pd.Series) -> None:
         _04 = left_i // s  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation]
 
     def _05() -> None:  # pyright: ignore[reportUnusedFunction]
-        assert_type(left_i // d, Never)
+        assert_type(left_i // d, Never)  # type: ignore[assert-type,unused-ignore]
 
     check(assert_type(b // left_i, pd.Series), pd.Series, np.integer)
     check(assert_type(i // left_i, pd.Series), pd.Series, np.integer)
@@ -208,7 +209,11 @@ def test_floordiv_pd_index(left_i: pd.Series) -> None:
     if TYPE_CHECKING_INVALID_USAGE:
         _13 = c // left_i  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation]
         _14 = s // left_i  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation]
-    check(assert_type(d // left_i, "pd.Series[pd.Timedelta]"), pd.Series, pd.Timedelta)
+    check(
+        assert_type(d // left_i, "pd.Series[pd.Timedelta]"),  # type: ignore[assert-type,unused-ignore]
+        pd.Series,
+        pd.Timedelta,
+    )
 
     check(assert_type(left_i.floordiv(b), pd.Series), pd.Series, np.integer)
     check(assert_type(left_i.floordiv(i), pd.Series), pd.Series, np.integer)
@@ -218,7 +223,7 @@ def test_floordiv_pd_index(left_i: pd.Series) -> None:
         left_i.floordiv(s)  # type: ignore[arg-type] # pyright: ignore[reportArgumentType,reportCallIssue] # pyrefly: ignore[no-matching-overload]
 
     def _25() -> None:  # pyright: ignore[reportUnusedFunction]
-        assert_type(left_i.floordiv(d), Never)
+        assert_type(left_i.floordiv(d), Never)  # type: ignore[assert-type,unused-ignore]
 
     check(assert_type(left_i.rfloordiv(b), pd.Series), pd.Series, np.integer)
     check(assert_type(left_i.rfloordiv(i), pd.Series), pd.Series, np.integer)
@@ -227,7 +232,7 @@ def test_floordiv_pd_index(left_i: pd.Series) -> None:
         left_i.rfloordiv(c)  # type: ignore[arg-type] # pyright: ignore[reportArgumentType,reportCallIssue] # pyrefly: ignore[no-matching-overload]
         left_i.rfloordiv(s)  # type: ignore[arg-type] # pyright: ignore[reportArgumentType,reportCallIssue] # pyrefly: ignore[no-matching-overload]
     check(
-        assert_type(left_i.rfloordiv(d), "pd.Series[pd.Timedelta]"),
+        assert_type(left_i.rfloordiv(d), "pd.Series[pd.Timedelta]"),  # type: ignore[assert-type,unused-ignore]
         pd.Series,
         pd.Timedelta,
     )
@@ -274,7 +279,7 @@ def test_floordiv_pd_series(left_i: pd.Series) -> None:
         left_i.rfloordiv(s)  # type: ignore[arg-type] # pyright: ignore[reportArgumentType,reportCallIssue] # pyrefly: ignore[no-matching-overload]
 
     check(
-        assert_type(left_i.rfloordiv(d), "pd.Series[pd.Timedelta]"),
+        assert_type(left_i.rfloordiv(d), "pd.Series[pd.Timedelta]"),  # type: ignore[assert-type,unused-ignore]
         pd.Series,
         pd.Timedelta,
     )

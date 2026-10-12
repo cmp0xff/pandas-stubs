@@ -679,7 +679,7 @@ def test_types_quantile() -> None:
     check(assert_type(a.quantile(), np.floating), np.floating)
     # TODO: remove the ignore astral-sh/ty#4055
     check(
-        assert_type(  # ty: ignore[type-assertion-failure]
+        assert_type(  # type: ignore[assert-type,unused-ignore] # ty: ignore[type-assertion-failure]
             a.quantile(interpolation="nearest"), np.floating
         ),
         np.floating,
@@ -2194,7 +2194,7 @@ def test_types_to_numpy() -> None:
 
     # TODO: remove the ignore astral-sh/ty#4055
     check(
-        assert_type(
+        assert_type(  # type: ignore[assert-type,unused-ignore]
             pd.Series().to_numpy(), np_1darray
         ),  # ty: ignore[type-assertion-failure]
         np_1darray,

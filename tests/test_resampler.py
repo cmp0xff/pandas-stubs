@@ -35,8 +35,8 @@ DF = DataFrame({"col1": S, "col2": S})
 
 
 def s2scalar(val: Series) -> float:
-    # TODO: remove ty ignore astral-sh/ty#4360 astral-sh/ty#4135
-    return val.mean()  # ty: ignore[unsound-return-statement]
+    mean: float = val.mean()
+    return mean
 
 
 def test_iter() -> None:

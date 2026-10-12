@@ -152,7 +152,8 @@ def test_truediv_numpy_array(left_i: pd.Series) -> None:
     check(assert_type(left_i / c, pd.Series), pd.Series)
     if TYPE_CHECKING_INVALID_USAGE:
         assert_type(left_i / s, Never)
-        assert_type(left_i / d, Never)
+        # python/mypy#22011 ignores Never returns when resolving gradual self-types.
+        assert_type(left_i / d, Never)  # type: ignore[assert-type,unused-ignore]
 
     # `numpy` typing gives the corresponding `ndarray`s in the static type
     # checking, where our `__rtruediv__` cannot override. At runtime, they return
@@ -192,7 +193,7 @@ def test_truediv_numpy_array(left_i: pd.Series) -> None:
         left_i.truediv(s)  # type: ignore[arg-type] # pyright: ignore[reportArgumentType,reportCallIssue] # pyrefly: ignore[no-matching-overload]
 
     def _25() -> None:  # pyright: ignore[reportUnusedFunction]
-        assert_type(left_i.truediv(d), Never)
+        assert_type(left_i.truediv(d), Never)  # type: ignore[assert-type,unused-ignore]
 
     check(assert_type(left_i.div(b), pd.Series), pd.Series)
     check(assert_type(left_i.div(i), pd.Series), pd.Series)
@@ -202,7 +203,7 @@ def test_truediv_numpy_array(left_i: pd.Series) -> None:
         left_i.div(s)  # type: ignore[arg-type] # pyright: ignore[reportArgumentType,reportCallIssue] # pyrefly: ignore[no-matching-overload]
 
     def _35() -> None:  # pyright: ignore[reportUnusedFunction]
-        assert_type(left_i.div(d), Never)
+        assert_type(left_i.div(d), Never)  # type: ignore[assert-type,unused-ignore]
 
     check(assert_type(left_i.rtruediv(b), pd.Series), pd.Series)
     check(assert_type(left_i.rtruediv(i), pd.Series), pd.Series)
@@ -238,7 +239,7 @@ def test_truediv_pd_index(left_i: pd.Series) -> None:
     check(assert_type(left_i / c, pd.Series), pd.Series)
     if TYPE_CHECKING_INVALID_USAGE:
         _05 = left_i / s  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation]
-        assert_type(left_i / d, Never)
+        assert_type(left_i / d, Never)  # type: ignore[assert-type,unused-ignore]
 
     check(assert_type(a / left_i, pd.Series), pd.Series)
     check(assert_type(b / left_i, pd.Series), pd.Series)
@@ -258,7 +259,7 @@ def test_truediv_pd_index(left_i: pd.Series) -> None:
         left_i.truediv(s)  # type: ignore[arg-type] # pyright: ignore[reportArgumentType,reportCallIssue] # pyrefly: ignore[no-matching-overload]
 
     def _26() -> None:  # pyright: ignore[reportUnusedFunction]
-        assert_type(left_i.truediv(d), Never)
+        assert_type(left_i.truediv(d), Never)  # type: ignore[assert-type,unused-ignore]
 
     check(assert_type(left_i.div(a), pd.Series), pd.Series)
     check(assert_type(left_i.div(b), pd.Series), pd.Series)
@@ -269,7 +270,7 @@ def test_truediv_pd_index(left_i: pd.Series) -> None:
         left_i.div(s)  # type: ignore[arg-type] # pyright: ignore[reportArgumentType,reportCallIssue] # pyrefly: ignore[no-matching-overload]
 
     def _36() -> None:  # pyright: ignore[reportUnusedFunction]
-        assert_type(left_i.div(d), Never)
+        assert_type(left_i.div(d), Never)  # type: ignore[assert-type,unused-ignore]
 
     check(assert_type(left_i.rtruediv(a), pd.Series), pd.Series)
     check(assert_type(left_i.rtruediv(b), pd.Series), pd.Series)
