@@ -232,6 +232,10 @@ from pandas._typing import (
     StrDtypeArg,
     Suffixes,
     SupportsDType,
+    SupportsS2GE,
+    SupportsS2GT,
+    SupportsS2LE,
+    SupportsS2LT,
     T as _T,
     TimeAmbiguous,
     TimedeltaDtypeArg,
@@ -2769,8 +2773,18 @@ class Series(IndexOpsMixin[S1], ElementOpsMixin[S1], NDFrame):
         self: Series[int], other: float, /
     ) -> Series[_bool]: ...
     @overload
+    def __ge__(self: Series[complex], other: complex, /) -> Series[_bool]: ...
+    @overload
+    def __ge__(self: Series[float], other: float, /) -> Series[_bool]: ...
+    @overload
+    def __ge__(self: Series[Timestamp], other: datetime, /) -> Series[_bool]: ...
+    @overload
+    def __ge__(self: Series[Timedelta], other: timedelta, /) -> Series[_bool]: ...
+    @overload
     def __ge__(  # ty: ignore[invalid-method-override]
-        self, other: S1 | ListLike | Series[S1] | datetime | timedelta | date, /
+        self: Iterable[SupportsS2GE[S2_contra]],
+        other: S2_contra | ListLike | Series[S2_contra],
+        /,
     ) -> Series[_bool]: ...
     @overload  # type: ignore[override]
     @override
@@ -2778,8 +2792,18 @@ class Series(IndexOpsMixin[S1], ElementOpsMixin[S1], NDFrame):
         self: Series[int], other: float, /
     ) -> Series[_bool]: ...
     @overload
+    def __gt__(self: Series[complex], other: complex, /) -> Series[_bool]: ...
+    @overload
+    def __gt__(self: Series[float], other: float, /) -> Series[_bool]: ...
+    @overload
+    def __gt__(self: Series[Timestamp], other: datetime, /) -> Series[_bool]: ...
+    @overload
+    def __gt__(self: Series[Timedelta], other: timedelta, /) -> Series[_bool]: ...
+    @overload
     def __gt__(  # ty: ignore[invalid-method-override]
-        self, other: S1 | ListLike | Series[S1] | datetime | timedelta | date, /
+        self: Iterable[SupportsS2GT[S2_contra]],
+        other: S2_contra | ListLike | Series[S2_contra],
+        /,
     ) -> Series[_bool]: ...
     @overload  # type: ignore[override]
     @override
@@ -2787,8 +2811,18 @@ class Series(IndexOpsMixin[S1], ElementOpsMixin[S1], NDFrame):
         self: Series[int], other: float, /
     ) -> Series[_bool]: ...
     @overload
+    def __le__(self: Series[complex], other: complex, /) -> Series[_bool]: ...
+    @overload
+    def __le__(self: Series[float], other: float, /) -> Series[_bool]: ...
+    @overload
+    def __le__(self: Series[Timestamp], other: datetime, /) -> Series[_bool]: ...
+    @overload
+    def __le__(self: Series[Timedelta], other: timedelta, /) -> Series[_bool]: ...
+    @overload
     def __le__(  # ty: ignore[invalid-method-override]
-        self, other: S1 | ListLike | Series[S1] | datetime | timedelta | date, /
+        self: Iterable[SupportsS2LE[S2_contra]],
+        other: S2_contra | ListLike | Series[S2_contra],
+        /,
     ) -> Series[_bool]: ...
     @overload  # type: ignore[override]
     @override
@@ -2796,8 +2830,18 @@ class Series(IndexOpsMixin[S1], ElementOpsMixin[S1], NDFrame):
         self: Series[int], other: float, /
     ) -> Series[_bool]: ...
     @overload
+    def __lt__(self: Series[complex], other: complex, /) -> Series[_bool]: ...
+    @overload
+    def __lt__(self: Series[float], other: float, /) -> Series[_bool]: ...
+    @overload
+    def __lt__(self: Series[Timestamp], other: datetime, /) -> Series[_bool]: ...
+    @overload
+    def __lt__(self: Series[Timedelta], other: timedelta, /) -> Series[_bool]: ...
+    @overload
     def __lt__(  # ty: ignore[invalid-method-override]
-        self, other: S1 | ListLike | Series[S1] | datetime | timedelta | date, /
+        self: Iterable[SupportsS2LT[S2_contra]],
+        other: S2_contra | ListLike | Series[S2_contra],
+        /,
     ) -> Series[_bool]: ...
     @overload
     def __mul__(  # type: ignore[overload-overlap]

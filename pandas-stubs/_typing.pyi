@@ -1254,4 +1254,16 @@ class SupportsTrueDiv(Protocol[_T_contra, _T_co]):
 class SupportsRTrueDiv(Protocol[_T_contra, _T_co]):
     def __rtruediv__(self, x: _T_contra, /) -> _T_co: ...
 
+class SupportsS2LT(Protocol[S2_contra]):
+    def __lt__(self, other: S2_contra, /) -> bool: ...
+
+class SupportsS2LE(Protocol[S2_contra]):
+    def __le__(self, other: S2_contra, /) -> bool: ...
+
+class SupportsS2GT(Protocol[S2_contra]):
+    def __gt__(self, other: S2_contra, /) -> bool: ...
+
+class SupportsS2GE(Protocol[S2_contra]):
+    def __ge__(self, other: S2_contra, /) -> bool: ...
+
 __all__ = ["npt", "type_t"]
