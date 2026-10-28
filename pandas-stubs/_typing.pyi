@@ -1020,17 +1020,19 @@ SeriesDTypeNoStrDateTime: TypeAlias = (
 SeriesDTypeNoDateTime: TypeAlias = (
     str | SeriesDTypeNoStrDateTime | type[str] | list[str]
 )
-SeriesDType: TypeAlias = (
+SeriesDTypeNoTuple: TypeAlias = (
     SeriesDTypeNoDateTime
     | datetime.date
     | datetime.time
     | datetime.datetime  # includes pd.Timestamp
     | datetime.timedelta  # includes pd.Timedelta
 )
+SeriesDType: TypeAlias = SeriesDTypeNoTuple | tuple[Hashable, ...]
 S0 = TypeVar("S0", bound=SeriesDType, default=Any)
 S1 = TypeVar("S1", bound=SeriesDType, default=Any)
 # Like S0 and S1, but without `default=Any`.
 S2 = TypeVar("S2", bound=SeriesDType)
+S2_NoTuple = TypeVar("S2_NoTuple", bound=SeriesDTypeNoTuple)
 S2_contra = TypeVar("S2_contra", bound=SeriesDType, contravariant=True)
 S2_NDT_contra = TypeVar(
     "S2_NDT_contra", bound=SeriesDTypeNoDateTime, contravariant=True

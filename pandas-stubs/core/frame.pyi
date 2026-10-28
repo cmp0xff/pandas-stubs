@@ -150,6 +150,7 @@ from pandas._typing import (
     ReindexMethod,
     Renamer,
     ReplaceValue,
+    S2_NoTuple,
     Scalar,
     ScalarOrNA,
     ScalarT,
@@ -172,6 +173,7 @@ from pandas._typing import (
     ValueKeyFunc,
     WriteBuffer,
     XMLParsers,
+    np_1darray,
     np_2darray,
     np_ndarray,
     np_ndarray_anyint,
@@ -1348,7 +1350,7 @@ class DataFrame(NDFrame, OpsMixin, _GetItemHack):
         dropna: _bool = ...,
     ) -> DataFrameGroupBy[IntervalT, Literal[False]]: ...
     @overload
-    def groupby(  # type: ignore[overload-overlap] # pyright: ignore reportOverlappingOverload
+    def groupby(  # pyright: ignore reportOverlappingOverload
         self,
         by: MultiIndex | GroupByObjectNonScalar | None = ...,
         level: IndexLabel | None = ...,
@@ -1360,7 +1362,7 @@ class DataFrame(NDFrame, OpsMixin, _GetItemHack):
         dropna: _bool = ...,
     ) -> DataFrameGroupBy[tuple[Hashable, ...], Literal[True]]: ...
     @overload
-    def groupby(  # type: ignore[overload-overlap]
+    def groupby(
         self,
         by: MultiIndex | GroupByObjectNonScalar | None = ...,
         level: IndexLabel | None = ...,
@@ -1502,15 +1504,17 @@ class DataFrame(NDFrame, OpsMixin, _GetItemHack):
     def apply(
         self,
         # Use S2 (TypeVar without `default=Any`) instead of S1 due to https://github.com/python/mypy/issues/19182.
-        func: Callable[..., S2 | NAType],
+        func: Callable[..., S2_NoTuple | NAType],
         axis: AxisIndex = ...,
         raw: _bool = ...,
         result_type: None = None,
         args: Any = ...,
         **kwargs: Any,
-    ) -> Series[S2]: ...
-    # Since non-scalar type T is not supported in Series[T],
-    # we separate this overload from the above one
+    ) -> Series[S2_NoTuple]: ...
+    # Mappings are not valid Series[T] dtypes, so they get their own overload.
+    # Tuples are a valid Series dtype, but for axis=0 and result_type="expand" the
+    # list-like overloads (DataFrame / Self) must win, so those arms use the
+    # scalar-only S2_NoTuple to avoid overlapping them.
     @overload
     def apply(
         self,
@@ -1527,14 +1531,14 @@ class DataFrame(NDFrame, OpsMixin, _GetItemHack):
     def apply(
         self,
         # Use S2 (TypeVar without `default=Any`) instead of S1 due to https://github.com/python/mypy/issues/19182.
-        func: Callable[..., S2 | NAType],
+        func: Callable[..., S2_NoTuple | NAType],
         axis: Axis = 0,
         raw: _bool = ...,
         args: Any = ...,
         *,
-        result_type: Literal["expand", "reduce"],
+        result_type: Literal["expand"],
         **kwargs: Any,
-    ) -> Series[S2]: ...
+    ) -> Series[S2_NoTuple]: ...
     @overload
     def apply(
         self,
@@ -1549,7 +1553,21 @@ class DataFrame(NDFrame, OpsMixin, _GetItemHack):
     @overload
     def apply(
         self,
-        func: Callable[..., ListLikeExceptSeriesAndStr | Mapping[Any, Any]],
+        # Use S2 (TypeVar without `default=Any`) instead of S1 due to https://github.com/python/mypy/issues/19182.
+        func: Callable[..., S2 | NAType],
+        axis: Axis = 0,
+        raw: _bool = ...,
+        args: Any = ...,
+        *,
+        result_type: Literal["reduce"],
+        **kwargs: Any,
+    ) -> Series[S2]: ...
+    @overload
+    def apply(
+        self,
+        func: Callable[
+            ..., MutableSequence[Any] | np_1darray | Index | Mapping[Any, Any]
+        ],
         axis: Axis = 0,
         raw: _bool = ...,
         args: Any = ...,
@@ -1600,7 +1618,9 @@ class DataFrame(NDFrame, OpsMixin, _GetItemHack):
     @overload
     def apply(
         self,
-        func: Callable[..., ListLikeExceptSeriesAndStr | Mapping[Any, Any]],
+        func: Callable[
+            ..., MutableSequence[Any] | np_1darray | Index | Mapping[Any, Any]
+        ],
         raw: _bool = ...,
         result_type: None = None,
         args: Any = ...,
