@@ -1017,9 +1017,7 @@ SeriesDTypeNoStrDateTime: TypeAlias = (
     | CategoricalDtype
     | BaseOffset
 )
-SeriesDTypeNoDateTime: TypeAlias = (
-    str | SeriesDTypeNoStrDateTime | type[str] | list[str]
-)
+SeriesDTypeNoDateTime: TypeAlias = str | SeriesDTypeNoStrDateTime | list[str]
 SeriesDType: TypeAlias = (
     SeriesDTypeNoDateTime
     | datetime.date
@@ -1049,7 +1047,7 @@ C2 = TypeVar(
     int,
     float,
     complex,
-    Dtype,
+    type[object],
     datetime.datetime,  # includes pd.Timestamp
     datetime.timedelta,  # includes pd.Timedelta
     Period,
