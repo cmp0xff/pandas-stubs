@@ -1047,7 +1047,7 @@ C2 = TypeVar(
     int,
     float,
     complex,
-    Dtype,
+    type[object],
     datetime.datetime,  # includes pd.Timestamp
     datetime.timedelta,  # includes pd.Timedelta
     Period,
