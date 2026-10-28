@@ -1289,6 +1289,9 @@ def test_types_apply() -> None:
     def returns_listlike_of_3(_: pd.Series) -> tuple[int, int, int]:
         return (7, 8, 9)
 
+    def returns_list_of_3(_: pd.Series) -> list[int]:
+        return [7, 8, 9]
+
     def returns_dict(_: pd.Series) -> dict[str, int]:
         return {"col4": 7, "col5": 8}
 
@@ -1321,6 +1324,7 @@ def test_types_apply() -> None:
     )
     check(assert_type(df.apply(returns_series), pd.DataFrame), pd.DataFrame)
     check(assert_type(df.apply(returns_listlike_of_3), pd.DataFrame), pd.DataFrame)
+    check(assert_type(df.apply(returns_list_of_3), pd.DataFrame), pd.DataFrame)
     check(assert_type(df.apply(returns_dict), pd.Series), pd.Series)
 
     # Check various return types for result_type="expand" with default axis (0)
@@ -1339,6 +1343,10 @@ def test_types_apply() -> None:
         assert_type(
             df.apply(returns_listlike_of_3, result_type="expand"), pd.DataFrame
         ),
+        pd.DataFrame,
+    )
+    check(
+        assert_type(df.apply(returns_list_of_3, result_type="expand"), pd.DataFrame),
         pd.DataFrame,
     )
     check(
@@ -1361,7 +1369,15 @@ def test_types_apply() -> None:
         pd.Series,  # This technically returns a pd.Series[pd.Series], but typing does not support that
     )
     check(
-        assert_type(df.apply(returns_listlike_of_3, result_type="reduce"), pd.Series),
+        assert_type(
+            df.apply(returns_listlike_of_3, result_type="reduce"),
+            "pd.Series[tuple[int, int, int]]",
+        ),
+        pd.Series,
+        tuple,
+    )
+    check(
+        assert_type(df.apply(returns_list_of_3, result_type="reduce"), pd.Series),
         pd.Series,
     )
     check(
@@ -1375,7 +1391,14 @@ def test_types_apply() -> None:
         np.integer,
     )
     check(assert_type(df.apply(returns_series, axis=1), pd.DataFrame), pd.DataFrame)
-    check(assert_type(df.apply(returns_listlike_of_3, axis=1), pd.Series), pd.Series)
+    check(
+        assert_type(
+            df.apply(returns_listlike_of_3, axis=1), "pd.Series[tuple[int, int, int]]"
+        ),
+        pd.Series,
+        tuple,
+    )
+    check(assert_type(df.apply(returns_list_of_3, axis=1), pd.Series), pd.Series)
     check(assert_type(df.apply(returns_dict, axis=1), pd.Series), pd.Series)
 
     # Check various return types for result_type="expand" with axis=1
@@ -1397,6 +1420,12 @@ def test_types_apply() -> None:
     check(
         assert_type(
             df.apply(returns_listlike_of_3, axis=1, result_type="expand"), pd.DataFrame
+        ),
+        pd.DataFrame,
+    )
+    check(
+        assert_type(
+            df.apply(returns_list_of_3, axis=1, result_type="expand"), pd.DataFrame
         ),
         pd.DataFrame,
     )
@@ -1425,7 +1454,15 @@ def test_types_apply() -> None:
     )
     check(
         assert_type(
-            df.apply(returns_listlike_of_3, axis=1, result_type="reduce"), pd.Series
+            df.apply(returns_listlike_of_3, axis=1, result_type="reduce"),
+            "pd.Series[tuple[int, int, int]]",
+        ),
+        pd.Series,
+        tuple,
+    )
+    check(
+        assert_type(
+            df.apply(returns_list_of_3, axis=1, result_type="reduce"), pd.Series
         ),
         pd.Series,
     )
