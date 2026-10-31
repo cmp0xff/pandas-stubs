@@ -46,13 +46,13 @@ When generating documentation or writing PR descriptions, format all GitHub refe
   - AI agents read the raw body and can consume far more detail than a human reviewer wants to scroll through. Put a comprehensive implementation record at the bottom of the body inside a `<details><summary>AI Implementation Plan</summary>` block: motivation, experiments and attempts (including failures), caveats, outcome, out-of-scope items, and a to-do list. This information lives in a developer's head; an AI agent can write it down cheaply, and later agents (e.g. pandas-dev/pandas-stubs#1926 sub-PRs) can pick it up without re-deriving it.
   - Rules: never put machine-only detail in the visible text; never hide information a human reviewer needs. The `<details>` block stays visible when expanded, so both audiences keep full access.
 - **Commit messages**: do not add summaries or additional comments to individual commits. The single PR description is sufficient.
-- **Commit signatures**: When AI generates commits, add a `Co-authored-by:` trailer naming the actual model or tool. Prefer the exact model name when known; use the tool name only when the model is not disclosed. Use the provider's official no-reply address:
+- **Commit signatures**: When AI generates commits, add a `Co-authored-by:` trailer naming the model that actually did the work, using the exact model id from your runtime/system info. Fall back to the tool name (e.g. `Codex`, `GitHub Copilot`) only when the model is not disclosed. Use the provider's official no-reply address. The examples below illustrate the format only; never copy an identifier that is not yours:
   - `Co-authored-by: deepseek-v4-pro <noreply@deepseek.com>`
   - `Co-authored-by: gpt-5.6-terra <noreply@openai.com>`
   - `Co-authored-by: claude-opus-4-20250514 <noreply@anthropic.com>`
   - `Co-authored-by: GitHub Copilot <noreply@github.com>`
   - `Co-authored-by: Gemini 3.1 Pro <noreply@google.com>`
-- **Why a fixed list**: models cannot reliably report their own name or version (they frequently hallucinate or are unaware of their exact identifier), so a canonical list lets an agent choose the closest matching identity deterministically; when the model isn't listed, use the tool name.
+- **Why runtime info**: models cannot reliably report their own name or version from recall (they frequently hallucinate or are unaware of their exact identifier), so take the id from runtime/system info, never from memory.
 - **Splitting exceptionally large PRs**: If a PR is massive, split it into small, individually reviewable sub-PRs. Each sub-PR body should start with `- [x] Towards pandas-dev/pandas-stubs#<parent>`.
 
 ## Decision Heuristics
