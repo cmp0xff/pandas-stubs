@@ -641,8 +641,8 @@ RollingOnlyAggName: TypeAlias = Literal[
     "sem",
     "skew",
 ]
-# Scalar `func` for Rolling/Expanding.aggregate. Weighted Window inherits it
-# but only has sum/mean/var/std.
+# Scalar `func` for Rolling/Expanding.aggregate. Weighted Window has its own
+# narrower WindowWeightedAggName (sum/mean/var/std).
 WindowAggFuncTypeBase: TypeAlias = (
     Callable[P, Any] | EWMAggName | RollingOnlyAggName | np.ufunc
 )
@@ -654,6 +654,21 @@ WindowAggFuncTypeSeriesToFrame: TypeAlias = (
 WindowAggFuncTypeFrame: TypeAlias = (
     WindowAggFuncTypeBase[P]
     | SequenceNotStr[AggFuncTypeBase[P]]
+    | AggFuncTypeDictFrame[HashableT, P]
+)
+# Weighted Window has no `apply` fallback: a scalar callable receives the
+# Window itself and a ufunc raises. List/dict elements stay open `str`; list and
+# tuple, not Sequence, keep a bare `str` out of the list branch.
+WindowWeightedAggName: TypeAlias = Literal["mean", "std", "sum", "var"]
+WindowWeightedAggFuncTypeSeriesToFrame: TypeAlias = (
+    list[AggFuncTypeBase[P]]
+    | tuple[AggFuncTypeBase[P], ...]
+    | AggFuncTypeDictSeries[HashableT, P]
+)
+WindowWeightedAggFuncTypeFrame: TypeAlias = (
+    WindowWeightedAggName
+    | list[AggFuncTypeBase[P]]
+    | tuple[AggFuncTypeBase[P], ...]
     | AggFuncTypeDictFrame[HashableT, P]
 )
 # List/dict forms of EWM.aggregate: list/tuple, not SequenceNotStr, because
