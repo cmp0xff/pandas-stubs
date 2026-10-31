@@ -20,6 +20,7 @@ from pandas import (
     Series,
 )
 from pandas.core.indexers import BaseIndexer
+from typing_extensions import override
 
 from pandas._libs.tslibs import BaseOffset
 from pandas._typing import (
@@ -29,12 +30,16 @@ from pandas._typing import (
     NDFrameT,
     P,
     QuantileInterpolation,
+    T,
     WindowAggFuncTypeBase,
     WindowAggFuncTypeFrame,
     WindowAggFuncTypeSeriesToFrame,
     WindowingEngine,
     WindowingEngineKwargs,
     WindowingRankType,
+    WindowWeightedAggFuncTypeFrame,
+    WindowWeightedAggFuncTypeSeriesToFrame,
+    WindowWeightedAggName,
 )
 
 class BaseWindow(Generic[NDFrameT]):
@@ -84,6 +89,36 @@ class Window(BaseWindow[NDFrameT]):
     def std(
         self, ddof: int = ..., numeric_only: bool = False, **kwargs: Any
     ) -> NDFrameT: ...
+    @overload  # type: ignore[override]
+    @override
+    def aggregate(
+        self,
+        func: Callable[Concatenate[Self, P], T],
+        *args: P.args,
+        **kwargs: P.kwargs,
+    ) -> T: ...
+    @overload
+    def aggregate(
+        self: BaseWindow[Series],
+        func: WindowWeightedAggName,
+        *args: Any,
+        **kwargs: Any,
+    ) -> Series: ...
+    @overload
+    def aggregate(
+        self: BaseWindow[Series],
+        func: WindowWeightedAggFuncTypeSeriesToFrame[..., Any],
+        *args: Any,
+        **kwargs: Any,
+    ) -> DataFrame: ...
+    @overload
+    def aggregate(  # pyright: ignore[reportIncompatibleMethodOverride]
+        self: BaseWindow[DataFrame],
+        func: WindowWeightedAggFuncTypeFrame[..., Any],
+        *args: Any,
+        **kwargs: Any,
+    ) -> DataFrame: ...
+    agg = aggregate  # type: ignore[assignment]
 
 _PipeCallable: TypeAlias = Callable[Concatenate[NDFrameT, P], Any]
 

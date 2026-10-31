@@ -235,6 +235,25 @@ def test_rolling_aggregate_series() -> None:
     check(assert_type(S.rolling(10).agg("sum"), Series), Series)
 
 
+def test_window_aggregate() -> None:
+    sw = S.rolling(2, win_type="boxcar")
+    dfw = DF.rolling(2, win_type="boxcar")
+    check(assert_type(sw.agg("sum"), Series), Series)
+    check(assert_type(dfw.agg("mean"), DataFrame), DataFrame)
+    check(assert_type(sw.agg(lambda w: w.sum()), Series), Series)
+    check(assert_type(sw.agg(["mean", "std"]), DataFrame), DataFrame)
+    check(
+        assert_type(dfw.agg({"col1": "mean", "col2": ["sum", "var"]}), DataFrame),
+        DataFrame,
+    )
+
+    if TYPE_CHECKING_INVALID_USAGE:
+        sw.agg("count")  # type: ignore[call-overload] # pyright: ignore[reportCallIssue, reportArgumentType] # pyrefly: ignore[no-matching-overload] # ty: ignore[no-matching-overload]
+        dfw.agg("median")  # type: ignore[call-overload] # pyright: ignore[reportCallIssue, reportArgumentType] # pyrefly: ignore[no-matching-overload] # ty: ignore[no-matching-overload]
+        # The callable receives the Window, not a Series.
+        sw.agg(_s_mean)  # type: ignore[call-overload] # pyright: ignore[reportCallIssue, reportArgumentType] # pyrefly: ignore[no-matching-overload] # ty: ignore[no-matching-overload]
+
+
 def test_expanding_basic_math() -> None:
     check(assert_type(DF.expanding(10).count(), DataFrame), DataFrame)
     check(assert_type(DF.expanding(10).sum(), DataFrame), DataFrame)
