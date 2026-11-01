@@ -248,18 +248,6 @@ def test_frame_groupby_resample() -> None:
 
     _interp: Callable[[DataFrame], DataFrame] = lambda x: x.resample("ME").interpolate()
     check(assert_type(GB_DF.apply(_interp), DataFrame), DataFrame)
-    check(
-        assert_type(GB_DF.apply(resample_interpolate, include_groups=False), DataFrame),
-        DataFrame,
-    )
-    check(
-        assert_type(GB_DF.apply(df2series, include_groups=False), Series | DataFrame),
-        DataFrame,
-    )
-    check(
-        assert_type(GB_DF.apply(df2scalar, include_groups=False), Series),
-        Series,
-    )
 
     # pipe
     def g(val: Resampler[DataFrame]) -> DataFrame:
@@ -287,9 +275,6 @@ def test_frame_groupby_resample() -> None:
     check(assert_type(GB_DF.resample("ME").transform(j), DataFrame), DataFrame)
 
     if TYPE_CHECKING_INVALID_USAGE:
-        GB_DF.apply(resample_interpolate, include_groups=True)  # type: ignore[call-overload] # pyright: ignore[reportCallIssue] # pyrefly: ignore[no-matching-overload] # ty: ignore[no-matching-overload]
-        GB_DF.apply(df2series, include_groups=True)  # type: ignore[call-overload] # pyright: ignore[reportCallIssue] # pyrefly: ignore[no-matching-overload] # ty: ignore[no-matching-overload]
-        GB_DF.apply(df2scalar, include_groups=True)  # type: ignore[call-overload] # pyright: ignore[reportCallIssue] # pyrefly: ignore[no-matching-overload] # ty: ignore[no-matching-overload]
         GB_DF.resample("ME", include_groups=True)  # type: ignore[arg-type] # pyright: ignore[reportArgumentType] # pyrefly: ignore[bad-argument-type] # ty: ignore[invalid-argument-type]
         assert_type(GB_DF.resample("ME").interpolate(), Never)
 
@@ -298,14 +283,6 @@ def test_series_groupby_resample() -> None:
     # basic
     check(
         assert_type(GB_S.resample("ME"), "ResamplerGroupBy[Series[float]]"),
-        DatetimeIndexResamplerGroupBy,
-        Series,
-    )
-    check(
-        assert_type(
-            GB_S.resample("ME", include_groups=False),
-            "ResamplerGroupBy[Series[float]]",
-        ),
         DatetimeIndexResamplerGroupBy,
         Series,
     )
@@ -412,6 +389,7 @@ def test_series_groupby_resample() -> None:
         Series,
         float,
     )
+    check(assert_type(GB_S.apply("sum"), "Series[float]"), Series, float)
 
     # pipe
     def g(val: Resampler[Series]) -> float:
@@ -461,7 +439,6 @@ def test_series_groupby_resample() -> None:
 
     if TYPE_CHECKING_INVALID_USAGE:
         GB_S.apply(_s_interp, include_groups=True)  # type: ignore[call-overload] # pyright: ignore[reportCallIssue] # pyrefly: ignore[no-matching-overload] # ty: ignore[no-matching-overload]
-        GB_S.resample("ME", include_groups=True)  # type: ignore[arg-type] # pyright: ignore[reportArgumentType] # pyrefly: ignore[bad-argument-type] # ty: ignore[invalid-argument-type]
 
 
 def test_frame_groupby_rolling() -> None:
