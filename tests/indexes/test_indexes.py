@@ -2059,8 +2059,12 @@ def test_index_from_tuples() -> None:
 
     # tupleize_cols=False: should not be MultiIndex
     check(
-        assert_type(pd.Index([(1, 2), (3, 4)], tupleize_cols=False), pd.Index),
+        assert_type(
+            pd.Index([(1, 2), (3, 4)], tupleize_cols=False),
+            "pd.Index[tuple[int, int]]",
+        ),
         pd.Index,
+        tuple,
     )
 
 

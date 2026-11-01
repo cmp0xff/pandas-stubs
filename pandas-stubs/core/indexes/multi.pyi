@@ -40,7 +40,7 @@ from pandas._typing import (
     np_ndarray_anyint,
 )
 
-class MultiIndex(Index):
+class MultiIndex(Index[tuple[Hashable, ...]]):
     @override
     def any(
         self, axis: None = None, out: None = None, keepdims: Literal[False] = False
