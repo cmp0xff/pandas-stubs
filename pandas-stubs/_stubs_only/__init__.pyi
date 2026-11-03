@@ -175,6 +175,9 @@ ArrayIndexSeriesTimedeltaNoSeq: TypeAlias = ArrayIndexTimedeltaNoSeq | Series[Ti
 ScalarArrayIndexSeriesTimedelta: TypeAlias = (
     ScalarArrayIndexTimedelta | Series[Timedelta]
 )
+ScalarArrayIndexSeriesTimedeltaOffset: TypeAlias = (
+    ScalarArrayIndexSeriesTimedelta | BaseOffset
+)
 
 ArrayIndexDatetimeNoSeq: TypeAlias = np_ndarray_dt | DatetimeArray | DatetimeIndex
 ScalarArrayIndexDatetime: TypeAlias = (
@@ -183,6 +186,7 @@ ScalarArrayIndexDatetime: TypeAlias = (
     | Sequence[datetime | np.datetime64]
     | ArrayIndexDatetimeNoSeq
 )
+ScalarArrayIndexSeriesDatetime: TypeAlias = ScalarArrayIndexDatetime | Series[Timestamp]
 
 ArrayIndexPeriodNoSeq: TypeAlias = (
     np_ndarray_td

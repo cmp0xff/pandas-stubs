@@ -90,13 +90,11 @@ def test_sub_py_sequence(left: "pd.Series[pd.Timestamp]") -> None:
     s = [datetime(2025, 8, 20)]
     d = [timedelta(seconds=1)]
 
-    if TYPE_CHECKING_INVALID_USAGE:
-        # Series[Timestamp] - Sequence[timestamp] should work, see pandas-dev/pandas#62353
-        _0 = left - s  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation]
-        # Series[Timestamp] - Sequence[timedelta] should work, see pandas-dev/pandas#62353
-        _a = left - d  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation]
+    check(assert_type(left - s, "pd.Series[pd.Timedelta]"), pd.Series, pd.Timedelta)
+    check(assert_type(left - d, "pd.Series[pd.Timestamp]"), pd.Series, pd.Timestamp)
 
-        _1 = s - left  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation]
+    check(assert_type(s - left, "pd.Series[pd.Timedelta]"), pd.Series, pd.Timedelta)
+    if TYPE_CHECKING_INVALID_USAGE:
         _b = d - left  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation]
 
     check(assert_type(left.sub(s), "pd.Series[pd.Timedelta]"), pd.Series, pd.Timedelta)

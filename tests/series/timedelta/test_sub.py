@@ -95,11 +95,10 @@ def test_sub_py_sequence(left: "pd.Series[pd.Timedelta]") -> None:
 
     if TYPE_CHECKING_INVALID_USAGE:
         _0 = left - s  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation]
-        # Series[Timedelta] - Sequence[timedelta] should work, see pandas-dev/pandas#62353
-        _a = left - d  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation]
+    check(assert_type(left - d, "pd.Series[pd.Timedelta]"), pd.Series, pd.Timedelta)
 
-        _1 = s - left  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation]
-        _b = d - left  # type: ignore[operator] # pyright: ignore[reportOperatorIssue,reportUnknownVariableType] # pyrefly: ignore[unsupported-operation]
+    check(assert_type(s - left, "pd.Series[pd.Timestamp]"), pd.Series, pd.Timestamp)
+    check(assert_type(d - left, "pd.Series[pd.Timedelta]"), pd.Series, pd.Timedelta)
 
     if TYPE_CHECKING_INVALID_USAGE:
         left.sub(s)  # type: ignore[arg-type] # pyright: ignore[reportArgumentType,reportCallIssue] # pyrefly: ignore[no-matching-overload]
