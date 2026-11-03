@@ -183,6 +183,7 @@ ScalarArrayIndexDatetime: TypeAlias = (
     | Sequence[datetime | np.datetime64]
     | ArrayIndexDatetimeNoSeq
 )
+ScalarArrayIndexSeriesDatetime: TypeAlias = ScalarArrayIndexDatetime | Series[Timestamp]
 
 ArrayIndexPeriodNoSeq: TypeAlias = (
     np_ndarray_td
