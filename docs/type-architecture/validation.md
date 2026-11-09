@@ -41,12 +41,12 @@ Run it when a change touches one of the things it reads:
 A change outside these surfaces does not need the check.
 
 The checker proves that its alias and operand restrictions and the
-[matmul reflected-symmetry rule](operator-signatures.md#reflected-dunders) hold, and —
+[matmul mirror rule](operator-signatures.md#reflected-dunders) hold, and —
 whenever it validates the shipped registry, both as a script and through
 `test_repository_matches_allowances` — that every exception key is exercised by the tree it
 scans. A passing run prints the exceptions file it consulted and the number of
 combinations and occurrences observed. It does not check runtime dispatch, return
-annotations or reflected dunders beyond matmul symmetry, overload selection, or all pandas
+annotations or reflected dunders beyond the matmul mirror, overload selection, or all pandas
 operand relationships. A passing result is therefore a focused regression signal, not a
 general proof of type-architecture correctness.
 

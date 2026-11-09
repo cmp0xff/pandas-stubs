@@ -1706,6 +1706,7 @@ def test_types_dot() -> None:
     n1 = np.array([[0, 1], [1, 2], [-1, -1], [2, 0]])
     check(assert_type(s1.dot(s2), Scalar), np.int64)
     check(assert_type(s1 @ s2, Scalar), np.int64)
+    check(assert_type(s1.__rmatmul__(s2), Scalar), np.int64)
     check(assert_type(s1.dot(df1), "pd.Series[int]"), pd.Series, np.int64)
     check(assert_type(s1 @ df1, pd.Series), pd.Series)
     check(assert_type(s1.dot(n1), np_ndarray_num), np.ndarray)

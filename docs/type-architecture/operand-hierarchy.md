@@ -111,11 +111,8 @@ is not a general claim that the higher tier's reflected dunder suffices for ever
 
 ## Matrix multiplication
 
-`Series.__matmul__(DataFrame)` returns a `Series`, and pandas supports the expression at
-runtime; `tests/series/test_series.py::test_types_dot` exercises the forward operation.
-`DataFrame` is the higher tier, so the overload is a cross-tier declaration recorded in the
-exception list. The way out is a `DataFrame.__rmatmul__(Series)` overload, which becomes
-reachable only once `Series.__matmul__(DataFrame)` is gone.
+`Series.__matmul__` accepts no `DataFrame`, so matrix multiplication needs no exception.
+`ser @ df` resolves through `DataFrame.__rmatmul__(Series)`, which returns a `Series`.
 
 ## Limits
 

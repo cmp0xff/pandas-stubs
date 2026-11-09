@@ -166,6 +166,36 @@ class StubTree:
                 )
         return ok
 
+    def check_mirror(self, class_name: str) -> bool:
+        """Require each reflected dunder to mirror its forward dunder when both exist."""
+        ok = True
+        for forward, reflected in REFLECTED_SYMMETRIC_DUNDERS.items():
+            expected = self.operator_pairs(class_name, forward)
+            actual = self.operator_pairs(class_name, reflected)
+            if expected and actual and expected != actual:
+                missing = sorted(f"{a} -> {b}" for a, b in expected - actual)
+                extra = sorted(f"{a} -> {b}" for a, b in actual - expected)
+                print(
+                    f"ERROR: {class_name}.{reflected} does not mirror {forward}: missing {missing}; extra {extra}.",
+                    file=sys.stderr,
+                )
+                ok = False
+        return ok
+
+    def operator_pairs(self, class_name: str, operator: str) -> set[tuple[str, str]]:
+        """Return (operand union member, return) spellings across ``operator``'s overloads."""
+        return {
+            (ast.unparse(member), ast.unparse(node.returns))
+            for class_node in self.classes.get(class_name, ())
+            for node in _conditional_definitions(class_node.body)
+            if isinstance(node, ast.FunctionDef)
+            and node.name == operator
+            and node.returns is not None
+            and (parameter := _other_parameter(node)) is not None
+            and parameter.annotation is not None
+            for member in _union_members(parameter.annotation)
+        }
+
 
 def check_operand_hierarchy(
     stub_root: Path,
@@ -180,6 +210,8 @@ def check_operand_hierarchy(
     observed: Counter[ExceptionKey] = Counter()
     for class_name in sorted(tree.tiers):
         if not tree.check_class(class_name, observed):
+            ok = False
+        if not tree.check_mirror(class_name):
             ok = False
     for key in sorted(exceptions.keys() | observed.keys()):
         expected = exceptions.get(key, 0)
@@ -196,71 +228,11 @@ def check_operand_hierarchy(
                 file=sys.stderr,
             )
             ok = False
-    if not _check_reflected_symmetry(tree):
-        ok = False
     if ok:
         print("Operand hierarchy invariant holds.")
         print(
             f"{EXCEPTIONS_FILE}: {len(observed)} combinations, {sum(observed.values())} occurrences."
         )
-    return ok
-
-
-def _union_members(node: ast.AST) -> Iterator[ast.AST]:
-    if isinstance(node, ast.BinOp) and isinstance(node.op, ast.BitOr):
-        yield from _union_members(node.left)
-        yield from _union_members(node.right)
-    else:
-        yield node
-
-
-def _operator_pairs(
-    tree: StubTree, class_name: str, operator: str
-) -> dict[tuple[str, str], str | None]:
-    pairs: dict[tuple[str, str], str | None] = {}
-    for class_node in tree.classes.get(class_name, ()):
-        for node in _conditional_definitions(class_node.body):
-            if not isinstance(node, ast.FunctionDef) or node.name != operator:
-                continue
-            parameter = _other_parameter(node)
-            if (
-                parameter is None
-                or parameter.annotation is None
-                or node.returns is None
-            ):
-                continue
-            for member in _union_members(parameter.annotation):
-                pair = (ast.unparse(member), ast.unparse(node.returns))
-                pairs[pair] = _terminal_name(member)
-    return pairs
-
-
-def _check_reflected_symmetry(tree: StubTree) -> bool:
-    ok = True
-    for forward, reflected in REFLECTED_SYMMETRIC_DUNDERS.items():
-        forward_pairs = {
-            name: _operator_pairs(tree, name, forward) for name in CLASS_TIERS
-        }
-        for class_name, pairs in forward_pairs.items():
-            if not pairs:
-                continue
-            dead = {class_name} | {
-                name
-                for name, operands in forward_pairs.items()
-                if class_name in operands.values()
-            }
-            expected = {pair for pair, name in pairs.items() if name not in dead}
-            actual = set(_operator_pairs(tree, class_name, reflected))
-            for difference, label in (
-                (expected - actual, "missing"),
-                (actual - expected, "extra"),
-            ):
-                for operand, result in sorted(difference):
-                    print(
-                        f"ERROR: {class_name}.{reflected} {label} pair: {operand} -> {result}.",
-                        file=sys.stderr,
-                    )
-                    ok = False
     return ok
 
 
@@ -300,6 +272,15 @@ def _conditional_definitions(body: list[ast.stmt]) -> Iterator[ast.stmt]:
             yield from _conditional_definitions(node.orelse)
         else:
             yield node
+
+
+def _union_members(node: ast.AST) -> Iterator[ast.AST]:
+    """Split ``A | (B | C)`` into its members."""
+    if isinstance(node, ast.BinOp) and isinstance(node.op, ast.BitOr):
+        yield from _union_members(node.left)
+        yield from _union_members(node.right)
+    else:
+        yield node
 
 
 def _terminal_name(node: ast.AST) -> str | None:

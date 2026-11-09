@@ -66,19 +66,18 @@ operators and use the same positional-only `other` parameter. The
 spellings, so it enforces the `/` for `__radd__` and `__iadd__` exactly as it does for
 `__add__`.
 
-Reflected dunders are outside the operand-hierarchy check except for matmul symmetry.
-For each class in `CLASS_TIERS` declaring `__matmul__`, `__rmatmul__` must contain the same
-operand-member/return pairs, compared as spelled, excluding same-type operands and operands whose forward
-`__matmul__` already accepts that class.
+They are deliberately outside the operand-hierarchy check, which scans only the names in
+`FORWARD_BINARY_DUNDERS`. The checker does require `__rmatmul__` to mirror `__matmul__`,
+operand for operand and return for return, in every scanned class declaring both.
 
 Python tries `y.__rop__(x)` for `x op y` only when `x.__op__` is missing or returns
 `NotImplemented`, or first when `type(y)` is a proper subclass of `type(x)` that overrides
 the reflected method. A reflected overload therefore matters only for left operands the
 forward dunder does not accept. One that names a higher tier as `other` is unreachable
 whenever that tier's forward dunder already accepts this type, because every checker
-resolves the forward method. `Series.__rmatmul__` therefore has no `DataFrame` overload,
-because `DataFrame.__matmul__(Series)` already resolves `df @ s`, and no `Series` overload,
-because both operands have the same type and Python never tries the reflected method.
+resolves the forward method. Same-type overloads are kept for symmetry, as in
+Series/Index arithmetic, even though Python never tries the reflected method for
+same-type operands.
 
 The stubs also use reflected signatures to restrict the receiver through an annotated
 `self`, as in `def __radd__(self: Series[Never], other: _str, /) -> Series[_str]: ...`.

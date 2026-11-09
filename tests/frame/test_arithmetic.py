@@ -102,6 +102,8 @@ def test_types_dot() -> None:
     check(assert_type([[1, 0], [0, 1]] @ df1, pd.DataFrame), pd.DataFrame)
     check(assert_type([1, 2] @ df1, pd.Series), pd.Series)
     check(assert_type(pd.array([1, 2]) @ df1, pd.Series), pd.Series)
+    check(assert_type(df2.__rmatmul__(s1), pd.Series), pd.Series)
+    check(assert_type(df2.__rmatmul__(df1), pd.DataFrame), pd.DataFrame)
     check(assert_type(df1.__rmatmul__(np.eye(2)), pd.DataFrame), pd.DataFrame)
     check(assert_type(df1.__rmatmul__(np.ones(2)), pd.Series), pd.Series)
     check(assert_type(df1.__rmatmul__(pd.array([1, 2])), pd.Series), pd.Series)

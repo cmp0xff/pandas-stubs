@@ -107,12 +107,7 @@ def test_scanned_operators(tmp_path: Path, operator: str) -> None:
     root = _write_tree(
         tmp_path,
         {
-            "core/indexes/base.pyi": f"class Index:\n    def {operator}(self, other: Series, /) -> None: ..."
-            + (
-                "\n    def __rmatmul__(self, other: Series, /) -> None: ..."
-                if operator == "__matmul__"
-                else ""
-            ),
+            "core/indexes/base.pyi": f"class Index:\n    def {operator}(self, other: Series, /) -> None: ...",
         },
     )
     assert not check_operand_hierarchy(root, exceptions={})
@@ -131,10 +126,6 @@ class Series:
     def __matmul__(self, other: DataFrame, /) -> Series: ...
     @overload
     def __matmul__(self, other: DataFrame, /) -> DataFrame: ...
-    @overload
-    def __rmatmul__(self, other: DataFrame, /) -> Series: ...
-    @overload
-    def __rmatmul__(self, other: DataFrame, /) -> DataFrame: ...
 """},
     )
     allowances: dict[tuple[str, str, str], int] = (
@@ -485,58 +476,54 @@ def test_cli_failure_status(monkeypatch: pytest.MonkeyPatch) -> None:
     assert main() == 1
 
 
+def test_matmul_mirror(tmp_path: Path) -> None:
+    root = _write_tree(
+        tmp_path,
+        {"core/frame.pyi": """
+class DataFrame:
+    @overload
+    def __matmul__(self, other: (DataFrame | (Series | ExtensionArray)), /) -> Self: ...
+    @overload
+    def __matmul__(self, other: int, /) -> Series: ...
+    if VERSION:
+        @overload
+        def __rmatmul__(self, other: ExtensionArray | Series | DataFrame, /) -> Self: ...
+        @overload
+        def __rmatmul__(self, other: int, /) -> Series: ...
+"""},
+    )
+    assert check_operand_hierarchy(root, exceptions={})
+
+
 @pytest.mark.parametrize(
-    "reflected, result, diagnostics",
+    "reflected, result, diagnostic",
     [
-        ("Index | ExtensionArray", "Series", []),
-        ("Index", "Series", ["missing pair: ExtensionArray -> Series"]),
+        ("Series", "Scalar", "missing ['int -> Scalar']; extra []"),
+        ("Series | int | str", "Scalar", "missing []; extra ['str -> Scalar']"),
         (
-            "Index | ExtensionArray | pd.Series[int] | DataFrame",
+            "Series | int",
             "Series",
-            ["extra pair: pd.Series[int] -> Series", "extra pair: DataFrame -> Series"],
+            "missing ['Series -> Scalar', 'int -> Scalar']; extra ['Series -> Series', 'int -> Series']",
         ),
-        (
-            "Index | ExtensionArray",
-            "DataFrame",
-            [
-                "missing pair: ExtensionArray -> Series",
-                "missing pair: Index -> Series",
-                "extra pair: ExtensionArray -> DataFrame",
-                "extra pair: Index -> DataFrame",
-            ],
-        ),
-        ("Index | ExtensionArray | int", "Series", ["extra pair: int -> Series"]),
     ],
 )
-def test_matmul_reflected_symmetry(
+def test_matmul_mirror_violation(
     tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
     reflected: str,
     result: str,
-    diagnostics: list[str],
-    capsys: pytest.CaptureFixture[str],
+    diagnostic: str,
 ) -> None:
     root = _write_tree(
         tmp_path,
-        {
-            "core/frame.pyi": f"""
-class DataFrame:
-    @overload
-    def __matmul__(self, other: (Index | (ExtensionArray | pd.Series[int])), /) -> Series: ...
-    @overload
-    def __matmul__(self, other: DataFrame, /) -> Series: ...
-    if VERSION:
-        def __rmatmul__(self, other: {reflected}, /) -> {result}: ...
-""",
-            "core/series.pyi": """
+        {"core/series.pyi": f"""
 class Series:
-    def __matmul__(self, other: pd.DataFrame, /) -> Series: ...
-""",
-        },
+    def __matmul__(self, other: Series | int, /) -> Scalar: ...
+    def __rmatmul__(self, other: {reflected}, /) -> {result}: ...
+"""},
     )
-    assert check_operand_hierarchy(
-        root, exceptions={("Series", "__matmul__", "DataFrame"): 1}
-    ) == (not diagnostics)
-    error = capsys.readouterr().err
-    assert set(error.splitlines()) == {
-        f"ERROR: DataFrame.__rmatmul__ {diagnostic}." for diagnostic in diagnostics
-    }
+    assert not check_operand_hierarchy(root, exceptions={})
+    assert (
+        f"ERROR: Series.__rmatmul__ does not mirror __matmul__: {diagnostic}."
+        in capsys.readouterr().err
+    )

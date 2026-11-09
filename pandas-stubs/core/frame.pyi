@@ -492,13 +492,13 @@ class DataFrame(NDFrame, OpsMixin, _GetItemHack):
     @overload
     def __rmatmul__(
         self,
-        other: np_2darray | Sequence[Sequence[SupportsSelfMul[Any]]],
+        other: DataFrame | np_2darray | Sequence[Sequence[SupportsSelfMul[Any]]],
         /,
     ) -> Self: ...
     @overload
     def __rmatmul__(
         self,
-        other: ExtensionArray | np_1darray | Sequence[SupportsSelfMul[Any]],
+        other: Series | ExtensionArray | np_1darray | Sequence[SupportsSelfMul[Any]],
         /,
     ) -> Series: ...
     @overload
