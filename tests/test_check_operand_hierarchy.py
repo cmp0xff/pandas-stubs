@@ -107,7 +107,12 @@ def test_scanned_operators(tmp_path: Path, operator: str) -> None:
     root = _write_tree(
         tmp_path,
         {
-            "core/indexes/base.pyi": f"class Index:\n    def {operator}(self, other: Series, /) -> None: ...",
+            "core/indexes/base.pyi": f"class Index:\n    def {operator}(self, other: Series, /) -> None: ..."
+            + (
+                "\n    def __rmatmul__(self, other: Series, /) -> None: ..."
+                if operator == "__matmul__"
+                else ""
+            ),
         },
     )
     assert not check_operand_hierarchy(root, exceptions={})
@@ -126,6 +131,10 @@ class Series:
     def __matmul__(self, other: DataFrame, /) -> Series: ...
     @overload
     def __matmul__(self, other: DataFrame, /) -> DataFrame: ...
+    @overload
+    def __rmatmul__(self, other: DataFrame, /) -> Series: ...
+    @overload
+    def __rmatmul__(self, other: DataFrame, /) -> DataFrame: ...
 """},
     )
     allowances: dict[tuple[str, str, str], int] = (
@@ -474,3 +483,60 @@ def test_cli_failure_status(monkeypatch: pytest.MonkeyPatch) -> None:
         "scripts.operand_hierarchy.check.check_operand_hierarchy", reject
     )
     assert main() == 1
+
+
+@pytest.mark.parametrize(
+    "reflected, result, diagnostics",
+    [
+        ("Index | ExtensionArray", "Series", []),
+        ("Index", "Series", ["missing pair: ExtensionArray -> Series"]),
+        (
+            "Index | ExtensionArray | pd.Series[int] | DataFrame",
+            "Series",
+            ["extra pair: pd.Series[int] -> Series", "extra pair: DataFrame -> Series"],
+        ),
+        (
+            "Index | ExtensionArray",
+            "DataFrame",
+            [
+                "missing pair: ExtensionArray -> Series",
+                "missing pair: Index -> Series",
+                "extra pair: ExtensionArray -> DataFrame",
+                "extra pair: Index -> DataFrame",
+            ],
+        ),
+        ("Index | ExtensionArray | int", "Series", ["extra pair: int -> Series"]),
+    ],
+)
+def test_matmul_reflected_symmetry(
+    tmp_path: Path,
+    reflected: str,
+    result: str,
+    diagnostics: list[str],
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    root = _write_tree(
+        tmp_path,
+        {
+            "core/frame.pyi": f"""
+class DataFrame:
+    @overload
+    def __matmul__(self, other: (Index | (ExtensionArray | pd.Series[int])), /) -> Series: ...
+    @overload
+    def __matmul__(self, other: DataFrame, /) -> Series: ...
+    if VERSION:
+        def __rmatmul__(self, other: {reflected}, /) -> {result}: ...
+""",
+            "core/series.pyi": """
+class Series:
+    def __matmul__(self, other: pd.DataFrame, /) -> Series: ...
+""",
+        },
+    )
+    assert check_operand_hierarchy(
+        root, exceptions={("Series", "__matmul__", "DataFrame"): 1}
+    ) == (not diagnostics)
+    error = capsys.readouterr().err
+    assert set(error.splitlines()) == {
+        f"ERROR: DataFrame.__rmatmul__ {diagnostic}." for diagnostic in diagnostics
+    }

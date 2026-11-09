@@ -14,7 +14,8 @@ from typing import Final
 # The scanned set is enumerated explicitly. Name heuristics cannot separate forward
 # from reflected operations (a forward dunder can itself start with ``__r``, as
 # ``__rshift__`` does), and a dunder outside this set — every reflected dunder, like
-# ``__radd__``, plus non-operator methods such as ``__init__`` — is not scanned.
+# ``__radd__``, plus non-operator methods such as ``__init__`` — is not scanned
+# for higher-tier operands.
 FORWARD_BINARY_DUNDERS: Final[frozenset[str]] = frozenset(
     {
         "__add__",
@@ -39,6 +40,8 @@ FORWARD_BINARY_DUNDERS: Final[frozenset[str]] = frozenset(
         "__ge__",
     }
 )
+
+REFLECTED_SYMMETRIC_DUNDERS: Final = {"__matmul__": "__rmatmul__"}
 
 # Every scanned class and its tier; Index subclasses are discovered through their
 # base chain.

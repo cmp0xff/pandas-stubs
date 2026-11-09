@@ -66,8 +66,10 @@ operators and use the same positional-only `other` parameter. The
 spellings, so it enforces the `/` for `__radd__` and `__iadd__` exactly as it does for
 `__add__`.
 
-They are deliberately outside the operand-hierarchy check, which scans only the names in
-`FORWARD_BINARY_DUNDERS`.
+Reflected dunders are outside the operand-hierarchy check except for matmul symmetry.
+For each class in `CLASS_TIERS` declaring `__matmul__`, `__rmatmul__` must contain the same
+operand-member/return pairs, compared as spelled, excluding same-type operands and operands whose forward
+`__matmul__` already accepts that class.
 
 Python tries `y.__rop__(x)` for `x op y` only when `x.__op__` is missing or returns
 `NotImplemented`, or first when `type(y)` is a proper subclass of `type(x)` that overrides
