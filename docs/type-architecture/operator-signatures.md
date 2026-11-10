@@ -68,7 +68,10 @@ spellings, so it enforces the `/` for `__radd__` and `__iadd__` exactly as it do
 
 They are deliberately outside the operand-hierarchy check, which scans only the names in
 `FORWARD_BINARY_DUNDERS`. The checker does require `__rmatmul__` to mirror `__matmul__`,
-operand for operand and return for return, in every scanned class declaring both.
+operand for operand and return for return, in every scanned class declaring both. Only
+pairs listed in `REFLECTED_SYMMETRIC_DUNDERS` are checked, because non-commutative
+operators such as `__sub__` and `__truediv__` legitimately accept different operands in
+their reflected form.
 
 Python tries `y.__rop__(x)` for `x op y` only when `x.__op__` is missing or returns
 `NotImplemented`, or first when `type(y)` is a proper subclass of `type(x)` that overrides

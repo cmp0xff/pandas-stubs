@@ -19,6 +19,7 @@ from scripts.operand_hierarchy.model import (
     CANONICAL_OPERAND_BY_TIER,
     CLASS_TIERS,
     FORWARD_BINARY_DUNDERS,
+    REFLECTED_SYMMETRIC_DUNDERS,
 )
 
 _REPO_ROOT = Path(__file__).parents[1]
@@ -476,27 +477,33 @@ def test_cli_failure_status(monkeypatch: pytest.MonkeyPatch) -> None:
     assert main() == 1
 
 
-def test_matmul_mirror(tmp_path: Path) -> None:
+@pytest.mark.parametrize(
+    "forward, reflected", sorted(REFLECTED_SYMMETRIC_DUNDERS.items())
+)
+def test_reflected_mirror(tmp_path: Path, forward: str, reflected: str) -> None:
     root = _write_tree(
         tmp_path,
-        {"core/frame.pyi": """
+        {"core/frame.pyi": f"""
 class DataFrame:
     @overload
-    def __matmul__(self, other: (DataFrame | (Series | ExtensionArray)), /) -> Self: ...
+    def {forward}(self, other: (DataFrame | (Series | ExtensionArray)), /) -> Self: ...
     @overload
-    def __matmul__(self, other: int, /) -> Series: ...
+    def {forward}(self, other: int, /) -> Series: ...
     if VERSION:
         @overload
-        def __rmatmul__(self, other: ExtensionArray | Series | DataFrame, /) -> Self: ...
+        def {reflected}(self, other: ExtensionArray | Series | DataFrame, /) -> Self: ...
         @overload
-        def __rmatmul__(self, other: int, /) -> Series: ...
+        def {reflected}(self, other: int, /) -> Series: ...
 """},
     )
     assert check_operand_hierarchy(root, exceptions={})
 
 
 @pytest.mark.parametrize(
-    "reflected, result, diagnostic",
+    "forward, reflected", sorted(REFLECTED_SYMMETRIC_DUNDERS.items())
+)
+@pytest.mark.parametrize(
+    "reflected_operand, result, diagnostic",
     [
         ("Series", "Scalar", "missing ['int -> Scalar']; extra []"),
         ("Series | int | str", "Scalar", "missing []; extra ['str -> Scalar']"),
@@ -507,10 +514,12 @@ class DataFrame:
         ),
     ],
 )
-def test_matmul_mirror_violation(
+def test_reflected_mirror_violation(
     tmp_path: Path,
     capsys: pytest.CaptureFixture[str],
+    forward: str,
     reflected: str,
+    reflected_operand: str,
     result: str,
     diagnostic: str,
 ) -> None:
@@ -518,12 +527,12 @@ def test_matmul_mirror_violation(
         tmp_path,
         {"core/series.pyi": f"""
 class Series:
-    def __matmul__(self, other: Series | int, /) -> Scalar: ...
-    def __rmatmul__(self, other: {reflected}, /) -> {result}: ...
+    def {forward}(self, other: Series | int, /) -> Scalar: ...
+    def {reflected}(self, other: {reflected_operand}, /) -> {result}: ...
 """},
     )
     assert not check_operand_hierarchy(root, exceptions={})
     assert (
-        f"ERROR: Series.__rmatmul__ does not mirror __matmul__: {diagnostic}."
+        f"ERROR: Series.{reflected} does not mirror {forward}: {diagnostic}."
         in capsys.readouterr().err
     )
