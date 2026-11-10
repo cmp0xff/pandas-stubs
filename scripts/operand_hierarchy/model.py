@@ -8,6 +8,10 @@ The tier model itself is documented in ``docs/type-architecture/operand-hierarch
 
 from __future__ import annotations
 
+from collections.abc import (  # noqa: TC003
+    Mapping,
+    Set as AbstractSet,
+)
 from pathlib import Path
 from typing import Final
 
@@ -16,32 +20,32 @@ from typing import Final
 # ``__rshift__`` does), and a dunder outside this set — every reflected dunder, like
 # ``__radd__``, plus non-operator methods such as ``__init__`` — is not scanned
 # for higher-tier operands.
-FORWARD_BINARY_DUNDERS: Final[frozenset[str]] = frozenset(
-    {
-        "__add__",
-        "__sub__",
-        "__mul__",
-        "__matmul__",
-        "__truediv__",
-        "__floordiv__",
-        "__mod__",
-        "__divmod__",
-        "__pow__",
-        "__lshift__",
-        "__rshift__",
-        "__and__",
-        "__or__",
-        "__xor__",
-        "__lt__",
-        "__le__",
-        "__eq__",
-        "__ne__",
-        "__gt__",
-        "__ge__",
-    }
-)
+FORWARD_BINARY_DUNDERS: Final[AbstractSet[str]] = {
+    "__add__",
+    "__sub__",
+    "__mul__",
+    "__matmul__",
+    "__truediv__",
+    "__floordiv__",
+    "__mod__",
+    "__divmod__",
+    "__pow__",
+    "__lshift__",
+    "__rshift__",
+    "__and__",
+    "__or__",
+    "__xor__",
+    "__lt__",
+    "__le__",
+    "__eq__",
+    "__ne__",
+    "__gt__",
+    "__ge__",
+}
 
-REFLECTED_SYMMETRIC_DUNDERS: Final = {"__matmul__": "__rmatmul__"}
+# Listed reflected dunders must match forward operands and returns exactly. Other pairs
+# are omitted on purpose, see operator-signatures.md § Reflected dunders.
+REFLECTED_SYMMETRIC_DUNDERS: Final[Mapping[str, str]] = {"__matmul__": "__rmatmul__"}
 
 # Every scanned class and its tier; Index subclasses are discovered through their
 # base chain.
