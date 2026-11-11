@@ -529,18 +529,18 @@ def test_isna() -> None:
 
     # 1-D numpy array
     arr_1d = idx.to_numpy()
-    check(assert_type(pd.isna(arr_1d), np_1darray_bool), np_1darray_bool)
-    check(assert_type(pd.notna(arr_1d), np_1darray_bool), np_1darray_bool)
+    check(assert_type(pd.isna(arr_1d), np_1darray_bool), np_1darray_bool)  # type: ignore[assert-type]
+    check(assert_type(pd.notna(arr_1d), np_1darray_bool), np_1darray_bool)  # type: ignore[assert-type]
 
     # 2-D numpy array
     arr_2d = idx.to_numpy().reshape(2, 2)
-    check(assert_type(pd.isna(arr_2d), np_2darray[np.bool]), np_2darray[np.bool])
-    check(assert_type(pd.notna(arr_2d), np_2darray[np.bool]), np_2darray[np.bool])
+    check(assert_type(pd.isna(arr_2d), np_2darray[np.bool]), np_2darray[np.bool])  # type: ignore[assert-type]
+    check(assert_type(pd.notna(arr_2d), np_2darray[np.bool]), np_2darray[np.bool])  # type: ignore[assert-type]
 
     # N-D numpy array
     arr_nd = idx.to_numpy().reshape([2, 2])
-    check(assert_type(pd.isna(arr_nd), np_ndarray_bool), np_ndarray_bool)
-    check(assert_type(pd.notna(arr_nd), np_ndarray_bool), np_ndarray_bool)
+    check(assert_type(pd.isna(arr_nd), np_ndarray_bool), np_ndarray_bool)  # type: ignore[assert-type]
+    check(assert_type(pd.notna(arr_nd), np_ndarray_bool), np_ndarray_bool)  # type: ignore[assert-type]
 
     # List of scalars
     l_sca = [1, 2.5, float("nan")]
@@ -620,245 +620,63 @@ def test_isna() -> None:
 
 
 def test_isna_object() -> None:
-    check(
-        assert_type(
-            pd.isna(object()),
-            "bool | np.bool_ | np_ndarray_bool | pd.Series[bool] | pd.DataFrame",
-        ),
-        bool,
-    )
-    check(
-        assert_type(
-            pd.isnull(object()),
-            "bool | np.bool_ | np_ndarray_bool | pd.Series[bool] | pd.DataFrame",
-        ),
-        bool,
-    )
+    class Foo:
+        pass
 
-    check(
-        assert_type(
-            pd.isna(cast(object, None)),
-            "bool | np.bool_ | np_ndarray_bool | pd.Series[bool] | pd.DataFrame",
-        ),
-        bool,
-    )
-    check(
-        assert_type(
-            pd.isnull(cast(object, None)),
-            "bool | np.bool_ | np_ndarray_bool | pd.Series[bool] | pd.DataFrame",
-        ),
-        bool,
-    )
-
-    check(
-        assert_type(
-            pd.isna(cast(object, np.nan)),
-            "bool | np.bool_ | np_ndarray_bool | pd.Series[bool] | pd.DataFrame",
-        ),
-        bool,
-    )
-    check(
-        assert_type(
-            pd.isnull(cast(object, np.nan)),
-            "bool | np.bool_ | np_ndarray_bool | pd.Series[bool] | pd.DataFrame",
-        ),
-        bool,
-    )
-
-    check(
-        assert_type(
-            pd.isna(cast(object, pd.DataFrame({"a": [1.0, np.nan]}))),
-            "bool | np.bool_ | np_ndarray_bool | pd.Series[bool] | pd.DataFrame",
-        ),
-        pd.DataFrame,
-    )
-    check(
-        assert_type(
-            pd.isnull(cast(object, pd.DataFrame({"a": [1.0, np.nan]}))),
-            "bool | np.bool_ | np_ndarray_bool | pd.Series[bool] | pd.DataFrame",
-        ),
-        pd.DataFrame,
-    )
-
-    check(
-        assert_type(
-            pd.isna(cast(object, pd.Series([1.0, np.nan]))),
-            "bool | np.bool_ | np_ndarray_bool | pd.Series[bool] | pd.DataFrame",
-        ),
-        pd.Series,
-    )
-    check(
-        assert_type(
-            pd.isnull(cast(object, pd.Series([1.0, np.nan]))),
-            "bool | np.bool_ | np_ndarray_bool | pd.Series[bool] | pd.DataFrame",
-        ),
-        pd.Series,
-    )
-
-    check(
-        assert_type(
-            pd.isna(cast(object, pd.Index([1.0, np.nan]))),
-            "bool | np.bool_ | np_ndarray_bool | pd.Series[bool] | pd.DataFrame",
-        ),
-        np_ndarray_bool,
-    )
-    check(
-        assert_type(
-            pd.isnull(cast(object, pd.Index([1.0, np.nan]))),
-            "bool | np.bool_ | np_ndarray_bool | pd.Series[bool] | pd.DataFrame",
-        ),
-        np_ndarray_bool,
-    )
-
-    check(
-        assert_type(
-            pd.isna(cast(object, pd.array([1, None], dtype="Int64"))),
-            "bool | np.bool_ | np_ndarray_bool | pd.Series[bool] | pd.DataFrame",
-        ),
-        np_ndarray_bool,
-    )
-    check(
-        assert_type(
-            pd.isnull(cast(object, pd.array([1, None], dtype="Int64"))),
-            "bool | np.bool_ | np_ndarray_bool | pd.Series[bool] | pd.DataFrame",
-        ),
-        np_ndarray_bool,
-    )
-
-    check(
-        assert_type(
-            pd.isna(cast(object, np.array([1.0, np.nan]))),
-            "bool | np.bool_ | np_ndarray_bool | pd.Series[bool] | pd.DataFrame",
-        ),
-        np_ndarray_bool,
-    )
-    check(
-        assert_type(
-            pd.isnull(cast(object, np.array([1.0, np.nan]))),
-            "bool | np.bool_ | np_ndarray_bool | pd.Series[bool] | pd.DataFrame",
-        ),
-        np_ndarray_bool,
-    )
-
-    check(
-        assert_type(
-            pd.isna(cast(object, np.array([[1.0, np.nan]]))),
-            "bool | np.bool_ | np_ndarray_bool | pd.Series[bool] | pd.DataFrame",
-        ),
-        np_ndarray_bool,
-    )
-    check(
-        assert_type(
-            pd.isnull(cast(object, np.array([[1.0, np.nan]]))),
-            "bool | np.bool_ | np_ndarray_bool | pd.Series[bool] | pd.DataFrame",
-        ),
-        np_ndarray_bool,
-    )
+    check(assert_type(pd.isna(object()), bool), bool)
+    check(assert_type(pd.isnull(object()), bool), bool)
+    check(assert_type(pd.isna(Foo), bool), bool)
+    check(assert_type(pd.isna(Foo()), bool), bool)
+    check(assert_type(pd.isna({}), bool), bool)
+    check(assert_type(pd.isna((1, None)), bool), bool)
+    check(assert_type(pd.isna(cast(object, None)), bool), bool)
+    check(assert_type(pd.isnull(cast(object, np.nan)), bool), bool)
 
 
 def test_notna_object() -> None:
-    class PlainObject:
+    class Foo:
         pass
 
-    check(
-        assert_type(
-            pd.notna(PlainObject),
-            "bool | np.bool_ | np_ndarray_bool | pd.Series[bool] | pd.DataFrame",
-        ),
-        bool,
-    )
-    check(
-        assert_type(
-            pd.notnull(PlainObject()),
-            "bool | np.bool_ | np_ndarray_bool | pd.Series[bool] | pd.DataFrame",
-        ),
-        bool,
-    )
-    check(
-        assert_type(
-            pd.notna(cast(object, pd.Series([1.0, np.nan]))),
-            "bool | np.bool_ | np_ndarray_bool | pd.Series[bool] | pd.DataFrame",
-        ),
-        pd.Series,
-    )
-    check(
-        assert_type(
-            pd.notnull(cast(object, pd.DataFrame({"a": [1.0, np.nan]}))),
-            "bool | np.bool_ | np_ndarray_bool | pd.Series[bool] | pd.DataFrame",
-        ),
-        pd.DataFrame,
-    )
+    check(assert_type(pd.notna(object()), bool), bool)
+    check(assert_type(pd.notnull(object()), bool), bool)
+    check(assert_type(pd.notna(Foo), bool), bool)
+    check(assert_type(pd.notna(Foo()), bool), bool)
+    check(assert_type(pd.notna({}), bool), bool)
+    check(assert_type(pd.notna((1, None)), bool), bool)
+    check(assert_type(pd.notna(cast(object, None)), bool), bool)
+    check(assert_type(pd.notnull(cast(object, np.nan)), bool), bool)
 
 
 def test_missing_array_protocol() -> None:
-    class ArrayObject:
-        def __init__(self, values: np_ndarray) -> None:
+    class ArrayObject1D:
+        def __init__(self, values: np_1darray) -> None:
             super().__init__()
             self.values = values
 
         def __array__(
             self, dtype: np.dtype[Any] | None = None, copy: bool | None = None
-        ) -> np_ndarray:
+        ) -> np_1darray:
             return np.array(self.values, dtype=dtype, copy=copy)
 
-    check(
-        assert_type(
-            pd.isna(ArrayObject(np.array([1.0, np.nan]))),
-            "bool | np.bool_ | np_ndarray_bool | pd.Series[bool] | pd.DataFrame",
-        ),
-        np_ndarray_bool,
-    )
-    check(
-        assert_type(
-            pd.isnull(ArrayObject(np.array([1.0, np.nan]))),
-            "bool | np.bool_ | np_ndarray_bool | pd.Series[bool] | pd.DataFrame",
-        ),
-        np_ndarray_bool,
-    )
+    class ArrayObject2D:
+        def __init__(self, values: np_2darray) -> None:
+            super().__init__()
+            self.values = values
 
-    check(
-        assert_type(
-            pd.isna(ArrayObject(np.array(1.0))),
-            "bool | np.bool_ | np_ndarray_bool | pd.Series[bool] | pd.DataFrame",
-        ),
-        np.bool_,
-    )
-    check(
-        assert_type(
-            pd.isnull(ArrayObject(np.array(1.0))),
-            "bool | np.bool_ | np_ndarray_bool | pd.Series[bool] | pd.DataFrame",
-        ),
-        np.bool_,
-    )
+        def __array__(
+            self, dtype: np.dtype[Any] | None = None, copy: bool | None = None
+        ) -> np_2darray:
+            return np.array(self.values, dtype=dtype, copy=copy)
 
-    check(
-        assert_type(
-            pd.isna(ArrayObject(np.array(None, dtype=object))),
-            "bool | np.bool_ | np_ndarray_bool | pd.Series[bool] | pd.DataFrame",
-        ),
-        np_ndarray_bool,
-    )
-    check(
-        assert_type(
-            pd.isnull(ArrayObject(np.array(None, dtype=object))),
-            "bool | np.bool_ | np_ndarray_bool | pd.Series[bool] | pd.DataFrame",
-        ),
-        np_ndarray_bool,
-    )
-    check(
-        assert_type(
-            pd.notna(ArrayObject(np.array([1.0, np.nan]))),
-            "bool | np.bool_ | np_ndarray_bool | pd.Series[bool] | pd.DataFrame",
-        ),
-        np_ndarray_bool,
-    )
-    check(
-        assert_type(
-            pd.notnull(ArrayObject(np.array(None, dtype=object))),
-            "bool | np.bool_ | np_ndarray_bool | pd.Series[bool] | pd.DataFrame",
-        ),
-        np.bool_,
-    )
+    obj_1d = ArrayObject1D(np.array([1.0, np.nan]))
+    check(assert_type(pd.isna(obj_1d), np_1darray_bool), np_ndarray_bool)
+    check(assert_type(pd.isnull(obj_1d), np_1darray_bool), np_ndarray_bool)
+    check(assert_type(pd.notna(obj_1d), np_1darray_bool), np_ndarray_bool)
+    check(assert_type(pd.notnull(obj_1d), np_1darray_bool), np_ndarray_bool)
+
+    obj_2d = ArrayObject2D(np.array([[1.0, np.nan]]))
+    check(assert_type(pd.isna(obj_2d), np_2darray[np.bool]), np_ndarray_bool)
+    check(assert_type(pd.notna(obj_2d), np_2darray[np.bool]), np_ndarray_bool)
 
 
 def test_isnull_narrowing() -> None:

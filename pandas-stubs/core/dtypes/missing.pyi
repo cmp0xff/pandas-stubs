@@ -3,10 +3,8 @@ from typing import (
     overload,
 )
 
-import numpy as np
 from pandas import (
     DataFrame,
-    Index,
     Series,
 )
 from pandas.core.arrays import ExtensionArray
@@ -22,8 +20,8 @@ from pandas._typing import (
     ScalarT,
     ScalarT0,
     ShapeT,
+    SupportsArray,
     np_1darray_bool,
-    np_ndarray,
     np_ndarray_bool,
 )
 
@@ -31,39 +29,39 @@ from pandas._typing import (
 _ObjectT = TypeVar("_ObjectT", bound=object)
 
 @overload
-def isna(obj: DataFrame) -> DataFrame: ...
+def isna(obj: DataFrame) -> DataFrame: ...  # type: ignore[overload-overlap] # pyright: ignore[reportOverlappingOverload]
 @overload
-def isna(obj: Series) -> Series[bool]: ...
+def isna(obj: Series) -> Series[bool]: ...  # type: ignore[overload-overlap]
 @overload
-def isna(obj: Index | ExtensionArray | list[ScalarT]) -> np_1darray_bool: ...
+def isna(obj: ExtensionArray | list[ScalarT]) -> np_1darray_bool: ...  # type: ignore[overload-overlap]
 @overload
-def isna(obj: np_ndarray[ShapeT]) -> np_ndarray_bool[ShapeT]: ...
-@overload
-def isna(obj: list[Any]) -> np_ndarray_bool: ...
+def isna(obj: list[Any]) -> np_ndarray_bool: ...  # type: ignore[overload-overlap]
 @overload
 def isna(obj: Scalar | NaTType | NAType | None) -> TypeIs[NaTType | NAType | None]: ...
 @overload
+def isna(obj: SupportsArray[ShapeT]) -> np_ndarray_bool[ShapeT]: ...  # type: ignore[overload-overlap]
+@overload
 def isna(
     obj: _ObjectT,  # pyright: ignore[reportInvalidTypeVarUse]
-) -> bool | np.bool_ | np_ndarray_bool | Series[bool] | DataFrame: ...
+) -> bool: ...
 
 isnull = isna
 
 @overload
-def notna(obj: DataFrame) -> DataFrame: ...
+def notna(obj: DataFrame) -> DataFrame: ...  # type: ignore[overload-overlap] # pyright: ignore[reportOverlappingOverload]
 @overload
-def notna(obj: Series) -> Series[bool]: ...
+def notna(obj: Series) -> Series[bool]: ...  # type: ignore[overload-overlap]
 @overload
-def notna(obj: Index | ExtensionArray | list[ScalarT]) -> np_1darray_bool: ...
+def notna(obj: ExtensionArray | list[ScalarT]) -> np_1darray_bool: ...  # type: ignore[overload-overlap]
 @overload
-def notna(obj: np_ndarray[ShapeT]) -> np_ndarray_bool[ShapeT]: ...
-@overload
-def notna(obj: list[Any]) -> np_ndarray_bool: ...
+def notna(obj: list[Any]) -> np_ndarray_bool: ...  # type: ignore[overload-overlap]
 @overload
 def notna(obj: ScalarT0 | NaTType | NAType | None) -> TypeIs[ScalarT0]: ...
 @overload
+def notna(obj: SupportsArray[ShapeT]) -> np_ndarray_bool[ShapeT]: ...  # type: ignore[overload-overlap]
+@overload
 def notna(
     obj: _ObjectT,  # pyright: ignore[reportInvalidTypeVarUse]
-) -> bool | np.bool_ | np_ndarray_bool | Series[bool] | DataFrame: ...
+) -> bool: ...
 
 notnull = notna
