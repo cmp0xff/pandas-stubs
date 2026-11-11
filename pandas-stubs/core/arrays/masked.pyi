@@ -36,6 +36,7 @@ class BaseMaskedArray(ExtensionArray):
         na_value: Scalar = ...,
     ) -> np_1darray: ...
     __array_priority__: int = 1000
+    @override
     def __array__(
         self, dtype: NpDtype | None = None, copy: bool | None = None
     ) -> np_1darray: ...

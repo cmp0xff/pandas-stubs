@@ -48,6 +48,9 @@ pandas\.core\.indexes\.(?:datetimes\.DatetimeIndex|period\.PeriodIndex|timedelta
 # Deliberate retyping of the runtime ABC classes as type[...] aliases
 pandas\.core\.dtypes\.generic\.(?:ABCSeries|ABCExtensionArray)
 
+# Stub-only `__array__` on the EA base: every concrete pandas EA defines it, and numpy coerces any EA to 1-D
+pandas.core.arrays.base.ExtensionArray.__array__
+
 # Stub-only TypeVars, aliases and helper protocols
 pandas._libs.tslibs.timedeltas.TimeDeltaUnitChoices
 pandas._libs.tslibs.timestamps.TimeZones

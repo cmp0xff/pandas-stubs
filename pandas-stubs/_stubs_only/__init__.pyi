@@ -65,6 +65,14 @@ from pandas._typing import (
     np_ndarray_td,
 )
 
+_ShapeT_co = TypeVar(
+    "_ShapeT_co", bound=tuple[int, ...], default=tuple[Any, ...], covariant=True
+)
+_DTypeT_co = TypeVar("_DTypeT_co", bound=np.dtype, default=np.dtype, covariant=True)
+
+class SupportsArray(Protocol[_ShapeT_co, _DTypeT_co]):
+    def __array__(self) -> np.ndarray[_ShapeT_co, _DTypeT_co]: ...
+
 T_co = TypeVar("T_co", covariant=True)
 T_contra = TypeVar("T_contra", contravariant=True)
 

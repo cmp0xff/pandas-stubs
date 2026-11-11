@@ -88,6 +88,7 @@ class IntervalArray(IntervalMixin, ExtensionArray):
         copy: bool = False,
         dtype: DtypeArg | None = None,
     ) -> Self: ...
+    @override
     def __array__(
         self, dtype: NpDtype | None = None, copy: bool | None = None
     ) -> np_1darray_object: ...

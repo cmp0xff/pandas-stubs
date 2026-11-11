@@ -984,9 +984,6 @@ GenericT_contra = TypeVar(
 )
 NpNumT = TypeVar("NpNumT", bound=np_num, default=np_num)
 ShapeT = TypeVar("ShapeT", bound=tuple[int, ...], default=tuple[Any, ...])
-_ShapeT_co = TypeVar(
-    "_ShapeT_co", bound=tuple[int, ...], default=tuple[Any, ...], covariant=True
-)
 # Numpy ndarray with more ergonomic typevar
 np_ndarray: TypeAlias = np.ndarray[ShapeT, np.dtype[GenericT]]
 np_ndarray_intp: TypeAlias = np_ndarray[ShapeT, np.intp]
@@ -1035,9 +1032,6 @@ ListLikeHashable: TypeAlias = (
 class SupportsDType(Protocol[GenericT_co]):
     @property
     def dtype(self) -> np.dtype[GenericT_co]: ...
-
-class SupportsArray(Protocol[_ShapeT_co]):
-    def __array__(self) -> np.ndarray[_ShapeT_co, Any]: ...
 
 # Similar to npt.DTypeLike but leaves out np.dtype and None for use in overloads
 DTypeLike: TypeAlias = type[Any] | tuple[Any, Any] | list[Any] | str

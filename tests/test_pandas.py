@@ -629,8 +629,12 @@ def test_isna_object() -> None:
     check(assert_type(pd.isna(Foo()), bool), bool)
     check(assert_type(pd.isna({}), bool), bool)
     check(assert_type(pd.isna((1, None)), bool), bool)
-    check(assert_type(pd.isna(cast(object, None)), bool), bool)
     check(assert_type(pd.isnull(cast(object, np.nan)), bool), bool)
+    obj = cast(object, None)
+    if pd.isna(obj):
+        assert_type(obj, NaTType | NAType | None)
+    else:
+        assert_type(obj, object)
 
 
 def test_notna_object() -> None:
