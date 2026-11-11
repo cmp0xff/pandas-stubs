@@ -65,7 +65,6 @@ class TimelikeOps(DatetimeLikeArrayMixin):
 class DatetimeLikeArrayMixin(OpsMixin, NDArrayBackedExtensionArray):
     @override
     def reshape(self, *args: Any, **kwargs: Any) -> Self: ...
-    @override
     def __array__(
         self, dtype: NpDtype | None = None, copy: bool | None = None
     ) -> np_1darray: ...

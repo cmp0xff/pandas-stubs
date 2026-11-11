@@ -8,6 +8,7 @@ from pandas import (
     Series,
 )
 from pandas._stubs_only import SupportsArray
+from pandas.core.arrays import ExtensionArray
 from typing_extensions import TypeIs
 
 from pandas._libs.missing import NAType
@@ -26,7 +27,7 @@ def isna(obj: DataFrame) -> DataFrame: ...  # type: ignore[overload-overlap] # p
 @overload
 def isna(obj: Series) -> Series[bool]: ...  # type: ignore[overload-overlap]
 @overload
-def isna(obj: list[ScalarT]) -> np_1darray_bool: ...
+def isna(obj: ExtensionArray | list[ScalarT]) -> np_1darray_bool: ...
 @overload
 def isna(obj: list[Any]) -> np_ndarray_bool: ...
 @overload
@@ -43,7 +44,7 @@ def notna(obj: DataFrame) -> DataFrame: ...  # type: ignore[overload-overlap] # 
 @overload
 def notna(obj: Series) -> Series[bool]: ...  # type: ignore[overload-overlap]
 @overload
-def notna(obj: list[ScalarT]) -> np_1darray_bool: ...
+def notna(obj: ExtensionArray | list[ScalarT]) -> np_1darray_bool: ...
 @overload
 def notna(obj: list[Any]) -> np_ndarray_bool: ...
 @overload

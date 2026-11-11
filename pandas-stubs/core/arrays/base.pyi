@@ -23,7 +23,6 @@ from pandas._typing import (
     InterpolateOptions,
     ListLike,
     NaPosition,
-    NpDtype,
     Renamer,
     Scalar,
     ScalarIndexer,
@@ -39,9 +38,6 @@ from pandas._typing import (
 from pandas.core.dtypes.dtypes import ExtensionDtype as ExtensionDtype
 
 class ExtensionArray:
-    def __array__(
-        self, dtype: NpDtype | None = None, copy: bool | None = None
-    ) -> np_1darray: ...
     def __array_ufunc__(
         self, ufunc: np.ufunc, method: str, *inputs: Any, **kwargs: Any
     ) -> Any: ...
