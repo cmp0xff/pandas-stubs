@@ -75,6 +75,9 @@ form. Series and Index `__radd__`/`__rmul__` also deliberately take the flipped
 `SupportsAdd`/`SupportsMul` protocols (forward `__add__`/`__mul__` take
 `SupportsRAdd`/`SupportsRMul`), which mirror semantically but not as spelled.
 
+`dot` must mirror `__matmul__` too, but may also accept higher-tier operands: a named
+method has no reflected fallback.
+
 Python tries `y.__rop__(x)` for `x op y` only when `x.__op__` is missing or returns
 `NotImplemented`, or first when `type(y)` is a proper subclass of `type(x)` that overrides
 the reflected method. A reflected overload therefore matters only for left operands the

@@ -27,6 +27,7 @@ from .model import (
     CANONICAL_OPERAND_BY_TIER,
     CLASS_TIERS,
     FORWARD_BINARY_DUNDERS,
+    METHOD_MIRRORED_DUNDERS,
     REFLECTED_SYMMETRIC_DUNDERS,
     REQUIRED_STUB_FILES,
 )
@@ -167,16 +168,33 @@ class StubTree:
         return ok
 
     def check_mirror(self, class_name: str) -> bool:
-        """Require each reflected dunder to mirror its forward dunder when both exist."""
+        """Check reflected and named mirrors, allowing higher tiers for named methods."""
         ok = True
-        for forward, reflected in REFLECTED_SYMMETRIC_DUNDERS.items():
+        higher = [
+            name for name, tier in self.tiers.items() if tier > self.tiers[class_name]
+        ]
+        for forward, mirror, is_method in (
+            *((f, m, False) for f, m in REFLECTED_SYMMETRIC_DUNDERS.items()),
+            *((f, m, True) for f, m in METHOD_MIRRORED_DUNDERS.items()),
+        ):
             expected = self.operator_pairs(class_name, forward)
-            actual = self.operator_pairs(class_name, reflected)
-            if expected and actual and expected != actual:
+            actual = self.operator_pairs(class_name, mirror)
+            if not expected or not actual:
+                continue
+            if is_method:
+                actual = {
+                    (operand, result)
+                    for operand, result in actual
+                    if not any(
+                        self.references(ast.parse(operand, mode="eval").body, name)
+                        for name in higher
+                    )
+                }
+            if expected != actual:
                 missing = sorted(f"{a} -> {b}" for a, b in expected - actual)
                 extra = sorted(f"{a} -> {b}" for a, b in actual - expected)
                 print(
-                    f"ERROR: {class_name}.{reflected} does not mirror {forward}: missing {missing}; extra {extra}.",
+                    f"ERROR: {class_name}.{mirror} does not mirror {forward}: missing {missing}; extra {extra}.",
                     file=sys.stderr,
                 )
                 ok = False

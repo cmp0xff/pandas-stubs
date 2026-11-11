@@ -47,6 +47,9 @@ FORWARD_BINARY_DUNDERS: Final[AbstractSet[str]] = {
 # are omitted on purpose, see operator-signatures.md § Reflected dunders.
 REFLECTED_SYMMETRIC_DUNDERS: Final[Mapping[str, str]] = {"__matmul__": "__rmatmul__"}
 
+# Named methods mirror these dunders after excluding higher-tier operands.
+METHOD_MIRRORED_DUNDERS: Final[Mapping[str, str]] = {"__matmul__": "dot"}
+
 # Every scanned class and its tier; Index subclasses are discovered through their
 # base chain.
 CLASS_TIERS: Final[dict[str, int]] = {
