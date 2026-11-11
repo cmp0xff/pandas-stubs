@@ -41,6 +41,7 @@ from pandas._typing import (
     np_ndarray_anyint,
     np_ndarray_bool,
     np_ndarray_dt,
+    np_ndarray_float,
     np_ndarray_int64,
     np_ndarray_intp,
     np_ndarray_td,
@@ -57,10 +58,7 @@ _EdgesInt: TypeAlias = (
     | Index[int]
 )
 _EdgesFloat: TypeAlias = (
-    Sequence[float]
-    | np_ndarray[tuple[Any, ...], np.float64]
-    | pd.Series[float]
-    | Index[float]
+    Sequence[float] | np_ndarray_float | pd.Series[float] | Index[float]
 )
 _EdgesTimestamp: TypeAlias = (
     Sequence[DatetimeLike] | np_ndarray_dt | pd.Series[pd.Timestamp] | pd.DatetimeIndex
