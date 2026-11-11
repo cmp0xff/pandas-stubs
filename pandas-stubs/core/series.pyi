@@ -66,11 +66,13 @@ from pandas._stubs_only import (
     NumListLike,
     OrderableT,
     ScalarArrayIndexSeriesComplex,
+    ScalarArrayIndexSeriesDatetime,
     ScalarArrayIndexSeriesJustComplex,
     ScalarArrayIndexSeriesJustFloat,
     ScalarArrayIndexSeriesJustInt,
     ScalarArrayIndexSeriesReal,
     ScalarArrayIndexSeriesTimedelta,
+    ScalarArrayIndexSeriesTimedeltaOffset,
     SeriesComplex,
     SeriesReal,
     Supports_ProtoAdd,
@@ -3565,22 +3567,13 @@ class Series(IndexOpsMixin[S1], ElementOpsMixin[S1], NDFrame):
     @overload
     def __sub__(
         self: Series[Timestamp],
-        other: (
-            datetime | np.datetime64 | np_ndarray_dt | DatetimeIndex | Series[Timestamp]
-        ),
+        other: ScalarArrayIndexSeriesDatetime,
         /,
     ) -> Series[Timedelta]: ...
     @overload
     def __sub__(
         self: Series[Timestamp],
-        other: (
-            timedelta
-            | np.timedelta64
-            | np_ndarray_td
-            | TimedeltaIndex
-            | Series[Timedelta]
-            | BaseOffset
-        ),
+        other: ScalarArrayIndexSeriesTimedeltaOffset,
         /,
     ) -> Series[Timestamp]: ...
     @overload
@@ -3588,18 +3581,12 @@ class Series(IndexOpsMixin[S1], ElementOpsMixin[S1], NDFrame):
     @overload
     def __sub__(
         self: Series[Timedelta],
-        other: (
-            timedelta
-            | np.timedelta64
-            | np_ndarray_td
-            | TimedeltaIndex
-            | Series[Timedelta]
-        ),
+        other: ScalarArrayIndexSeriesTimedelta,
         /,
     ) -> Series[Timedelta]: ...
     @overload
     def __sub__(
-        self: Series[Period], other: Series[Period] | Period, /
+        self: Series[Period], other: Period | PeriodIndex | Series[Period], /
     ) -> Series[BaseOffset]: ...
     @overload
     def sub(
@@ -3896,34 +3883,24 @@ class Series(IndexOpsMixin[S1], ElementOpsMixin[S1], NDFrame):
     @overload
     def __rsub__(
         self: Series[Timestamp],
-        other: (
-            datetime | np.datetime64 | np_ndarray_dt | DatetimeIndex | Series[Timestamp]
-        ),
+        other: ScalarArrayIndexSeriesDatetime,
         /,
     ) -> Series[Timedelta]: ...
     @overload
     def __rsub__(
         self: Series[Timedelta],
-        other: (
-            datetime | np.datetime64 | np_ndarray_dt | DatetimeIndex | Series[Timestamp]
-        ),
+        other: ScalarArrayIndexSeriesDatetime,
         /,
     ) -> Series[Timestamp]: ...
     @overload
     def __rsub__(
         self: Series[Timedelta],
-        other: (
-            timedelta
-            | np.timedelta64
-            | np_ndarray_td
-            | TimedeltaIndex
-            | Series[Timedelta]
-        ),
+        other: ScalarArrayIndexSeriesTimedelta,
         /,
     ) -> Series[Timedelta]: ...
     @overload
     def __rsub__(
-        self: Series[Period], other: Series[Period] | Period, /
+        self: Series[Period], other: Period | PeriodIndex | Series[Period], /
     ) -> Series[BaseOffset]: ...
     @overload
     def rsub(
