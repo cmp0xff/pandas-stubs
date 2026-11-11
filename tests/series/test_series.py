@@ -1715,6 +1715,8 @@ def test_types_dot() -> None:
     check(assert_type(s1 @ np.eye(4), np_1darray), np_1darray)
     check(assert_type(s1 @ n1, Any), np.ndarray)
     check(assert_type([0, 1, 2, 3] @ s1, Any), np.int64)
+    check(assert_type(pd.Index([0, 1, 2, 3]) @ s1, Any), np.int64)
+    check(assert_type(pd.array([0, 1, 2, 3]) @ s1, Any), np.int64)
     check(assert_type([[0, 1, 2, 3], [4, 5, 6, 7]] @ s1, np_1darray), np_1darray)
 
 

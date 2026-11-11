@@ -479,7 +479,13 @@ class DataFrame(NDFrame, OpsMixin, _GetItemHack):
     @overload
     def dot(
         self,
-        other: Series | ExtensionArray | np_1darray | Sequence[SupportsSelfMul[Any]],
+        other: (
+            Series
+            | Index
+            | ExtensionArray
+            | np_1darray
+            | Sequence[SupportsSelfMul[Any]]
+        ),
     ) -> Series: ...
     @overload
     def __matmul__(
@@ -490,7 +496,13 @@ class DataFrame(NDFrame, OpsMixin, _GetItemHack):
     @overload
     def __matmul__(
         self,
-        other: Series | ExtensionArray | np_1darray | Sequence[SupportsSelfMul[Any]],
+        other: (
+            Series
+            | Index
+            | ExtensionArray
+            | np_1darray
+            | Sequence[SupportsSelfMul[Any]]
+        ),
         /,
     ) -> Series: ...
     @overload
@@ -502,7 +514,13 @@ class DataFrame(NDFrame, OpsMixin, _GetItemHack):
     @overload
     def __rmatmul__(
         self,
-        other: Series | ExtensionArray | np_1darray | Sequence[SupportsSelfMul[Any]],
+        other: (
+            Series
+            | Index
+            | ExtensionArray
+            | np_1darray
+            | Sequence[SupportsSelfMul[Any]]
+        ),
         /,
     ) -> Series: ...
     @overload
