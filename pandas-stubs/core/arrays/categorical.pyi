@@ -29,7 +29,6 @@ from pandas._typing import (
     AnyArrayLike,
     ListLike,
     NaPosition,
-    NpDtype,
     Ordered,
     PositionalIndexerTuple,
     Renamer,
@@ -243,7 +242,7 @@ class Categorical(NDArrayBackedExtensionArray, Generic[CategoricalValueT]):
     def __ge__(self, other: CategoricalValueT, /) -> np_1darray_bool: ...
     def remove_unused_categories(self) -> Self: ...
     def __array__(
-        self, dtype: NpDtype | None = None, copy: bool | None = None
+        self, dtype: np.dtype | None = None, copy: bool | None = None
     ) -> np_1darray: ...
     def memory_usage(self, deep: bool = False) -> int: ...
     def isnull(self) -> np_1darray_bool: ...

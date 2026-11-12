@@ -15,6 +15,7 @@ from typing import (
     type_check_only,
 )
 
+import numpy as np
 from pandas.core.arraylike import OpsMixin
 from pandas.core.arrays import ExtensionArray
 from pandas.core.series import Series
@@ -25,7 +26,6 @@ from pandas._typing import (
     AnyArrayLike,
     Axis,
     AxisInt,
-    NpDtype,
     NpDtypeNoStr,
     Scalar,
     ScalarIndexer,
@@ -71,7 +71,7 @@ class SparseArray(OpsMixin, ExtensionArray):
     @classmethod
     def from_spmatrix(cls, data: _SparseMatrixLike) -> Self: ...
     def __array__(
-        self, dtype: NpDtype | None = None, copy: bool | None = None
+        self, dtype: np.dtype | None = None, copy: bool | None = None
     ) -> np_1darray: ...
     @property
     def sp_index(self) -> SparseIndex: ...

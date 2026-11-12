@@ -129,4 +129,6 @@ def test_string_arrow_array() -> None:
     """Test __array__ method for ArrowStringArray."""
     arr = ArrowStringArray(pa.array(["a", "b"]))
     check(assert_type(arr.__array__(), np_1darray), np_1darray, str)
-    check(assert_type(arr.__array__(dtype=object), np_1darray), np_1darray, str)
+    check(
+        assert_type(arr.__array__(dtype=np.dtype(object)), np_1darray), np_1darray, str
+    )
