@@ -262,7 +262,5 @@ def test_sparse_array() -> None:
     arr = SparseArray([1, 0, 0, 2, 3])
     check(assert_type(arr.__array__(), np_1darray), np_1darray, np.integer)
     check(
-        assert_type(arr.__array__(dtype=np.dtype(np.float64)), np_1darray),
-        np_1darray,
-        np.float64,
+        assert_type(arr.__array__(dtype=np.float64), np_1darray), np_1darray, np.float64
     )

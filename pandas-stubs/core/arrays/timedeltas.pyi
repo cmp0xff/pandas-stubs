@@ -139,5 +139,5 @@ class TimedeltaArray(TimelikeOps):
     def median(self, *, skipna: bool = True, **kwargs: Any) -> Timedelta: ...
     @override
     def __array__(
-        self, dtype: np.dtype | None = None, copy: bool | None = None
+        self, dtype: NpDtype | None = None, copy: bool | None = None
     ) -> np_1darray_td: ...

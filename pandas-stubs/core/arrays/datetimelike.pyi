@@ -9,7 +9,6 @@ from typing import (
     overload,
 )
 
-import numpy as np
 from pandas.core.arraylike import OpsMixin
 from pandas.core.arrays._mixins import NDArrayBackedExtensionArray
 from typing_extensions import override
@@ -24,6 +23,7 @@ from pandas._typing import (
     AxisInt,
     DatetimeLikeScalar,
     Frequency,
+    NpDtype,
     PositionalIndexerTuple,
     ScalarIndexer,
     SequenceIndexer,
@@ -66,7 +66,7 @@ class DatetimeLikeArrayMixin(OpsMixin, NDArrayBackedExtensionArray):
     @override
     def reshape(self, *args: Any, **kwargs: Any) -> Self: ...
     def __array__(
-        self, dtype: np.dtype | None = None, copy: bool | None = None
+        self, dtype: NpDtype | None = None, copy: bool | None = None
     ) -> np_1darray: ...
     @overload
     @override

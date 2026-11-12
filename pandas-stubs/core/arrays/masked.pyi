@@ -5,7 +5,6 @@ from typing import (
     overload,
 )
 
-import numpy as np
 from numpy import typing as npt
 from pandas.core.arrays import ExtensionArray as ExtensionArray
 from pandas.core.series import Series
@@ -15,6 +14,7 @@ from pandas._libs.missing import NAType
 from pandas._typing import (
     AxisInt,
     DtypeArg,
+    NpDtype,
     Scalar,
     ScalarIndexer,
     SequenceIndexer,
@@ -37,7 +37,7 @@ class BaseMaskedArray(ExtensionArray):
     ) -> np_1darray: ...
     __array_priority__: int = 1000
     def __array__(
-        self, dtype: np.dtype | None = None, copy: bool | None = None
+        self, dtype: NpDtype | None = None, copy: bool | None = None
     ) -> np_1darray: ...
     def __arrow_array__(self, type: DtypeArg | None = None) -> Any: ...
     def value_counts(self, dropna: bool = True) -> Series[int]: ...

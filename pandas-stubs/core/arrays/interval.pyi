@@ -6,7 +6,6 @@ from typing import (
     overload,
 )
 
-import numpy as np
 from pandas._stubs_only import OrderableT
 from pandas.core.arrays.base import ExtensionArray as ExtensionArray
 from pandas.core.indexes.base import Index
@@ -22,6 +21,7 @@ from pandas._typing import (
     AnyArrayLike,
     DtypeArg,
     IntervalClosedType,
+    NpDtype,
     Scalar,
     ScalarIndexer,
     SequenceIndexer,
@@ -89,7 +89,7 @@ class IntervalArray(IntervalMixin, ExtensionArray):
         dtype: DtypeArg | None = None,
     ) -> Self: ...
     def __array__(
-        self, dtype: np.dtype | None = None, copy: bool | None = None
+        self, dtype: NpDtype | None = None, copy: bool | None = None
     ) -> np_1darray_object: ...
     @overload
     @override

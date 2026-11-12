@@ -355,7 +355,5 @@ def test_datetime_array() -> None:
     arr = pd.array([datetime(2024, 1, 1)])
     check(assert_type(arr.__array__(), np_1darray), np_1darray, np.datetime64)
     check(
-        assert_type(arr.__array__(dtype=np.dtype(object)), np_1darray),
-        np_1darray,
-        pd.Timestamp,
+        assert_type(arr.__array__(dtype=object), np_1darray), np_1darray, pd.Timestamp
     )

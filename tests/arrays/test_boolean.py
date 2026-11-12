@@ -180,7 +180,5 @@ def test_boolean_array() -> None:
     arr = BooleanArray(np.array([True, False]), np.array([False, False]))
     check(assert_type(arr.__array__(), np_1darray), np_1darray, np.bool_)
     check(
-        assert_type(arr.__array__(dtype=np.dtype(np.float64)), np_1darray),
-        np_1darray,
-        np.float64,
+        assert_type(arr.__array__(dtype=np.float64), np_1darray), np_1darray, np.float64
     )

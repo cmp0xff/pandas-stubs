@@ -1,7 +1,6 @@
 from collections.abc import Sequence
 from typing import Any
 
-import numpy as np
 from pandas import PeriodDtype
 from pandas.core.arrays.datetimelike import DatelikeOps
 from pandas.core.arrays.datetimes import DatetimeArray
@@ -18,6 +17,7 @@ from pandas._libs.tslibs.period import (
 )
 from pandas._typing import (
     DtypeArg,
+    NpDtype,
     PeriodFrequency,
     np_1darray_bool,
     np_1darray_int64,
@@ -46,7 +46,7 @@ class PeriodArray(DatelikeOps, PeriodMixin):
     def dtype(self) -> PeriodDtype: ...
     @override
     def __array__(
-        self, dtype: np.dtype | None = None, copy: bool | None = None
+        self, dtype: NpDtype | None = None, copy: bool | None = None
     ) -> np_1darray_object: ...
     def __arrow_array__(
         self, type: DtypeArg | None = None

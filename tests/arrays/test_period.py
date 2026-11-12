@@ -102,8 +102,7 @@ def test_period_array_array() -> None:
     arr = PeriodArray(idx)
     check(assert_type(arr.__array__(), np_1darray_object), np_1darray_object)
     check(
-        assert_type(arr.__array__(dtype=np.dtype(object)), np_1darray_object),
-        np_1darray_object,
+        assert_type(arr.__array__(dtype=object), np_1darray_object), np_1darray_object
     )
 
 

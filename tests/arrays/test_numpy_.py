@@ -294,7 +294,6 @@ def test_numpy_array() -> None:
     arr = NumpyExtensionArray(np.array([1, 2, 3]))
     check(assert_type(arr.__array__(), np_1darray), np_1darray, np.int64)
     check(
-        assert_type(arr.__array__(dtype=np.dtype(np.float64)), np_1darray),
-        np_1darray,
-        np.float64,
+        assert_type(arr.__array__(dtype=np.float64), np_1darray), np_1darray, np.float64
     )
+    check(assert_type(arr.__array__(dtype="f8"), np_1darray), np_1darray, np.float64)
