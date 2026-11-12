@@ -412,6 +412,19 @@ def test_index_neg() -> None:
     check(assert_type(-idx, "pd.Index[int]"), pd.Index)
 
 
+def test_index_array() -> None:
+    idx = pd.Index([1, 2, 3])
+    check(assert_type(idx.__array__(), np_1darray), np_1darray, np.integer)
+    check(
+        assert_type(idx.__array__(dtype=np.dtype(np.float64)), np_1darray),
+        np_1darray,
+        np.float64,
+    )
+
+    if TYPE_CHECKING_INVALID_USAGE:
+        idx.__array__("f8")  # type: ignore[arg-type] # pyright: ignore[reportArgumentType] # pyrefly: ignore[bad-argument-type] # ty: ignore[invalid-argument-type]
+
+
 def test_types_to_numpy() -> None:
     idx = pd.Index([1, 2])
     check(assert_type(idx.to_numpy(), np_1darray), np_1darray)
