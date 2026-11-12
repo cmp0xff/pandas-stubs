@@ -43,6 +43,7 @@ from tests._typing import (
     np_1darray_bool,
     np_1darray_int64,
     np_1darray_intp,
+    np_ndarray,
     np_ndarray_dt,
 )
 
@@ -1905,7 +1906,7 @@ def test_index_view() -> None:
     # mypy and pyright differ here in what they report:
     # - mypy: ndarray[Any, Any]"
     # - pyright: ndarray[tuple[Any, ...], dtype[Any]]
-    check(assert_type(ind.view(np.ndarray), np.ndarray), np.ndarray)  # type: ignore[assert-type]
+    check(assert_type(ind.view(np.ndarray), np.ndarray), np_ndarray)  # type: ignore[assert-type]
 
     class MyArray(np.ndarray): ...
 
@@ -2032,7 +2033,7 @@ def test_get_loc_bool_array() -> None:
     idx = pd.Index(["a", "b", "a", "c"])
     check(
         assert_type(idx.get_loc("a"), int | slice | np_1darray_bool),
-        np.ndarray,
+        np_1darray_bool,
         np.bool_,
     )
 
@@ -2053,7 +2054,9 @@ def test_multiindex_get_loc() -> None:
     # (non-sorted level causes a mask to be returned)
     mi_unsorted = pd.MultiIndex.from_arrays([["a", "b", "a"], ["d", "e", "f"]])
     loc_mask = mi_unsorted.get_loc("a")
-    check(assert_type(loc_mask, int | slice | np_1darray_bool), np.ndarray, np.bool_)
+    check(
+        assert_type(loc_mask, int | slice | np_1darray_bool), np_1darray_bool, np.bool_
+    )
 
 
 def test_index_from_tuples() -> None:

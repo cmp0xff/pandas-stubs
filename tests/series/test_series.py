@@ -69,6 +69,7 @@ from tests._typing import (
     np_1darray_complex,
     np_1darray_dt,
     np_1darray_float,
+    np_1darray_int64,
     np_1darray_object,
     np_1darray_str,
     np_1darray_td,
@@ -1732,12 +1733,12 @@ def test_types_dot() -> None:
     check(assert_type(s1.dot(df1), pd.Series), pd.Series, np.int64)
     check(assert_type(s1.dot(np.ones(4)), Any), np.float64)
     check(assert_type(s1.dot(np.eye(4)), np_1darray), np_1darray)
-    check(assert_type(s1.dot(n1), Any), np.ndarray)
+    check(assert_type(s1.dot(n1), Any), np_1darray_int64)
     check(assert_type(s1 @ s2, Any), np.int64)
     check(assert_type(s1 @ df1, pd.Series), pd.Series, np.int64)
     check(assert_type(s1 @ np.ones(4), Any), np.float64)
     check(assert_type(s1 @ np.eye(4), np_1darray), np_1darray)
-    check(assert_type(s1 @ n1, Any), np.ndarray)
+    check(assert_type(s1 @ n1, Any), np_1darray_int64)
     check(assert_type([0, 1, 2, 3] @ s1, Any), np.int64)
     check(assert_type([[0, 1, 2, 3], [4, 5, 6, 7]] @ s1, np_1darray), np_1darray)
 
