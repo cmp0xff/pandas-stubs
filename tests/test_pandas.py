@@ -529,16 +529,19 @@ def test_isna() -> None:
 
     # 1-D numpy array
     arr_1d = idx.to_numpy()
+    # TODO: python/mypy#21768
     check(assert_type(pd.isna(arr_1d), np_1darray_bool), np_1darray_bool)  # type: ignore[assert-type]
     check(assert_type(pd.notna(arr_1d), np_1darray_bool), np_1darray_bool)  # type: ignore[assert-type]
 
     # 2-D numpy array
     arr_2d = idx.to_numpy().reshape(2, 2)
+    # TODO: python/mypy#21768
     check(assert_type(pd.isna(arr_2d), np_2darray[np.bool]), np_2darray[np.bool])  # type: ignore[assert-type]
     check(assert_type(pd.notna(arr_2d), np_2darray[np.bool]), np_2darray[np.bool])  # type: ignore[assert-type]
 
     # N-D numpy array
     arr_nd = idx.to_numpy().reshape([2, 2])
+    # TODO: python/mypy#21768
     check(assert_type(pd.isna(arr_nd), np_ndarray_bool), np_ndarray_bool)  # type: ignore[assert-type]
     check(assert_type(pd.notna(arr_nd), np_ndarray_bool), np_ndarray_bool)  # type: ignore[assert-type]
 
