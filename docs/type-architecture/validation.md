@@ -29,6 +29,7 @@ Run it when a change touches one of the things it reads:
 - a **forward binary dunder** on a scanned class — the tier-0 scalars, `ExtensionArray`,
   `Index` and its subclasses, `Series`, or `DataFrame` — adding, removing, or editing the
   signature, including renaming its `other` operand;
+- **`__rmatmul__` or `dot`** on a class in `CLASS_TIERS`;
 - **any `TypeAlias`** reachable, directly or transitively, from such an `other`
   annotation, including a `ScalarArrayIndex*` alias in
   `pandas-stubs/_stubs_only/__init__.pyi`;
@@ -39,14 +40,15 @@ Run it when a change touches one of the things it reads:
 
 A change outside these surfaces does not need the check.
 
-The checker proves only that its alias and operand restrictions hold, and — whenever it
-validates the shipped registry, both as a script and through
+The checker proves that its alias and operand restrictions and the
+[`__rmatmul__` and `dot` mirror rules](operator-signatures.md#reflected-dunders) hold, and —
+whenever it validates the shipped registry, both as a script and through
 `test_repository_matches_allowances` — that every exception key is exercised by the tree it
 scans. A passing run prints the exceptions file it consulted and the number of
 combinations and occurrences observed. It does not check runtime dispatch, return
-annotations, reflected dunders, overload selection, or all pandas operand relationships. A
-passing result is therefore a focused regression signal, not a general proof of
-type-architecture correctness.
+annotations or reflected dunders beyond the matmul mirror, overload selection, or all pandas
+operand relationships. A passing result is therefore a focused regression signal, not a
+general proof of type-architecture correctness.
 
 ## Verification
 

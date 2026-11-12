@@ -1180,14 +1180,20 @@ class Series(IndexOpsMixin[S1], ElementOpsMixin[S1], NDFrame):
         /,
     ) -> Any: ...
     @overload
-    def __matmul__(self, other: DataFrame, /) -> Series: ...
-    @overload
     def __matmul__(
         self, other: np_2darray | Sequence[Sequence[SupportsSelfMul[Any]]], /
     ) -> np_1darray: ...
     @overload
     def __rmatmul__(
-        self, other: np_1darray | Sequence[SupportsSelfMul[Any]], /
+        self,
+        other: (
+            Series
+            | Index
+            | ExtensionArray
+            | np_1darray
+            | Sequence[SupportsSelfMul[Any]]
+        ),
+        /,
     ) -> Any: ...
     @overload
     def __rmatmul__(
