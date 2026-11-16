@@ -1044,7 +1044,7 @@ if TYPE_CHECKING:
 
 T_INT = TypeVar("T_INT", bound=int)
 T_COMPLEX = TypeVar("T_COMPLEX", bound=complex)
-SeriesDTypeNoStrDateTime: TypeAlias = (
+SeriesDTypeNoStrDateTimePeriod: TypeAlias = (
     bytes
     | bool
     | int
@@ -1052,14 +1052,15 @@ SeriesDTypeNoStrDateTime: TypeAlias = (
     | complex
     | NpDtypeNoStr
     | ExtensionDtype
-    | Period
     | Interval
     | CategoricalDtype
     | BaseOffset
 )
-SeriesDTypeNoDateTime: TypeAlias = (
-    str | SeriesDTypeNoStrDateTime | type[str] | list[str]
+SeriesDTypeNoStrDateTime: TypeAlias = SeriesDTypeNoStrDateTimePeriod | Period
+SeriesDTypeNoDateTimePeriod: TypeAlias = (
+    str | SeriesDTypeNoStrDateTimePeriod | type[str] | list[str]
 )
+SeriesDTypeNoDateTime: TypeAlias = SeriesDTypeNoDateTimePeriod | Period
 SeriesDType: TypeAlias = (
     SeriesDTypeNoDateTime
     | datetime.date
@@ -1075,6 +1076,7 @@ S2_contra = TypeVar("S2_contra", bound=SeriesDType, contravariant=True)
 S2_NDT_contra = TypeVar(
     "S2_NDT_contra", bound=SeriesDTypeNoDateTime, contravariant=True
 )
+S2_NDTP = TypeVar("S2_NDTP", bound=SeriesDTypeNoDateTimePeriod)
 S2_NSDT = TypeVar("S2_NSDT", bound=SeriesDTypeNoStrDateTime)
 S3 = TypeVar("S3", bound=SeriesDType)
 

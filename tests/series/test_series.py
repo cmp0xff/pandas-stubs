@@ -481,7 +481,7 @@ def test_types_shift() -> None:
     )
 
     if TYPE_CHECKING_INVALID_USAGE:
-        s.shift(freq="1D", fill_value=4)  # type: ignore[call-overload] # pyright: ignore[reportArgumentType] # pyrefly: ignore[no-matching-overload] # ty: ignore[no-matching-overload]
+        s.shift(freq="1D", fill_value=4)  # type: ignore[call-overload] # pyright: ignore[reportArgumentType] # pyrefly: ignore[no-matching-overload] # ty: ignore[invalid-argument-type]
 
 
 def test_types_shift_datetimelike_fill_value() -> None:
@@ -500,34 +500,34 @@ def test_types_shift_datetimelike_fill_value() -> None:
 
     # `Series[Any]` keeps accepting numeric fill values
     s_any = pd.DataFrame({"a": [1, 2, 3]})["a"]
-    # TODO: remove the ignore astral-sh/ty#4055
+    check(assert_type(s_any.shift(1, fill_value=0), pd.Series), pd.Series, np.integer)
+
+    s_int = pd.Series([1, 2, 3])
+    s_str = pd.Series(["a", "b", "c"])
+    s_date = s_dt.dt.date
+    s_cat = pd.Series(["a", "b"], dtype="category")
+    s_iv = pd.Series([pd.Interval(0, 1)])
+    check(assert_type(s_int.shift(1, fill_value=0), pd.Series), pd.Series, np.integer)
+    check(assert_type(s_str.shift(1, fill_value="x"), pd.Series), pd.Series, str)
     check(
-        assert_type(  # ty: ignore[type-assertion-failure]
-            s_any.shift(1, fill_value=0), pd.Series
-        ),
+        assert_type(s_date.shift(1, fill_value=datetime.date(2020, 1, 2)), pd.Series),
         pd.Series,
-        np.integer,
+        datetime.date,
+    )
+    check(assert_type(s_cat.shift(1, fill_value="a"), pd.Series), pd.Series, str)
+    check(
+        assert_type(s_iv.shift(1, fill_value=pd.Interval(0, 1)), pd.Series),
+        pd.Series,
+        pd.Interval,
     )
 
     if TYPE_CHECKING_INVALID_USAGE:
-
-        def _0() -> None:  # pyright: ignore[reportUnusedFunction]
-            assert_type(s_dt.shift(1, fill_value=1), Never)
-
-        def _1() -> None:  # pyright: ignore[reportUnusedFunction]
-            assert_type(s_dt.shift(1, fill_value=1.5), Never)
-
-        def _2() -> None:  # pyright: ignore[reportUnusedFunction]
-            assert_type(s_dt.shift(1, fill_value=np.int64(1)), Never)
-
-        def _3() -> None:  # pyright: ignore[reportUnusedFunction]
-            assert_type(s_dt.shift(1, fill_value="a"), Never)
-
-        def _4() -> None:  # pyright: ignore[reportUnusedFunction]
-            assert_type(s_td.shift(1, fill_value=1), Never)
-
-        def _5() -> None:  # pyright: ignore[reportUnusedFunction]
-            assert_type(s_per.shift(1, fill_value=True), Never)
+        s_dt.shift(1, fill_value=1)  # type: ignore[call-overload] # pyright: ignore[reportCallIssue,reportArgumentType] # pyrefly: ignore[no-matching-overload] # ty: ignore[no-matching-overload]
+        s_dt.shift(1, fill_value=1.5)  # type: ignore[call-overload] # pyright: ignore[reportCallIssue,reportArgumentType] # pyrefly: ignore[no-matching-overload] # ty: ignore[no-matching-overload]
+        s_dt.shift(1, fill_value=np.int64(1))  # type: ignore[call-overload] # pyright: ignore[reportCallIssue,reportArgumentType] # pyrefly: ignore[no-matching-overload] # ty: ignore[no-matching-overload]
+        s_dt.shift(1, fill_value="a")  # type: ignore[call-overload] # pyright: ignore[reportCallIssue,reportArgumentType] # pyrefly: ignore[no-matching-overload] # ty: ignore[no-matching-overload]
+        s_td.shift(1, fill_value=1)  # type: ignore[call-overload] # pyright: ignore[reportCallIssue,reportArgumentType] # pyrefly: ignore[no-matching-overload] # ty: ignore[no-matching-overload]
+        s_per.shift(1, fill_value=True)  # type: ignore[call-overload] # pyright: ignore[reportCallIssue,reportArgumentType] # pyrefly: ignore[no-matching-overload] # ty: ignore[no-matching-overload]
 
 
 def test_series_pct_change() -> None:
