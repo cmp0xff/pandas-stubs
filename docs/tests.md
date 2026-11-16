@@ -46,3 +46,7 @@ Series/Index comparisons belong in `tests/series/<dtype>/test_relops.py`. Cover 
 operand directions together there, and cover the Series `lt`, `le`, `gt`, and `ge`
 methods. Index-only comparisons belong in `tests/indexes/<dtype>/test_relops.py`.
 When both operands have the same type, swapping them does not add typing coverage.
+
+Series member functions whose typing depends on the dtype (operators, comparisons, and
+methods such as `shift`) are tested in `tests/series/<dtype>/test_<name>.py`.
+Dtype-agnostic behaviour stays in the general test file.
