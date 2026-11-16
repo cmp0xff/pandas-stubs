@@ -481,7 +481,53 @@ def test_types_shift() -> None:
     )
 
     if TYPE_CHECKING_INVALID_USAGE:
-        s.shift(freq="1D", fill_value=4)  # type: ignore[call-overload] # pyright: ignore[reportArgumentType] # pyrefly: ignore[no-matching-overload] # ty: ignore[invalid-argument-type]
+        s.shift(freq="1D", fill_value=4)  # type: ignore[call-overload] # pyright: ignore[reportArgumentType] # pyrefly: ignore[no-matching-overload] # ty: ignore[no-matching-overload]
+
+
+def test_types_shift_datetimelike_fill_value() -> None:
+    """Test that numeric and string `fill_value` is rejected for datetime-like Series."""
+    s_dt = pd.Series(pd.date_range("2020", periods=3))
+    s_td = pd.Series(pd.to_timedelta([1, 2, 3], unit="D"))
+    s_per = pd.Series(pd.period_range("2020", periods=3, freq="D"))
+    ts, td, per = pd.Timestamp("2020"), pd.Timedelta(1, "D"), pd.Period("2020", "D")
+
+    check(assert_type(s_dt.shift(1, fill_value=ts), pd.Series), pd.Series, pd.Timestamp)
+    check(assert_type(s_dt.shift(1, fill_value=pd.NaT), pd.Series), pd.Series)
+    check(assert_type(s_td.shift(1, fill_value=td), pd.Series), pd.Series, pd.Timedelta)
+    check(assert_type(s_td.shift(1, fill_value=None), pd.Series), pd.Series)
+    check(assert_type(s_per.shift(1, fill_value=per), pd.Series), pd.Series, pd.Period)
+    check(assert_type(s_per.shift(1, fill_value=pd.NaT), pd.Series), pd.Series)
+
+    # `Series[Any]` keeps accepting numeric fill values
+    s_any = pd.DataFrame({"a": [1, 2, 3]})["a"]
+    # TODO: remove the ignore astral-sh/ty#4055
+    check(
+        assert_type(  # ty: ignore[type-assertion-failure]
+            s_any.shift(1, fill_value=0), pd.Series
+        ),
+        pd.Series,
+        np.integer,
+    )
+
+    if TYPE_CHECKING_INVALID_USAGE:
+
+        def _0() -> None:  # pyright: ignore[reportUnusedFunction]
+            assert_type(s_dt.shift(1, fill_value=1), Never)
+
+        def _1() -> None:  # pyright: ignore[reportUnusedFunction]
+            assert_type(s_dt.shift(1, fill_value=1.5), Never)
+
+        def _2() -> None:  # pyright: ignore[reportUnusedFunction]
+            assert_type(s_dt.shift(1, fill_value=np.int64(1)), Never)
+
+        def _3() -> None:  # pyright: ignore[reportUnusedFunction]
+            assert_type(s_dt.shift(1, fill_value="a"), Never)
+
+        def _4() -> None:  # pyright: ignore[reportUnusedFunction]
+            assert_type(s_td.shift(1, fill_value=1), Never)
+
+        def _5() -> None:  # pyright: ignore[reportUnusedFunction]
+            assert_type(s_per.shift(1, fill_value=True), Never)
 
 
 def test_series_pct_change() -> None:

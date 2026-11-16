@@ -173,6 +173,7 @@ from pandas._typing import (
     Dtype,
     DTypeLike,
     DtypeObj,
+    ExtScalarOrNA,
     FilePath,
     FillnaOptions,
     FloatDtypeArg,
@@ -1511,10 +1512,26 @@ class Series(IndexOpsMixin[S1], ElementOpsMixin[S1], NDFrame):
     ) -> Series: ...
     @overload
     def shift(
+        self: Series[Never],
+        periods: int | Sequence[int] = ...,
+        axis: Axis = 0,
+        fill_value: ExtScalarOrNA = ...,
+    ) -> Series: ...
+    @overload
+    def shift(
+        self: Series[Timestamp] | Series[Timedelta] | Series[Period],
+        periods: int | Sequence[int] = ...,
+        freq: None = None,
+        axis: Axis = 0,
+        *,
+        fill_value: complex | np.number | np.bool_ | _str,
+    ) -> Never: ...
+    @overload
+    def shift(
         self,
         periods: int | Sequence[int] = ...,
         axis: Axis = 0,
-        fill_value: Scalar | NAType | None = ...,
+        fill_value: ExtScalarOrNA = ...,
     ) -> Series: ...
     @overload
     def shift(
