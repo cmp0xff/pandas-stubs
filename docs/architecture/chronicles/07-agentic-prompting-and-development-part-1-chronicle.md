@@ -2,7 +2,6 @@
 
 > **Generated via Unsupervised NLP Clustering (TF-IDF + K-Means)**
 > This domain was automatically synthesized based on the semantic similarity of PR bodies and titles. 
-> To reproduce this algorithmic classification locally, please execute the NLP pipeline script located at `scratch/run_clustering.sh` from the repository root (this will spin up a local `uv` virtual environment, install `scikit-learn`, and run the K-Means algorithm over `scratch/raw_prs.jsonl`).
 
 ## 1. Domain Signature
 - **Defining Terms**: `agents`, `md`, `prompted`, `develop`, `ai`, `request`, `follow`
