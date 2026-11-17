@@ -24,7 +24,7 @@ Two disciplines keep it faithful to the paper rather than cosmetic:
 1. **Contemporaneous and evidence-grounded.** Every decision is logged when it is made,
    with a real date and a link to the PR / discussion / commit that decided it. It is
    *not* a retroactive reconstruction (see `docs/architecture/decisions/` for the
-   retrospective ADRs, which are explicitly marked as such).
+   retrospective ADRs, which reconstruct past decisions after the fact).
 2. **"Decided" is separated from "planned".** The decision log below is fixed and
    evidence-backed; the rollout plan is provisional and expected to change.
 
@@ -33,7 +33,7 @@ Two disciplines keep it faithful to the paper rather than cosmetic:
 | Sub-PR | Stage | Content | Status |
 | :--- | :--- | :--- | :--- |
 | pandas-dev/pandas-stubs#1928 | Conventions | `AGENTS.md`: citation rules, 4-checker paradigm, PR body policy | merged |
-| pandas-dev/pandas-stubs#1931 | Type architecture | `docs/type-architecture/` guide and `scripts/operand_hierarchy/` checker | merged |
+| pandas-dev/pandas-stubs#1955, pandas-dev/pandas-stubs#1931 | Type architecture | `scripts/operand_hierarchy/` checker and its CI job; `docs/type-architecture/` guide | merged |
 | — | ADR rollout | ADR-0024 (protocol-typed `self`), ADR-0021/0022, ADR-0023 (Index `-`), then the retrospective ADRs in small batches | planned |
 | — | Records | Chronicles, matrices, subsystem guides, history | planned |
 
@@ -46,9 +46,9 @@ decision log records when it changes.
 1. **Conventions** — `AGENTS.md` (PR pandas-dev/pandas-stubs#1928) first: establishes the
    citation rules, the 4-checker paradigm, the PR-body policy, and the commit-signature
    allowlist.
-2. **Type architecture** — the `docs/type-architecture/` guide and the
-   `scripts/operand_hierarchy/` checker (PR pandas-dev/pandas-stubs#1931); the only
-   architecture validator in CI.
+2. **Type architecture** — the `scripts/operand_hierarchy/` checker
+   (pandas-dev/pandas-stubs#1955), the only architecture validator in CI, and the
+   `docs/type-architecture/` guide (pandas-dev/pandas-stubs#1931).
 3. **ADR rollout** — the forward-looking ADRs first (ADR-0024 protocol-typed `self`,
    ADR-0021/0022, ADR-0023 Index `-`), then the retrospective ADRs in small batches.
 4. **Records** — chronicles, type matrices, subsystem guides, and history eras, as
@@ -59,7 +59,7 @@ decision log records when it changes.
 Decisions are added here as they are made, newest first, each with evidence.
 
 - **2026-11-17 — older architecture validators dropped.** `scripts/operand_hierarchy/`
-  (pandas-dev/pandas-stubs#1931) supersedes `scripts/check_container_hierarchy.py`, the
+  (pandas-dev/pandas-stubs#1955) supersedes `scripts/check_container_hierarchy.py`, the
   AQA validators and the snapshot generator, so they leave the collection together with
   their generated outputs; `docs/architecture/concepts/type-architecture.md` now points
   at `docs/type-architecture/`. The protocol-self ADR is renumbered ADR-0024, so
@@ -87,4 +87,4 @@ Decisions are added here as they are made, newest first, each with evidence.
 ## Conventions
 
 All of this follows `AGENTS.md` — citation formatting, the 4-checker paradigm, the
-PR-body policy, and the commit-signature allowlist.
+PR-body policy, and the `Co-authored-by` trailer rule.

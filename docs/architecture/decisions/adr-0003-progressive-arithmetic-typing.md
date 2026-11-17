@@ -64,7 +64,7 @@ def __sub__(self: Series[S1], other: Any) -> Series[Any]: ...
 
 - **Positive**: Code operating on DataFrame columns (`frame["timestamp"] - pd.Timestamp(...)`) gains accurate downstream type hints (`Series[Timedelta]`) without explicit casting.
 - **Positive**: Type checkers reject invalid operations like `Timestamp + Timestamp` at type-check time.
-- **Negative / Neutral**: Complex overload cascades require exhaustive matrix testing in `tests/series/arithmetic/`.
+- **Negative / Neutral**: Complex overload cascades require exhaustive matrix testing in the per-dtype folders under `tests/series/` (e.g. `tests/series/int/test_add.py`).
 
 ## Historical References & Provenance
 
