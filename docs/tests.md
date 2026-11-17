@@ -38,7 +38,12 @@ Among the tests above, the following can be run directly during a PR by commenti
 - Use pyrefly with preset 'all': `/pyrefly_all`
 - Use ty with all rules raising errors: `/ty_all`
 
-## Comparison test ownership
+## Series and Index test placement
+
+Dtype-dependent Series tests live in `tests/series/<dtype>/`: arithmetic in
+`test_<op>.py` (for example `test_add.py`), comparisons in `test_relops.py`, and other
+methods in `test_series_<dtype>.py`. `Series[Any]` and dtype-agnostic tests stay in
+`tests/series/`.
 
 Keep cross-container comparison tests with the higher-tier container in the operand
 hierarchy, following the existing arithmetic test organization. For example,
@@ -46,7 +51,3 @@ Series/Index comparisons belong in `tests/series/<dtype>/test_relops.py`. Cover 
 operand directions together there, and cover the Series `lt`, `le`, `gt`, and `ge`
 methods. Index-only comparisons belong in `tests/indexes/<dtype>/test_relops.py`.
 When both operands have the same type, swapping them does not add typing coverage.
-
-Series member functions whose typing depends on the dtype (operators, comparisons, and
-methods such as `shift`) are tested in `tests/series/<dtype>/test_<name>.py`.
-Dtype-agnostic behaviour stays in the general test file.

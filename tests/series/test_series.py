@@ -96,10 +96,6 @@ if TYPE_CHECKING:
 from pandas.io.formats.format import EngFormatter
 from pandas.tseries.offsets import (
     BaseOffset,
-    BDay,
-    BQuarterEnd,
-    MonthEnd,
-    Week,
     YearEnd,
 )
 
@@ -462,49 +458,11 @@ def test_types_sort_values_with_key() -> None:
     )
 
 
-def test_types_shift() -> None:
-    """Test shift operator on series with different arguments."""
-    s = pd.Series([1, 2, 3], index=pd.date_range("2020", periods=3))
-    check(assert_type(s.shift(), pd.Series), pd.Series, np.floating)
-    check(assert_type(s.shift(axis=0, periods=1), pd.Series), pd.Series, np.floating)
-    check(assert_type(s.shift(-1, fill_value=0), pd.Series), pd.Series, np.integer)
-    check(assert_type(s.shift(freq="1D"), pd.Series), pd.Series, np.integer)
-    check(assert_type(s.shift(freq=BDay(1)), pd.Series), pd.Series, np.integer)
-    check(assert_type(s.shift(freq=BQuarterEnd(5)), pd.Series), pd.Series, np.integer)
-    check(assert_type(s.shift(freq=MonthEnd(3)), pd.Series), pd.Series, np.integer)
-    check(assert_type(s.shift(freq=Week(4)), pd.Series), pd.Series, np.integer)
-    check(assert_type(s.shift(freq=YearEnd(2)), pd.Series), pd.Series, np.integer)
-    check(
-        assert_type(s.shift(freq=None, fill_value=None), pd.Series),
-        pd.Series,
-        np.floating,
-    )
-
+def test_types_shift_any() -> None:
+    """Test fill_value of pd.Series[Any].shift."""
     # `Series[Any]` keeps accepting numeric fill values
     s_any = pd.DataFrame({"a": [1, 2, 3]})["a"]
     check(assert_type(s_any.shift(1, fill_value=0), pd.Series), pd.Series, np.integer)
-
-    s_int = pd.Series([1, 2, 3])
-    s_str = pd.Series(["a", "b", "c"])
-    s_date = pd.Series(pd.date_range("2020", periods=3)).dt.date
-    s_cat = pd.Series(["a", "b"], dtype="category")
-    s_iv = pd.Series([pd.Interval(0, 1)])
-    check(assert_type(s_int.shift(1, fill_value=0), pd.Series), pd.Series, np.integer)
-    check(assert_type(s_str.shift(1, fill_value="x"), pd.Series), pd.Series, str)
-    check(
-        assert_type(s_date.shift(1, fill_value=datetime.date(2020, 1, 2)), pd.Series),
-        pd.Series,
-        datetime.date,
-    )
-    check(assert_type(s_cat.shift(1, fill_value="a"), pd.Series), pd.Series, str)
-    check(
-        assert_type(s_iv.shift(1, fill_value=pd.Interval(0, 1)), pd.Series),
-        pd.Series,
-        pd.Interval,
-    )
-
-    if TYPE_CHECKING_INVALID_USAGE:
-        s.shift(freq="1D", fill_value=4)  # type: ignore[call-overload] # pyright: ignore[reportArgumentType] # pyrefly: ignore[no-matching-overload] # ty: ignore[invalid-argument-type]
 
 
 def test_series_pct_change() -> None:

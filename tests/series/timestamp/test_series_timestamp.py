@@ -11,7 +11,7 @@ from tests import (
 )
 
 
-def test_shift_fill_value() -> None:
+def test_types_shift_fill_value() -> None:
     """Test fill_value of pd.Series[pd.Timestamp].shift."""
     s = pd.Series(pd.date_range("2020", periods=3))
     ts = pd.Timestamp("2020")

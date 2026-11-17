@@ -10,7 +10,7 @@ from tests import (
 )
 
 
-def test_shift_fill_value() -> None:
+def test_types_shift_fill_value() -> None:
     """Test fill_value of pd.Series[pd.Period].shift."""
     s = pd.Series(pd.period_range("2020", periods=3, freq="D"))
     per = pd.Period("2020", "D")

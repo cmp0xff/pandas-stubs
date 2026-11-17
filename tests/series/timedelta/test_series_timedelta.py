@@ -11,7 +11,7 @@ from tests import (
 )
 
 
-def test_shift_fill_value() -> None:
+def test_types_shift_fill_value() -> None:
     """Test fill_value of pd.Series[pd.Timedelta].shift."""
     s = pd.Series(pd.to_timedelta([1, 2, 3], unit="D"))
     td = pd.Timedelta(1, "D")
