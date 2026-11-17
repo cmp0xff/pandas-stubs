@@ -68,7 +68,6 @@ FORWARD_DUNDER_EXCEPTIONS: Final[dict[ExceptionKey, int]] = {
     ("Period", "__ne__", "Series"): 1,
     ("Period", "__sub__", "Index"): 2,
     ("Period", "__sub__", "Series"): 1,
-    ("Series", "__matmul__", "DataFrame"): 1,
     ("Timedelta", "__eq__", "Index"): 1,
     ("Timedelta", "__eq__", "Series"): 1,
     ("Timedelta", "__floordiv__", "Index"): 1,

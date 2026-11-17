@@ -21,7 +21,7 @@ or that this documentation is exhaustive.
 
 - [Operand hierarchy](operand-hierarchy.md) — tiers and scanned methods, cross-tier
   lookup examples, a traced rejection, the cross-tier overload policy and the
-  exception list with its empty-set target, the matrix-multiplication exception, and the
+  exception list with its empty-set target, matrix multiplication, and the
   scope limits.
 - [Operator signatures](operator-signatures.md) — operand aliases, protocols,
   positional-only parameters, subclass overrides, and the dunder set the checker scans.

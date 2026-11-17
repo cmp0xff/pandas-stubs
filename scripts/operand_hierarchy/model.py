@@ -9,12 +9,19 @@ The tier model itself is documented in ``docs/type-architecture/operand-hierarch
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Final
+from typing import (
+    TYPE_CHECKING,
+    Final,
+)
+
+if TYPE_CHECKING:
+    from collections.abc import Mapping
 
 # The scanned set is enumerated explicitly. Name heuristics cannot separate forward
 # from reflected operations (a forward dunder can itself start with ``__r``, as
 # ``__rshift__`` does), and a dunder outside this set — every reflected dunder, like
-# ``__radd__``, plus non-operator methods such as ``__init__`` — is not scanned.
+# ``__radd__``, plus non-operator methods such as ``__init__`` — is not scanned
+# for higher-tier operands.
 FORWARD_BINARY_DUNDERS: Final[frozenset[str]] = frozenset(
     {
         "__add__",
@@ -39,6 +46,13 @@ FORWARD_BINARY_DUNDERS: Final[frozenset[str]] = frozenset(
         "__ge__",
     }
 )
+
+# Listed reflected dunders must match forward operands and returns exactly. Other pairs
+# are omitted on purpose, see operator-signatures.md § Reflected dunders.
+REFLECTED_SYMMETRIC_DUNDERS: Final[Mapping[str, str]] = {"__matmul__": "__rmatmul__"}
+
+# Named methods mirror these dunders after excluding higher-tier operands.
+METHOD_MIRRORED_DUNDERS: Final[Mapping[str, str]] = {"__matmul__": "dot"}
 
 # Every scanned class and its tier; Index subclasses are discovered through their
 # base chain.
