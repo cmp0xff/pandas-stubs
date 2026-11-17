@@ -80,7 +80,7 @@ correctly.
    matching overload is no longer Protocol-typed.
 4. **Abandon the protocol consolidation and return to one overload per concrete
    element-type combination** — sound under all checkers, but reverses the
-   de-duplication ADR-0009 and the pandas-dev/pandas-stubs#1378/#1474 migration were adopted for, at a scale
+   de-duplication ADR-0009 and the pandas-dev/pandas-stubs#1378 and pandas-dev/pandas-stubs#1474 migration were adopted for, at a scale
    (five operator families) that would be a large regression.
 
 ## Decision Outcome

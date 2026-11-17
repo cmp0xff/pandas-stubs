@@ -44,8 +44,8 @@ reviewable PRs** so maintainers onboard incrementally. This order is provisional
 decision log records when it changes.
 
 1. **Conventions** — `AGENTS.md` (PR pandas-dev/pandas-stubs#1928) first: establishes the
-   citation rules, the 4-checker paradigm, the PR-body policy, and the commit-signature
-   allowlist.
+   citation rules, the 4-checker paradigm, the PR-body policy, and the `Co-authored-by`
+   trailer rule.
 2. **Type architecture** — the `scripts/operand_hierarchy/` checker
    (pandas-dev/pandas-stubs#1955), the only architecture validator in CI, and the
    `docs/type-architecture/` guide (pandas-dev/pandas-stubs#1931).
