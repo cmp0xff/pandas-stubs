@@ -1,8 +1,7 @@
 ---
 status: proposed
 date: 2026-09-02
-deciders: [Dr-Irv, twoertwein, MarcoGorelli, loicdiridollou, cmp0xff]
-consulted: [typing-sig]
+deciders: [cmp0xff]
 informed: [pandas-stubs contributors]
 ---
 

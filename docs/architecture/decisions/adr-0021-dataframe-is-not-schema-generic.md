@@ -1,8 +1,7 @@
 ---
-status: accepted
+status: proposed
 date: 2026-09-02
-deciders: [Dr-Irv, twoertwein, MarcoGorelli, loicdiridollou, cmp0xff]
-consulted: [typing-sig]
+deciders: [cmp0xff]
 informed: [pandas-stubs contributors]
 ---
 
@@ -32,15 +31,15 @@ age = df["age"]   # hoped: Series[int]
 This ADR records the conclusion drawn from attempting to express that construct in
 pure PEP 484/695 typing: **tier 1 (schema carrying) is expressible; tier 2 (per-column
 pinpointing) is not, and requires codegen or a checker plugin.** It is the standing
-architecture answer to PR pandas-dev/pandas-stubs#295, PR pandas-dev/pandas-stubs#1190,
-PR pandas-dev/pandas-stubs#1548, and PR pandas-dev/pandas-stubs#1566.
+architecture answer to pandas-dev/pandas-stubs#295, pandas-dev/pandas-stubs#1190,
+pandas-dev/pandas-stubs#1548, and pandas-dev/pandas-stubs#1566.
 
 ## Decision Drivers
 
 - **Expressiveness**: `DataFrame[Person]` should name the schema in a signature
-  (satisfies #295).
+  (satisfies pandas-dev/pandas-stubs#295).
 - **Per-column type recovery**: `df["age"]` should yield `Series[int]` where the key is a
-  known column (#1190, #1566).
+  known column (pandas-dev/pandas-stubs#1190, pandas-dev/pandas-stubs#1566).
 - **Soundness**: the mechanism must be real PEP 484/695 typing and be accepted uniformly
   by mypy, pyright, pyrefly, and ty — not a checker-specific extension that the others
   reject.
@@ -55,10 +54,10 @@ PR pandas-dev/pandas-stubs#1548, and PR pandas-dev/pandas-stubs#1566.
 2. **Generic over a phantom schema parameter** — `class DataFrame(Generic[Schema])` that
    carries `DataFrame[Person]` but returns `Series[Any]` from indexing. *(Chosen for the
    pure-typing tier.)*
-   - *Pros*: pure typing, uniformly accepted, satisfies #295.
+   - *Pros*: pure typing, uniformly accepted, satisfies pandas-dev/pandas-stubs#295.
    - *Cons*: `df["age"]` collapses to `Series[Any]`.
 3. **Concrete `Literal` overloads (codegen)** — one `@overload` per known column key.
-   - *Pros*: exact `Series[int]` / `Series[str]` resolution; real static checking (#1190).
+   - *Pros*: exact `Series[int]` / `Series[str]` resolution; real static checking (pandas-dev/pandas-stubs#1190).
    - *Cons*: requires generating the overload set; loses precision on unknown keys.
 4. **Checker plugin reading the schema's `__annotations__`** — a checker-specific
    solution.
@@ -107,7 +106,7 @@ Because facts 1 and 2 close the "generic over a schema" path, per-column returns
 
 | Tier | Pure typing? | `df["age"]` | Buys |
 | :--- | :--- | :--- | :--- |
-| Carry the schema — `DataFrame[Person]` | ✅ trivial | `Series[Any]` | names schema in signatures (#295) |
+| Carry the schema — `DataFrame[Person]` | ✅ trivial | `Series[Any]` | names schema in signatures (pandas-dev/pandas-stubs#295) |
 | Enforce per-column types — `df["age"] -> Series[int]` | ❌ codegen/plugin | `Series[int]` | real static checking |
 
 ## Minimal Example
@@ -152,7 +151,7 @@ pyright, pyrefly, and ty agree with mypy.
 ## Consequences
 
 - **Positive**: `DataFrame[Person]` names the schema anywhere a `DataFrame` appears in a
-  signature, satisfying the core of #295.
+  signature, satisfying the core of pandas-dev/pandas-stubs#295.
 - **Negative / Neutral**: for the pure-typing tier, `df["col"]` stays `Series[Any]`, so a
   frame's indexer gives no more element-type information today than in ADR-0002's original
   "Dynamic DataFrame column indexing" consequence.

@@ -1,8 +1,7 @@
 ---
-status: accepted
+status: proposed
 date: 2026-09-03
-deciders: [Dr-Irv, twoertwein, MarcoGorelli, loicdiridollou, cmp0xff]
-consulted: [typing-sig]
+deciders: [cmp0xff]
 informed: [pandas-stubs contributors]
 ---
 
@@ -30,7 +29,7 @@ example `_proto_sub` covers `int`/`float`/`complex`/`Timedelta`/`Timestamp` but 
 `Index[bool]` should therefore fail to satisfy `Supports_ProtoSub[bool, S2]`, and mypy,
 pyright, and pyrefly should all reject `Index[bool] - bool`.
 
-python/mypy#20061 ("Issue when `self` is typed as a Protocol") breaks that expectation
+python/mypypython/mypy#20061 ("Issue when `self` is typed as a Protocol") breaks that expectation
 for mypy only: mypy matches the Protocol-typed `self` overload anyway, so it silently
 **accepts** `Index[bool] - bool` — a false negative. pyright and pyrefly reject it
 correctly.
@@ -72,16 +71,16 @@ correctly.
 1. **Ignore comments on the affected test expressions** — infeasible: mypy emits no
    error to ignore (false negative), and `warn_unused_ignores` /
    `reportUnnecessaryTypeIgnoreComment` turn a speculative ignore into its own error.
-2. **Wait for upstream mypy to fix python/mypy#20061** — blocks the entire
+2. **Wait for upstream mypy to fix python/mypypython/mypy#20061** — blocks the entire
    protocol-based operator-family migration indefinitely and leaves `Index[bool] -
    bool` silently accepted by mypy in the meantime.
 3. **Add explicit narrower `-> Never` overloads immediately before the
    `Supports_Proto*` overload** — chosen. Relies on ordinary first-match-wins
-   top-to-bottom overload resolution, which is unaffected by #20061 because the
+   top-to-bottom overload resolution, which is unaffected by python/mypy#20061 because the
    matching overload is no longer Protocol-typed.
 4. **Abandon the protocol consolidation and return to one overload per concrete
    element-type combination** — sound under all checkers, but reverses the
-   de-duplication ADR-0009 and the #1378/#1474 migration were adopted for, at a scale
+   de-duplication ADR-0009 and the pandas-dev/pandas-stubs#1378/#1474 migration were adopted for, at a scale
    (five operator families) that would be a large regression.
 
 ## Decision Outcome
@@ -91,7 +90,7 @@ add an explicit narrower `-> Never` overload **immediately before** the
 `Supports_Proto*` overload it would otherwise be shadowed by, e.g.:
 
 ```python
-# Must precede `Supports_ProtoSub`: mypy matches it for `bool` (python/mypy#20061)
+# Must precede `Supports_ProtoSub`: mypy matches it for `bool` (python/mypypython/mypy#20061)
 @overload
 def __sub__(self: Index[bool], other: bool | SequenceNotStr[bool], /) -> Never: ...
 @overload
@@ -104,7 +103,7 @@ With the narrower overload listed first, mypy, pyright, and pyrefly all resolve
 `Index[bool] - bool` to the `Never` overload, and the test needs **no** ignore
 comments — `assert_type(expr, Never)` is sufficient (`AGENTS.md` Example 2). This is
 consistent with `AGENTS.md`'s "Invalid Usage Testing Pattern": *"Return `Never` only
-when a direct error cannot be expressed"* — for mypy under #20061, a direct
+when a direct error cannot be expressed"* — for mypy under python/mypy#20061, a direct
 `[operator]` error genuinely cannot be expressed, so `Never` is the correct fallback,
 not a workaround of convenience.
 
@@ -150,8 +149,8 @@ test exists at all:
 | operation | `Never` guard | test status |
 | :--- | :--- | :--- |
 | `Index[bool] -/- bool` | **yes** (base.pyi:762, :802) | clean `assert_type(…, Never)`, fixed in pandas-dev/pandas-stubs#1938 |
-| `Index[bool] / bool`, `bool / Index[bool]` | no (only `np_ndarray_bool`, base.pyi:987) | 4 sites, pyright-only guard + bare `# TODO: python/mypy#20061` |
-| `Series[bool] / bool` (+ `.truediv`/`.div`/`.rtruediv`/`.rdiv`) | no | 8 sites, pyright-only guard + bare `# TODO: python/mypy#20061` |
+| `Index[bool] / bool`, `bool / Index[bool]` | no (only `np_ndarray_bool`, base.pyi:987) | 4 sites, pyright-only guard + bare `# TODO: python/mypypython/mypy#20061` |
+| `Series[bool] / bool` (+ `.truediv`/`.div`/`.rtruediv`/`.rdiv`) | no | 8 sites, pyright-only guard + bare `# TODO: python/mypypython/mypy#20061` |
 | `Index[bool] // bool`, `Index[complex] // complex` | no (ndarray-only, base.pyi:1103, :1145) | **no test file exists at all** |
 | `Index[str] - str`, `/ str`, `// str` | no | **no test file exists at all** |
 
@@ -184,7 +183,7 @@ Two further structural facts:
 - **Negative / Neutral**: the "omission from `_proto_*` means illegal" invariant is no
   longer self-enforcing under mypy — it now depends on someone remembering to add the
   matching `Never` overload in the right position. Every new `_proto_*` family added in
-  the future needs an explicit audit against python/mypy#20061 rather than trusting the
+  the future needs an explicit audit against python/mypypython/mypy#20061 rather than trusting the
   protocol alone.
 
 ### Follow-ups (deferred; document now, fix later)
@@ -200,7 +199,7 @@ Two further structural facts:
 ## Historical References & Provenance
 
 - **Primary / related pull requests & issues**:
-  - python/mypy#20061: Issue when `self` is typed as a Protocol (the upstream root
+  - python/mypypython/mypy#20061: Issue when `self` is typed as a Protocol (the upstream root
     cause).
   - pandas-dev/pandas-stubs#1938: `Index[bool]` subtraction `Never` guards (the fix
     that surfaced this decision).
@@ -223,7 +222,7 @@ Two further structural facts:
 
 ## Controversies and Open Questions
 
-1. **Whether to keep the protocol consolidation if upstream never fixes #20061.**
+1. **Whether to keep the protocol consolidation if upstream never fixes python/mypy#20061.**
    The per-element-type `Never` tax accumulates with every new `_proto_*` family; if
    the number of required exclusions keeps growing, revisiting option 4 (concrete
    overloads, no protocol) may become worth the duplication it reintroduces.

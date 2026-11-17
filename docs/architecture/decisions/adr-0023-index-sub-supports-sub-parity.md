@@ -1,8 +1,7 @@
 ---
 status: accepted
 date: 2026-09-03
-deciders: [Dr-Irv, twoertwein, MarcoGorelli, loicdiridollou, cmp0xff]
-consulted: [typing-sig]
+deciders: [cmp0xff, loicdiridollou]
 informed: [pandas-stubs contributors]
 ---
 
@@ -58,7 +57,7 @@ that `+`/`*` have, so an external reflected operand resolves to a concrete
 ## Considered Options
 
 1. **Add `_typeshed.SupportsRSub`/`SupportsSub` overloads mirroring `__mul__`/`__rmul__`** *(tried, rejected)*.
-   - Implemented as commit `bc985f07` on `typ-index-subtraction` (#1938).
+   - Implemented as commit pandas-dev/pandas-stubs@bc985f07 on `typ-index-subtraction` (pandas-dev/pandas-stubs#1938).
    - *Pros*: exact parity with `+`/`*`; reuses the accepted `S2_NSDT` result bound.
    - *Cons*: the greedy capture of `Index[bool]` (below) turns a genuine operator
      error into `Index[Never]`. This is the direct reason the option is rejected.
@@ -92,7 +91,7 @@ that `+`/`*` have, so an external reflected operand resolves to a concrete
 self-bound `Supports_ProtoSub`/`Supports_ProtoRSub` overloads plus the explicit
 `Never` guards, and carry **no** external `_typeshed.SupportsRSub`/`SupportsSub`
 overload. `SupportsSub`/`SupportsRSub` were added to the
-`from _typeshed import (…)` block by the parity attempt (`bc985f07`) and are
+`from _typeshed import (…)` block by the parity attempt (pandas-dev/pandas-stubs@bc985f07) and are
 now removed.
 
 The rationale for rejecting the external `Supports*` form is the bool capture:
@@ -146,9 +145,9 @@ the need for that workaround entirely.
 - [ADR-0024](adr-0024-protocol-self-overloads-need-never-exclusions.md) — why a
   protocol-typed `self` overload needs the explicit `Never` exclusions this ADR keeps.
 - PR pandas-dev/pandas-stubs#1938 (branch `typ-index-subtraction`):
-  - `ec114bec` — aligned the `__sub__` family onto the `ElementOpsMixin` +
+  - pandas-dev/pandas-stubs@ec114bec — aligned the `__sub__` family onto the `ElementOpsMixin` +
     `Supports_Proto*` idiom and added the first `Index[bool] - bool -> Never` guard.
-  - `bc985f07` — added external `_typeshed.SupportsRSub`/`SupportsSub` parity
+  - pandas-dev/pandas-stubs@bc985f07 — added external `_typeshed.SupportsRSub`/`SupportsSub` parity
     overloads; recorded here as tried-and-rejected. It introduced the `Index[bool]`
     capture (`Index[bool] - Index[bool] -> Index[Never]`) and the `np_ndarray_bool`
     guard extension.
