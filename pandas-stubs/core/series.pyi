@@ -1544,7 +1544,7 @@ class Series(IndexOpsMixin[S1], ElementOpsMixin[S1], NDFrame):
         self: Series[date] | Series[time],
         periods: int | Sequence[int] = ...,
         axis: Axis = 0,
-        fill_value: ExtScalarOrNA = ...,
+        fill_value: ExtScalarOrNA | time = ...,
     ) -> Series: ...
     @overload
     def shift(
