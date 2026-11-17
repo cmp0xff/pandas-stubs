@@ -143,6 +143,8 @@ the need for that workaround entirely.
 - ADR-0009 — structural and nominal protocols for type discrimination; the origin
   of the `Supports_Proto*`/`_typeshed.Supports*` split.
 - ADR-0017 — boolean arithmetic restrictions; the model for the `Never` guards.
+- [ADR-0024](adr-0024-protocol-self-overloads-need-never-exclusions.md) — why a
+  protocol-typed `self` overload needs the explicit `Never` exclusions this ADR keeps.
 - PR pandas-dev/pandas-stubs#1938 (branch `typ-index-subtraction`):
   - `ec114bec` — aligned the `__sub__` family onto the `ElementOpsMixin` +
     `Supports_Proto*` idiom and added the first `Index[bool] - bool -> Never` guard.

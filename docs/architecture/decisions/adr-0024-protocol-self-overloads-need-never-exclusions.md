@@ -6,7 +6,7 @@ consulted: [typing-sig]
 informed: [pandas-stubs contributors]
 ---
 
-# ADR-0023: Protocol-Typed `self` Overloads Need Explicit `Never` Exclusions
+# ADR-0024: Protocol-Typed `self` Overloads Need Explicit `Never` Exclusions
 
 ## Context and Problem Statement
 
