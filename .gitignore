@@ -138,3 +138,6 @@ dmypy.json
 .pyre/
 /poetry.lock
 .idea/**/*
+
+.DS_Store
+**/.DS_Store
