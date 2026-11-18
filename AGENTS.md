@@ -22,6 +22,11 @@ The `pandas-stubs` project is introduced in `README.md`.
 - Before changing an existing stub, confirm the API is listed there. If it is not, do not change the stub: draft the issue text for pandas-dev/pandas in chat, let the user open it, and add its link to the PR body.
 - When a reviewer asks for an issue, draft it the same way. Never act on pandas-dev/pandas yourself.
 
+## Issues and Discussions
+
+- Follow "Issues and discussions" in `docs/README.md`.
+- Never draft a comment that asks to be assigned, asks whether someone is working on an issue, announces a plan, or restates the issue. Draft only comments that carry a reproducer, a measurement, or a PR link, and let the user post them.
+
 ## Citation & Reference Formatting Rules (Important)
 
 When generating documentation or writing PR descriptions, format all GitHub references as plain text so that GitHub renders them as native autolinks.

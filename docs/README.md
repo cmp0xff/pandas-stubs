@@ -13,6 +13,13 @@ Instructions for working with the code are found here:
 - [How to make a release](release_procedure.md)
 - [Type architecture](type-architecture/README.md)
 
+## Issues and discussions
+
+- We do not assign issues. To work on one, open a PR; there is no need to ask first or to check whether someone else is working on it.
+- We review code, not plans. Post a plan only when a maintainer asks for one.
+- Comment on an issue when you add something new: a reproducer, a measured type-checker or runtime result, or a link to your PR. Comments that restate the issue or ask for general guidance may go unanswered.
+- Keep comments short. If AI drafts them, check every claim yourself and cut anything that does not add information.
+
 ## After a review round
 
 When you have addressed a round of review comments:
