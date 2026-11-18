@@ -14,6 +14,7 @@ The `pandas-stubs` project is introduced in `README.md`.
 ## Project Guidelines
 
 - Follow `docs/philosophy.md`.
+- Use `np_1darray*` for 1-D arguments per "Narrow vs. Wide Arguments" there; validate with `python -S scripts/check_ndarray_params.py`.
 - Also follow all guidelines for contributing to the codebase specified at [Contributing to the code base](https://pandas.pydata.org/docs/development/contributing_codebase.html).
 
 ## Scope: Public API Only

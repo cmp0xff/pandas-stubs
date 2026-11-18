@@ -1,0 +1,54 @@
+# ndarray parameter allowlist - PERMANENT: APIs that genuinely accept n-D arrays at
+# runtime (see "Narrow vs. Wide Arguments" in docs/philosophy.md).
+# Each non-comment line is an exact module:qualname:param key, sorted.
+# Entries must match a current direct annotation; type aliases are not resolved.
+# Known sites still to be narrowed belong in ndarray-params-burndown.txt instead.
+pandas._libs.tslibs.offsets:BaseOffset.__add__:other
+pandas._libs.tslibs.offsets:BaseOffset.__mul__:other
+pandas._libs.tslibs.offsets:BaseOffset.__radd__:other
+pandas._libs.tslibs.offsets:BaseOffset.__rmul__:other
+pandas._libs.tslibs.offsets:BaseOffset.__rsub__:other
+pandas._libs.tslibs.period:Period.__eq__:other
+pandas._libs.tslibs.period:Period.__ge__:other
+pandas._libs.tslibs.period:Period.__gt__:other
+pandas._libs.tslibs.period:Period.__le__:other
+pandas._libs.tslibs.period:Period.__lt__:other
+pandas._libs.tslibs.period:Period.__ne__:other
+pandas._libs.tslibs.timedeltas:Timedelta.__add__:other
+pandas._libs.tslibs.timedeltas:Timedelta.__eq__:other
+pandas._libs.tslibs.timedeltas:Timedelta.__floordiv__:other
+pandas._libs.tslibs.timedeltas:Timedelta.__ge__:other
+pandas._libs.tslibs.timedeltas:Timedelta.__gt__:other
+pandas._libs.tslibs.timedeltas:Timedelta.__le__:other
+pandas._libs.tslibs.timedeltas:Timedelta.__lt__:other
+pandas._libs.tslibs.timedeltas:Timedelta.__mod__:other
+pandas._libs.tslibs.timedeltas:Timedelta.__mul__:other
+pandas._libs.tslibs.timedeltas:Timedelta.__ne__:other
+pandas._libs.tslibs.timedeltas:Timedelta.__radd__:other
+pandas._libs.tslibs.timedeltas:Timedelta.__rfloordiv__:other
+pandas._libs.tslibs.timedeltas:Timedelta.__rmul__:other
+pandas._libs.tslibs.timedeltas:Timedelta.__rsub__:other
+pandas._libs.tslibs.timedeltas:Timedelta.__rtruediv__:other
+pandas._libs.tslibs.timedeltas:Timedelta.__sub__:other
+pandas._libs.tslibs.timedeltas:Timedelta.__truediv__:other
+pandas._libs.tslibs.timestamps:Timestamp.__add__:other
+pandas._libs.tslibs.timestamps:Timestamp.__eq__:other
+pandas._libs.tslibs.timestamps:Timestamp.__ge__:other
+pandas._libs.tslibs.timestamps:Timestamp.__gt__:other
+pandas._libs.tslibs.timestamps:Timestamp.__le__:other
+pandas._libs.tslibs.timestamps:Timestamp.__lt__:other
+pandas._libs.tslibs.timestamps:Timestamp.__ne__:other
+pandas._libs.tslibs.timestamps:Timestamp.__radd__:other
+pandas._libs.tslibs.timestamps:Timestamp.__sub__:other
+pandas.core.algorithms:take:arr
+pandas.core.dtypes.missing:isna:obj
+pandas.core.dtypes.missing:notna:obj
+pandas.core.frame:DataFrame.__matmul__:other  # shape-erased overload workaround
+pandas.core.frame:DataFrame.__rmatmul__:other  # shape-erased overload workaround
+pandas.core.frame:DataFrame.dot:other  # shape-erased overload workaround
+pandas.core.frame:DataFrame.mask:cond
+pandas.core.frame:DataFrame.where:cond
+pandas.io.formats.style:Styler.apply:func
+pandas.io.formats.style:Styler.background_gradient:gmap
+pandas.io.formats.style:Styler.bar:align
+pandas.io.formats.style:Styler.text_gradient:gmap

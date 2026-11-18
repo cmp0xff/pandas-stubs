@@ -103,7 +103,7 @@ args = [
 ]
 
 [tool.poe.tasks.pytest_architecture]
-help = "Run operand hierarchy architecture tests"
+help = "Run operand hierarchy and ndarray parameter architecture tests"
 script = "scripts.test.run:pytest_architecture"
 
 [tool.poe.tasks.style]
