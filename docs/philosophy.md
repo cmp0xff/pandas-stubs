@@ -188,6 +188,12 @@ pandas-stubs annotations are not too wide (allow adding a `Timestamp` to a
 time-based interval), mypy and pyright are configured to report unused ignore
 statements.
 
+Arguments that pandas requires to be 1-D use the `np_1darray*` aliases, not
+`np_ndarray*`. Existing exceptions are tracked in
+`scripts/test/ndarray-params-permanent.txt` and
+`scripts/test/ndarray-params-burndown.txt`, enforced by
+`python -S scripts/check_ndarray_params.py`.
+
 ## Deprecated methods
 
 Mark a method that pandas deprecates with `@deprecated` from `typing_extensions`.

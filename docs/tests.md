@@ -11,9 +11,10 @@ Here are the most important options. Fore more details, please use `poe --help`.
   - Run only pyrefly: `poe pyrefly`
   - Run only ty: `poe ty`
   - Run runtime tests (excluding architecture tests): `poe pytest`
-  - Run operand hierarchy architecture tests: `poe pytest_architecture`
+  - Run architecture tests (operand hierarchy and ndarray parameters): `poe pytest_architecture`
   - Run only pre-commit: `poe style`
 - Run tests against the installed stubs (this will install and uninstall the stubs): `poe test_dist`
+- Check n-D ndarray parameter annotations against their allowlists: `python -S scripts/check_ndarray_params.py`.
 - Verify type completeness: `poe type_completeness`.
 - Run stubtest against pandas with the committed allowlists (a required CI job on Python 3.15): `poe stubtest`. See the headers of `scripts/test/stubtest-allowlist-permanent.txt` and `scripts/test/stubtest-allowlist-burndown.txt`. Use `poe stubtest --no_allowlist` to report every mismatch.
 
