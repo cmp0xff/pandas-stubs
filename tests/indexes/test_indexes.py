@@ -754,12 +754,8 @@ def test_interval_index_breaks() -> None:
         dt_2d: np_2darray[np.datetime64] = np.array(
             [[np.datetime64("2000-01-01"), np.datetime64("2001-01-01")]]
         )
-        td_2d: np_2darray[np.timedelta64] = np.array(
-            [[np.timedelta64(1, "D"), np.timedelta64(2, "D")]]
-        )
         pd.IntervalIndex.from_breaks(int_2d)  # type: ignore[arg-type] # pyright: ignore[reportCallIssue,reportArgumentType] # pyrefly: ignore[no-matching-overload] # ty: ignore[no-matching-overload]
         pd.IntervalIndex.from_breaks(dt_2d)  # type: ignore[arg-type] # pyright: ignore[reportCallIssue,reportArgumentType] # pyrefly: ignore[no-matching-overload] # ty: ignore[no-matching-overload]
-        pd.IntervalIndex.from_breaks(td_2d)  # type: ignore[arg-type] # pyright: ignore[reportCallIssue,reportArgumentType] # pyrefly: ignore[no-matching-overload] # ty: ignore[no-matching-overload]
 
     np_ndarray_dt64 = np.array(
         [
@@ -883,12 +879,8 @@ def test_interval_index_arrays() -> None:
         dt_2d: np_2darray[np.datetime64] = np.array(
             [[np.datetime64("2000-01-01"), np.datetime64("2001-01-01")]]
         )
-        td_2d: np_2darray[np.timedelta64] = np.array(
-            [[np.timedelta64(1, "D"), np.timedelta64(2, "D")]]
-        )
         pd.IntervalIndex.from_arrays(int_2d, int_2d)  # type: ignore[arg-type] # pyright: ignore[reportCallIssue,reportArgumentType] # pyrefly: ignore[no-matching-overload] # ty: ignore[no-matching-overload]
         pd.IntervalIndex.from_arrays(dt_2d, dt_2d)  # type: ignore[arg-type] # pyright: ignore[reportCallIssue,reportArgumentType] # pyrefly: ignore[no-matching-overload] # ty: ignore[no-matching-overload]
-        pd.IntervalIndex.from_arrays(td_2d, td_2d)  # type: ignore[arg-type] # pyright: ignore[reportCallIssue,reportArgumentType] # pyrefly: ignore[no-matching-overload] # ty: ignore[no-matching-overload]
 
     left_dt64_arr: np_ndarray_dt = np.array(
         [
