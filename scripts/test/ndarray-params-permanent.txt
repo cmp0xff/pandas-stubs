@@ -43,6 +43,9 @@ pandas._libs.tslibs.timestamps:Timestamp.__sub__:other
 pandas.core.algorithms:take:arr
 pandas.core.dtypes.missing:isna:obj
 pandas.core.dtypes.missing:notna:obj
+pandas.core.frame:DataFrame.__matmul__:other  # shape-erased overload workaround
+pandas.core.frame:DataFrame.__rmatmul__:other  # shape-erased overload workaround
+pandas.core.frame:DataFrame.dot:other  # shape-erased overload workaround
 pandas.core.frame:DataFrame.mask:cond
 pandas.core.frame:DataFrame.where:cond
 pandas.io.formats.style:Styler.apply:func

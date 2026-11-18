@@ -8,11 +8,17 @@ import ast
 from collections import Counter
 from pathlib import Path
 import sys
+from typing import Final
 
-_REPO_ROOT = Path(__file__).resolve().parents[2]
-_PERMANENT = Path("scripts/test/ndarray-params-permanent.txt")
-_BURNDOWN = Path("scripts/test/ndarray-params-burndown.txt")
-_ARRAY_NAMES = {"np.ndarray", "numpy.ndarray", "npt.NDArray", "numpy.typing.NDArray"}
+_REPO_ROOT: Final = Path(__file__).resolve().parents[2]
+_PERMANENT: Final = Path("scripts/test/ndarray-params-permanent.txt")
+_BURNDOWN: Final = Path("scripts/test/ndarray-params-burndown.txt")
+_ARRAY_NAMES: Final = {
+    "np.ndarray",
+    "numpy.ndarray",
+    "npt.NDArray",
+    "numpy.typing.NDArray",
+}
 
 
 def _dotted_name(node: ast.AST) -> str:
@@ -116,16 +122,20 @@ def _read_allowlist(path: Path) -> tuple[set[str], list[str]]:
     return set(entries), problems
 
 
+def _unlisted(key: str) -> str:
+    return (
+        f"{key}: unlisted n-D parameter; use np_1darray* for 1-D input, "
+        "or document genuine n-D support in the permanent list."
+    )
+
+
 def check_ndarray_params(stub_root: Path, permanent: Path, burndown: Path) -> bool:
     found = find_ndarray_params(stub_root)
     allowed, problems = _read_allowlist(permanent)
     remaining, more_problems = _read_allowlist(burndown)
     problems.extend(more_problems)
     for key in sorted(found - allowed - remaining):
-        problems.append(
-            f"{key}: unlisted n-D parameter; use np_1darray* for 1-D input, "
-            "or document genuine n-D support in the permanent list."
-        )
+        problems.append(_unlisted(key))
     for key in sorted(remaining - found):
         problems.append(
             f"{key}: stale burndown entry; delete its line from {burndown}."
@@ -142,7 +152,10 @@ def check_ndarray_params(stub_root: Path, permanent: Path, burndown: Path) -> bo
 
 
 def write_burndown(stub_root: Path, permanent: Path, burndown: Path) -> None:
-    """Rewrite the burndown entries from the stubs, keeping its leading comment header."""
+    """Drop stale burndown entries, keeping its leading comment header.
+
+    Raise ValueError instead of adding keys: the burndown only shrinks.
+    """
     allowed, problems = _read_allowlist(permanent)
     if problems:
         raise ValueError("\n".join(problems))
@@ -151,7 +164,10 @@ def write_burndown(stub_root: Path, permanent: Path, burndown: Path) -> None:
         if line.strip() and not line.startswith("#"):
             break
         header.append(line)
+    remaining, _ = _read_allowlist(burndown)
     entries = sorted(find_ndarray_params(stub_root) - allowed)
+    if new := [key for key in entries if key not in remaining]:
+        raise ValueError("\n".join(map(_unlisted, new)))
     burndown.write_text(
         "".join(header) + "".join(f"{key}\n" for key in entries), encoding="utf-8"
     )

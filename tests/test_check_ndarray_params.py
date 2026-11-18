@@ -125,19 +125,29 @@ def test_allowlist_failures(
 def test_regenerate_and_comments(tmp_path: Path) -> None:
     root = _write_stub(
         tmp_path,
-        "def z(x: np_ndarray) -> None: ...\ndef a(x: np_ndarray) -> None: ...",
+        "\n".join(f"def {name}(x: np_ndarray) -> None: ..." for name in "zma"),
     )
     permanent, burndown = tmp_path / "permanent.txt", tmp_path / "burndown.txt"
     permanent.write_text(
         "# Permanent\n\npandas.core.example:z:x # reason\n", encoding="utf-8"
     )
-    burndown.write_text("# Keep header\n\npandas:stale:x\n", encoding="utf-8")
+    expected = "# Keep header\n\npandas.core.example:a:x\npandas.core.example:m:x\n"
+    burndown.write_text(expected + "pandas:stale:x\n", encoding="utf-8")
     write_burndown(root, permanent, burndown)
-    assert (
-        burndown.read_text(encoding="utf-8")
-        == "# Keep header\n\npandas.core.example:a:x\n"
-    )
+    assert burndown.read_text(encoding="utf-8") == expected
+    write_burndown(root, permanent, burndown)
+    assert burndown.read_text(encoding="utf-8") == expected
     assert check_ndarray_params(root, permanent, burndown)
+
+
+def test_regenerate_refuses_new_keys(tmp_path: Path) -> None:
+    root = _write_stub(tmp_path, "def f(x: np_ndarray) -> None: ...")
+    permanent, burndown = tmp_path / "permanent.txt", tmp_path / "burndown.txt"
+    permanent.write_text("", encoding="utf-8")
+    burndown.write_text("# Header\n", encoding="utf-8")
+    with pytest.raises(ValueError, match=r"pandas\.core\.example:f:x: unlisted"):
+        write_burndown(root, permanent, burndown)
+    assert burndown.read_text(encoding="utf-8") == "# Header\n"
 
 
 def test_repository_matches_allowlists() -> None:

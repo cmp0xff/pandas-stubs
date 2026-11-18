@@ -5,7 +5,7 @@
 # Each non-comment line is an exact module:qualname:param key, sorted.
 # The file only shrinks: the check fails on stale entries, so fixing a site
 # requires deleting its line. Type aliases are not resolved.
-# Regenerate from the current tree minus permanent keys, preserving this header:
+# Drop stale entries (new keys are refused), preserving this header:
 #   python -S scripts/check_ndarray_params.py --write-burndown
 pandas._testing:assert_extension_array_equal:index_values
 pandas.core.algorithms:factorize:values
