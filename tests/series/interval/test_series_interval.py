@@ -69,3 +69,13 @@ def test_types_bfill() -> None:
         pd.Series,
         pd.Interval,
     )
+
+
+def test_types_shift_fill_value() -> None:
+    """Test fill_value of pd.Series[pd.Interval].shift."""
+    s = pd.Series([pd.Interval(0, 1)])
+    check(
+        assert_type(s.shift(1, fill_value=pd.Interval(0, 1)), pd.Series),
+        pd.Series,
+        pd.Interval,
+    )

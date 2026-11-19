@@ -142,6 +142,7 @@ from pandas._libs.tslibs.nattype import NaTType
 from pandas._typing import (
     S1,
     S2,
+    S2_NDTP,
     S2_NSDT,
     T_COMPLEX,
     AggFuncTypeBase,
@@ -173,6 +174,7 @@ from pandas._typing import (
     Dtype,
     DTypeLike,
     DtypeObj,
+    ExtScalarOrNA,
     FilePath,
     FillnaOptions,
     FloatDtypeArg,
@@ -1511,10 +1513,38 @@ class Series(IndexOpsMixin[S1], ElementOpsMixin[S1], NDFrame):
     ) -> Series: ...
     @overload
     def shift(
-        self,
+        self: Series[Timestamp],
         periods: int | Sequence[int] = ...,
         axis: Axis = 0,
-        fill_value: Scalar | NAType | None = ...,
+        fill_value: datetime | np.datetime64 | NaTType | None = ...,
+    ) -> Series: ...
+    @overload
+    def shift(
+        self: Series[Timedelta],
+        periods: int | Sequence[int] = ...,
+        axis: Axis = 0,
+        fill_value: timedelta | np.timedelta64 | NaTType | None = ...,
+    ) -> Series: ...
+    @overload
+    def shift(
+        self: Series[Period],
+        periods: int | Sequence[int] = ...,
+        axis: Axis = 0,
+        fill_value: Period | NaTType | None = ...,
+    ) -> Series: ...
+    @overload
+    def shift(
+        self: Series[S2_NDTP],
+        periods: int | Sequence[int] = ...,
+        axis: Axis = 0,
+        fill_value: ExtScalarOrNA = ...,
+    ) -> Series: ...
+    @overload
+    def shift(
+        self: Series[date] | Series[time],
+        periods: int | Sequence[int] = ...,
+        axis: Axis = 0,
+        fill_value: ExtScalarOrNA | time = ...,
     ) -> Series: ...
     @overload
     def shift(
