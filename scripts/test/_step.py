@@ -11,6 +11,10 @@ ty_src_all = Step(
     name="Run ty on 'tests' (using the local stubs) and on the local stubs with all rules raising errors",
     run=partial(run.checker_src, "ty", all_rules=True),
 )
+zuban_src = Step(
+    name="Run zuban on 'tests' (using the local stubs) and on the local stubs",
+    run=partial(run.checker_src, "zuban"),
+)
 pyrefly_src = Step(
     name="Run pyrefly on 'tests' (using the local stubs) and on the local stubs",
     run=partial(run.checker_src, "pyrefly"),
@@ -54,6 +58,10 @@ pyrefly_dist = Step(
 ty_dist = Step(
     name="Run ty on 'tests' using the installed stubs",
     run=partial(run.checker_dist, "ty"),
+)
+zuban_dist = Step(
+    name="Run zuban on 'tests' using the installed stubs",
+    run=partial(run.checker_dist, "zuban"),
 )
 stubtest = Step(
     name="Run stubtest to compare the installed stubs against pandas", run=run.stubtest

@@ -41,6 +41,9 @@ jobs:
       - name: Run ty on 'tests' (using the local stubs) and on the local stubs
         run: poetry run poe ty
 
+      - name: Run zuban on 'tests' (using the local stubs) and on the local stubs
+        run: poetry run poe zuban
+
       - name: Run pyrefly on 'tests' (using the local stubs) and on the local stubs
         run: poetry run poe pyrefly
 
