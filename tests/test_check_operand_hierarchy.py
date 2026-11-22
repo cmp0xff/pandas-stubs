@@ -19,6 +19,8 @@ from scripts.operand_hierarchy.model import (
     CANONICAL_OPERAND_BY_TIER,
     CLASS_TIERS,
     FORWARD_BINARY_DUNDERS,
+    METHOD_MIRRORED_DUNDERS,
+    REFLECTED_SYMMETRIC_DUNDERS,
 )
 
 _REPO_ROOT = Path(__file__).parents[1]
@@ -474,3 +476,126 @@ def test_cli_failure_status(monkeypatch: pytest.MonkeyPatch) -> None:
         "scripts.operand_hierarchy.check.check_operand_hierarchy", reject
     )
     assert main() == 1
+
+
+@pytest.mark.parametrize(
+    "forward, reflected", sorted(REFLECTED_SYMMETRIC_DUNDERS.items())
+)
+def test_reflected_mirror(tmp_path: Path, forward: str, reflected: str) -> None:
+    root = _write_tree(
+        tmp_path,
+        {"core/frame.pyi": f"""
+class DataFrame:
+    @overload
+    def {forward}(self, other: (DataFrame | (Series | ExtensionArray)), /) -> Self: ...
+    @overload
+    def {forward}(self, other: int, /) -> Series: ...
+    if VERSION:
+        @overload
+        def {reflected}(self, other: ExtensionArray | Series | DataFrame, /) -> Self: ...
+        @overload
+        def {reflected}(self, other: int, /) -> Series: ...
+"""},
+    )
+    assert check_operand_hierarchy(root, exceptions={})
+
+
+@pytest.mark.parametrize(
+    "forward, reflected", sorted(REFLECTED_SYMMETRIC_DUNDERS.items())
+)
+@pytest.mark.parametrize(
+    "reflected_operand, result, diagnostic",
+    [
+        ("Series", "Scalar", "missing ['int -> Scalar']; extra []"),
+        ("Series | int | str", "Scalar", "missing []; extra ['str -> Scalar']"),
+        (
+            "Series | int",
+            "Series",
+            "missing ['Series -> Scalar', 'int -> Scalar']; extra ['Series -> Series', 'int -> Series']",
+        ),
+    ],
+)
+def test_reflected_mirror_violation(
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+    forward: str,
+    reflected: str,
+    reflected_operand: str,
+    result: str,
+    diagnostic: str,
+) -> None:
+    root = _write_tree(
+        tmp_path,
+        {"core/series.pyi": f"""
+class Series:
+    def {forward}(self, other: Series | int, /) -> Scalar: ...
+    def {reflected}(self, other: {reflected_operand}, /) -> {result}: ...
+"""},
+    )
+    assert not check_operand_hierarchy(root, exceptions={})
+    assert (
+        f"ERROR: Series.{reflected} does not mirror {forward}: {diagnostic}."
+        in capsys.readouterr().err
+    )
+
+
+@pytest.mark.parametrize("forward, method", sorted(METHOD_MIRRORED_DUNDERS.items()))
+@pytest.mark.parametrize(
+    "method_operand, result, diagnostic",
+    [
+        ("int | Index", "Series", ""),
+        ("int", "Series", "missing ['Index -> Series']; extra []"),
+        ("int | Index | DataFrame", "Series", ""),
+        ("int | Index | pd.DataFrame", "Series", ""),
+        ("int | Index | Higher", "Series", ""),
+        ("int | Index | types.Higher", "Series", ""),
+        (
+            "int | Index | Series",
+            "Series",
+            "missing []; extra ['Series -> Series']",
+        ),
+        (
+            "int | Index | ExtensionArray",
+            "Series",
+            "missing []; extra ['ExtensionArray -> Series']",
+        ),
+        (
+            "int | Index",
+            "Scalar",
+            "missing ['Index -> Series', 'int -> Series']; extra ['Index -> Scalar', 'int -> Scalar']",
+        ),
+        (
+            "DataFrame",
+            "Series",
+            "missing ['Index -> Series', 'int -> Series']; extra []",
+        ),
+    ],
+)
+def test_method_mirror(
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+    forward: str,
+    method: str,
+    method_operand: str,
+    result: str,
+    diagnostic: str,
+) -> None:
+    root = _write_tree(
+        tmp_path,
+        {
+            "aliases.pyi": "Higher: TypeAlias = DataFrame",
+            "core/series.pyi": f"""
+class Series:
+    def {forward}(self, other: int | Index, /) -> Series: ...
+    def {method}(self, other: {method_operand}) -> {result}: ...
+""",
+        },
+    )
+    assert check_operand_hierarchy(root, exceptions={}) == (not diagnostic)
+    error = capsys.readouterr().err
+    if diagnostic:
+        assert (
+            f"ERROR: Series.{method} does not mirror {forward}: {diagnostic}." in error
+        )
+    else:
+        assert error == ""

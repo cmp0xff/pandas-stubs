@@ -503,7 +503,13 @@ class DataFrame(NDFrame, OpsMixin, _GetItemHack):
     @overload
     def dot(
         self,
-        other: Series | ExtensionArray | np_1darray | Sequence[SupportsSelfMul[Any]],
+        other: (
+            Series
+            | Index
+            | ExtensionArray
+            | np_1darray
+            | Sequence[SupportsSelfMul[Any]]
+        ),
     ) -> Series: ...
     @overload  # workaround for overload bugs in mypy and pyright
     def __matmul__(
@@ -520,7 +526,13 @@ class DataFrame(NDFrame, OpsMixin, _GetItemHack):
     @overload
     def __matmul__(
         self,
-        other: Series | ExtensionArray | np_1darray | Sequence[SupportsSelfMul[Any]],
+        other: (
+            Series
+            | Index
+            | ExtensionArray
+            | np_1darray
+            | Sequence[SupportsSelfMul[Any]]
+        ),
         /,
     ) -> Series: ...
     @overload  # workaround for overload bugs in mypy and pyright
@@ -532,13 +544,19 @@ class DataFrame(NDFrame, OpsMixin, _GetItemHack):
     @overload
     def __rmatmul__(
         self,
-        other: np_2darray | Sequence[Sequence[SupportsSelfMul[Any]]],
+        other: DataFrame | np_2darray | Sequence[Sequence[SupportsSelfMul[Any]]],
         /,
     ) -> Self: ...
     @overload
     def __rmatmul__(
         self,
-        other: np_1darray | Sequence[SupportsSelfMul[Any]],
+        other: (
+            Series
+            | Index
+            | ExtensionArray
+            | np_1darray
+            | Sequence[SupportsSelfMul[Any]]
+        ),
         /,
     ) -> Series: ...
     @overload
